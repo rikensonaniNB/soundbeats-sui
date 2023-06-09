@@ -57,7 +57,10 @@ module soundbeats::beats_nft {
         quantity: u32,
         ctx: &mut TxContext
     ) {
+        //TODO: add security here (minter must be authorized)
         let sender = tx_context::sender(ctx);
+        
+        //TODO: add security (authorized owner, ownership transfer)
         
         let i = 0;
         while (i < quantity) {

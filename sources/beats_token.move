@@ -33,13 +33,16 @@ module soundbeats::beats {
     
     // ===== Entrypoints =====
     
-    /// Mine new tokens 
+    /// Mint new tokens 
     public entry fun mint(
         recipient: address,
         quantity: u64,
         ctx: &mut TxContext
     ) {
+        //TODO: add security here (minter must be authorized)
         let sender = tx_context::sender(ctx);
+        
+        //TODO: add security (authorized owner, ownership transfer)
         
         event::emit(TokenMinted {
             creator: sender,
