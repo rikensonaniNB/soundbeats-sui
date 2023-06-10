@@ -1,53 +1,37 @@
 module soundbeats::beats {
     use std::option;
-    use sui::coin;
+    use sui::coin::{Self, Coin, TreasuryCap};
     use sui::transfer;
-    use sui::event;
     use sui::tx_context::{Self, TxContext};
 
-    /// The type identifier of coin. The coin will have a type
-    /// tag of kind: `Coin<package_object::mycoin::MYCOIN>`
-    /// Make sure that the name of the type matches the module's name.
+    /// Name of the coin. By convention, this type has the same name as its parent module
+    /// and has no fields. The full type of the coin defined by this module will be `COIN<MANAGED>`.
     struct BEATS has drop {}
 
-    /// Module initializer is called once on module publish. A treasury
-    /// cap is sent to the publisher, who then controls minting and burning
-    fun init(
-        witness: BEATS, 
-        ctx: &mut TxContext
-    ) {
-        let (treasury, metadata) = coin::create_currency(witness, 6, b"BEATS", b"", b"", option::none(), ctx);
+    /// Register the managed currency to acquire its `TreasuryCap`. Because
+    /// this is a module initializer, it ensures the currency only gets
+    /// registered once.
+    fun init(witness: BEATS, ctx: &mut TxContext) {
+        // Get a treasury cap for the coin and give it to the transaction sender
+        let (treasury_cap, metadata) = coin::create_currency<BEATS>(witness, 2, b"BEATS", b"", b"", option::none(), ctx);
         transfer::public_freeze_object(metadata);
-        transfer::public_transfer(treasury, tx_context::sender(ctx))
+        transfer::public_transfer(treasury_cap, tx_context::sender(ctx))
     }
 
-    // ===== Public view functions =====
-    
-    // ===== Events =====
-
-    struct TokenMinted has copy, drop {
-        creator: address,
-        recipient: address,
-        quantity: u64
-    }
-    
-    // ===== Entrypoints =====
-    
-    /// Mint new tokens 
+    /// Only manager can mint new coins
     public entry fun mint(
-        recipient: address,
-        quantity: u64,
-        ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BEATS>, amount: u64, recipient: address, ctx: &mut TxContext
     ) {
-        //TODO: add security here (minter must be authorized)
-        let sender = tx_context::sender(ctx);
-        
-        //TODO: add security (authorized owner, ownership transfer)
-        
-        event::emit(TokenMinted {
-            creator: sender,
-            recipient: recipient,
-            quantity: quantity
-        });
+        coin::mint_and_transfer(treasury_cap, amount, recipient, ctx)
+    }
+
+    /// Only manager can burn coins
+    public entry fun burn(treasury_cap: &mut TreasuryCap<BEATS>, coin: Coin<BEATS>) {
+        coin::burn(treasury_cap, coin);
+    }
+
+    #[test_only]
+    public fun test_init(ctx: &mut TxContext) {
+        init(BEATS {}, ctx)
     }
 }
