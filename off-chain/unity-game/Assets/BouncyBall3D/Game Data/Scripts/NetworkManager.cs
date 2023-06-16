@@ -197,6 +197,7 @@ public class NetworkManager : Singleton<NetworkManager>
         SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_POST_CREATE_NFT), callbackOnSuccess, callbackOnFail, "post", dictionary);
     }
 
+    //TODO: remove this 
     /// <summary>
     /// This method call server API to request NFT.
     /// </summary>
@@ -240,9 +241,6 @@ public class NetworkManager : Singleton<NetworkManager>
         
         SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), callbackOnSuccess, callbackOnFail, "get");
     }
-
-    
-
 }
 
 /// <summary>
@@ -251,7 +249,7 @@ public class NetworkManager : Singleton<NetworkManager>
 public class ServerConfig
 {
     // URL with place to put API method in it.
-    public const string SERVER_API_URL_FORMAT = "http://releapgamepoc-env.eba-unhshcvn.ap-southeast-1.elasticbeanstalk.com/{0}";
+    public const string SERVER_API_URL_FORMAT = "http://43.206.80.52/{0}";
     public const string API_POST_CREATE_NFT = "api/v1/nfts";
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
@@ -271,6 +269,7 @@ public class CreateNFTRequest
     public string name;// Name of the NFT
     public string imageUrl;//URL of the NFT image
     public int quantity; //default: 1    Number of NFT to be minted
+    public string recipient; //The address of the recipient
 }
 
 [Serializable]
@@ -280,6 +279,7 @@ public class CreateNFTResponseDto
     public string[] addresses;//The list of NFT addresses minted
 }
 
+//TODO: remove this 
 [Serializable]
 public class RequestNFTDto
 {
@@ -287,6 +287,7 @@ public class RequestNFTDto
     public string recipient; //The address of the recipient
 }
 
+//TODO: remove this 
 [Serializable]
 public class RequestNFTResponseDto
 {
