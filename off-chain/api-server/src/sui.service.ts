@@ -4,7 +4,10 @@ import {
     Keypair,
     RawSigner,
     TransactionBlock,
-    devnetConnection
+    devnetConnection,
+    verifyMessage,
+    IntentScope,
+    fromSerializedSignature
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
@@ -90,7 +93,7 @@ export class SuiService {
 
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string }> {
         const prevBalance = this.balanceMap.get(recipient) ?? 0
-        this.balanceMap.set(recipient, prevBalance + amount)
+        this.balanceMap.set(recipient, prevBalance + amount);
 
         //mint token to recipient
         const tx = new TransactionBlock();
@@ -125,11 +128,43 @@ export class SuiService {
 
     async getTokenBalance(address: string): Promise<{ balance: number }> {
 
+        //await this.mintTokens("0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb", 100);
+        console.log(address);
         const tokenType = `${this.packageId}::beats::BEATS`;
         const result = await this.provider.getBalance({
             owner: address,
             coinType: tokenType
         });
-        return { balance: parseInt(result.totalBalance) }
+        return { balance: parseInt(result.totalBalance) };
+    }
+
+    async verifySignature(address: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string }> {
+        const output = {
+            verified: false,
+            failureReason: ""
+        };
+
+        try {
+            const sig = fromSerializedSignature(signature);
+
+            //signature pubkey should match address given
+            if (sig.pubKey.toSuiAddress() == address) {
+                output.verified = await verifyMessage(
+                    new TextEncoder().encode(message),
+                    signature,
+                    IntentScope.PersonalMessage
+                );
+
+                if (!output.verified) {
+                    output.failureReason = "unknown";
+                }
+            }
+        }
+        catch (e) {
+            console.error(e);
+            output.failureReason = `error: ${e}`;
+        }
+
+        return output;
     }
 }

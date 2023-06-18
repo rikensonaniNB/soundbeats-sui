@@ -2,14 +2,14 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 import { AppService } from './app.service'
 import {
-    CreateNFTDto,
-    CreateNFTResponseDto,
+    MintNftDto,
+    MintNftResponseDto,
     GetTokenBalanceDto,
     GetTokenBalanceResponseDto,
-    RequestNFTDto,
-    RequestNFTResponseDto,
-    RequestTokenDto,
-    RequestTokenResponseDto,
+    MintTokenDto,
+    MintTokenResponseDto,
+    VerifySignatureDto,
+    VerifySignatureResponseDto,
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 
@@ -24,7 +24,7 @@ export class AppController {
 
     @ApiOperation({ summary: 'Create NFT' })
     @Post('/api/v1/nfts')
-    async createNFT(@Body() body: CreateNFTDto): Promise<CreateNFTResponseDto> {
+    async mintNft(@Body() body: MintNftDto): Promise<MintNftResponseDto> {
         const { name, recipient, imageUrl, quantity } = body
         if (body.name == null || body.name == '') {
             throw new Error('name cannot be null or empty')
@@ -35,24 +35,9 @@ export class AppController {
         return await this.suiService.mintNfts(recipient, name, "Soundbeats NFT", imageUrl, quantity ?? 1)
     }
 
-    /*
-      @ApiOperation({ summary: 'Request NFT' })
-      @Post('/api/v1/nfts/request')
-      async requestNFT(@Body() body: RequestNFTDto): Promise<RequestNFTResponseDto> {
-        const { nftAddress, recipient } = body
-        if (nftAddress == null || nftAddress == '') {
-          throw new Error('nftAddress cannot be null or empty')
-        }
-        if (recipient == null || recipient == '') {
-          throw new Error('recipient cannot be null or empty')
-        }
-        return await this.suiService.requestNft(nftAddress, recipient)
-      }
-      */
-
     @ApiOperation({ summary: 'Request private token' })
     @Post('/api/v1/token')
-    async requestToken(@Body() body: RequestTokenDto): Promise<RequestTokenResponseDto> {
+    async mintToken(@Body() body: MintTokenDto): Promise<MintTokenResponseDto> {
         const { amount, recipient } = body
         if (amount == null || amount <= 0) {
             throw new Error('amount cannot be null, zero or negative')
@@ -71,5 +56,21 @@ export class AppController {
             throw new Error('wallet cannot be null or empty')
         }
         return await this.suiService.getTokenBalance(wallet)
+    }
+
+    @ApiOperation({ summary: 'Verify a signed message' })
+    @Get('/api/v1/verify')
+    async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
+        const { address, signature, message } = query
+        if (address == null || address == '') {
+            throw new Error('address cannot be null or empty')
+        }
+        if (signature == null || signature == '') {
+            throw new Error('signature cannot be null or empty')
+        }
+        if (message == null || message == '') {
+            throw new Error('message cannot be null or empty')
+        }
+        return await this.suiService.verifySignature(address, signature, message)
     }
 }
