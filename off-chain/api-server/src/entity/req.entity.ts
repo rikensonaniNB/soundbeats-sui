@@ -57,6 +57,8 @@ export class VerifySignatureDto {
 export class VerifySignatureResponseDto {
     @ApiProperty({ description: 'Whether or not the signature was verified' })
     verified: boolean
+    @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
+    address: string
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
     failureReason: string
 }

@@ -11,6 +11,7 @@ import {
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
+import { sign } from 'crypto'
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -138,9 +139,10 @@ export class SuiService {
         return { balance: parseInt(result.totalBalance) };
     }
 
-    async verifySignature(address: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string }> {
+    async verifySignature(address: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string }> {
         const output = {
             verified: false,
+            address: address,
             failureReason: ""
         };
 
@@ -158,6 +160,9 @@ export class SuiService {
                 if (!output.verified) {
                     output.failureReason = "unknown";
                 }
+            }
+            else {
+                output.failureReason = "address mismatch";
             }
         }
         catch (e) {
