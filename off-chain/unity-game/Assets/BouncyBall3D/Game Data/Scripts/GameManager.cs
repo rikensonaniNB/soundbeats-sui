@@ -142,7 +142,7 @@ public class GameManager : Singleton<GameManager>
             RequestTokenDto requestTokenDto = new RequestTokenDto
             {
                 amount = score,
-                recipient = PlayerData.NFTRecipent
+                recipient = SuiWallet.ActiveWalletAddress
             };
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }

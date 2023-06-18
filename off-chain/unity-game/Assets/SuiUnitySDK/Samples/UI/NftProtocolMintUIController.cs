@@ -82,7 +82,7 @@ public class NftProtocolMintUIController : MonoBehaviour
                         mintedNftObjectId = txEffects.SelectToken("created[1].reference.objectId").Value<string>();
                     }
 
-                    NFTMintedReadonlyInputField.text = "https://explorer.devnet.sui.io/objects/"+ mintedNftObjectId;
+                    NFTMintedReadonlyInputField.text = "https://suiexplorer.com/objects/"+ mintedNftObjectId;
                 }
                 else
                 {
