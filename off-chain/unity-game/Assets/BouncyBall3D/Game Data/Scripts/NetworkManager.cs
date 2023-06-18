@@ -241,6 +241,14 @@ public class NetworkManager : Singleton<NetworkManager>
         
         SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), callbackOnSuccess, callbackOnFail, "get");
     }
+
+    public void VerifySignature(VerifySignatureDto body, UnityAction<VerifySignatureResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        SendRequest(string.Format(
+            ServerConfig.SERVER_API_URL_FORMAT, 
+            String.Format(ServerConfig.API_VERIFY_SIGNATURE, body.address, body.signature, body.message)
+        ), callbackOnSuccess, callbackOnFail, "get");
+    }
 }
 
 /// <summary>
@@ -254,6 +262,7 @@ public class ServerConfig
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
     public const string API_GET_PRIVATE_TOKEN_BALANCE = "api/v1/token?wallet=";
+    public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
 
     //URL of Leaderboard and NFT
     public const string LeaderboardNFT_API_URL_FORMAT = "http://45.79.126.10:3009/user/";
@@ -307,10 +316,27 @@ public class RequestTokenResponseDto
     public string signature;//The signature of the transaction
 
 }
+
 [Serializable]
 public class GetTokenBalanceResponseDto
 {
     public int balance;//The balance of the wallet
+}
+
+[Serializable]
+public class VerifySignatureDto
+{
+    public string address; 
+    public string signature; 
+    public string message; 
+}
+
+[Serializable]
+public class VerifySignatureResponseDto
+{
+    public bool verified;
+    public string address; 
+    public string failureReason; 
 }
 
 [Serializable]
