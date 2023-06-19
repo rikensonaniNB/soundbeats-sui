@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 public class NFTManager : MonoBehaviour
 {
     public static NFTManager instance;
-    public List<GETNFTResponse> userList;
+    //public List<GETNFTResponse> userList;
     public GameObject uiController;
     
     private void Awake()
@@ -50,6 +50,32 @@ public class NFTManager : MonoBehaviour
         }
     }
 
+    public class NFTOwned_Post
+    {
+        public string NFT;
+        public string wallet_address;
+    }
+
+    [Serializable]
+    public class LeaderBoardDatum
+    {
+        public string _id;
+        public string wallet_address;
+        public int score;
+        public int __v;
+    }
+
+    [Serializable]
+    public class NFT
+    {
+        public string _id;
+        public string wallet_address;
+        public string nft;
+        public int __v;
+    }
+
+    //TODO: this should be removable
+    /*
     [ContextMenu("Get NFT Owned And Score")]
     public void GetNFTSCORE(string address)
     {
@@ -98,7 +124,7 @@ public class NFTManager : MonoBehaviour
                         PlayerPrefs.SetString("selectedIndex", PlayerPrefs.GetInt("NFTOwned_" + i).ToString());
                         PlayerData.SelectIndex = PlayerPrefs.GetInt("NFTOwned_" + i);
                     }
-                    uiController.GetComponent<UIController>().SelectNFTS();
+                    uiController.GetComponent<UIController>().SelectNfts();
                 }
 
                 foreach (LeaderBoardDatum data in response.leaderBoardData)
@@ -113,30 +139,6 @@ public class NFTManager : MonoBehaviour
         }
     }
 
-    public class NFTOwned_Post
-    {
-        public string NFT;
-        public string wallet_address;
-    }
-
-    [Serializable]
-    public class LeaderBoardDatum
-    {
-        public string _id;
-        public string wallet_address;
-        public int score;
-        public int __v;
-    }
-
-    [Serializable]
-    public class NFT
-    {
-        public string _id;
-        public string wallet_address;
-        public string nft;
-        public int __v;
-    }
-
     [Serializable]
     public class GETNFTResponse
     {
@@ -144,4 +146,5 @@ public class NFTManager : MonoBehaviour
         public List<NFT> NFTs;
         public List<LeaderBoardDatum> leaderBoardData;
     }
+    */ 
 }

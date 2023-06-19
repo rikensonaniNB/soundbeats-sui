@@ -121,7 +121,7 @@ public class GameManager : Singleton<GameManager>
             //SendToDrive.instance.Send();
             LeaderboardManager.instance.SendBestScore(
                 ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_Leaderboard_Create, 
-                PlayerPrefs.GetString("suiaddress"),
+                PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
                 bestScore
             );
         }

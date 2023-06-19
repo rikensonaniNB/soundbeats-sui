@@ -6,7 +6,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: is this used? 
+//TODO: can be removed probably 
+/*
 public class TransactionsUIController : MonoBehaviour
 {
     public Button IncrementCounterButton;
@@ -30,7 +31,6 @@ public class TransactionsUIController : MonoBehaviour
             var gasObjectId = GasObjectIdInput.text;
             var rpcResult = await SuiApi.Client.MoveCallAsync(signer, packageObjectId, module, function, typeArgs, args, gasObjectId, 2000);
 
-            /*
             var keyPair = SuiWallet.GetActiveKeyPair();
 
             var txBytes = rpcResult.Result.TxBytes;
@@ -39,7 +39,6 @@ public class TransactionsUIController : MonoBehaviour
 
             await SuiApi.Client.ExecuteTransactionAsync(txBytes, SuiSignatureScheme.ED25519, signature, pkBase64);
             await RefreshCounter();
-            */
         });
 
 
@@ -60,3 +59,4 @@ public class TransactionsUIController : MonoBehaviour
         Output.text = JsonConvert.SerializeObject(rpcResult.Result, formatting: Formatting.Indented);
     }
 }
+*/

@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: can be removed?
+//TODO: can be removed
 /*
 public class WalletUIController : MonoBehaviour
 {

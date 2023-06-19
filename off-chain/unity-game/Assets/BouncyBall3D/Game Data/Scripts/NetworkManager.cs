@@ -29,9 +29,6 @@ public class ServerConfig
 
 public class NetworkManager : Singleton<NetworkManager>
 {
-    //TODO: why is this here? 
-    public GetTokenBalanceResponseDto getTokenBalanceResponseDto;
-
     #region API Methods
 
     /// <summary>
@@ -66,13 +63,12 @@ public class NetworkManager : Singleton<NetworkManager>
         SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_POST_REQUEST_PRIVATE_TOKEN), callbackOnSuccess, callbackOnFail, "postToken",dictionary);
     }
 
-    //TODO: rename (get rid of Private) 
     /// <summary>
     /// Calls the API to query the user's token balance.
     /// </summary>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
-    public void GetPrivateTokenBalance(string wallet, UnityAction<GetTokenBalanceResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    public void GetTokenBalance(string wallet, UnityAction<GetTokenBalanceResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet);
         

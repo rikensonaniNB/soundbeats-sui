@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    private const int SIGNING_MESSAGE_LENGTH = 32;
+
     private static string MessageToSign = "";
 
     //call to request the front end Javascript code to sign a message 
@@ -117,7 +119,7 @@ public class UIController : MonoBehaviour
             }
         }); 
        
-        if (PlayerPrefs.HasKey("suiaddress"))
+        if (PlayerPrefs.HasKey(SuiWallet.WalletAddressKey))
         {
             ShowHomeScreen(); 
         }
@@ -209,13 +211,8 @@ public class UIController : MonoBehaviour
  
         WalletButton_Home.onClick.AddListener(() =>
         {
-            NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+            NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
             LoadingScreen.SetActive(true);
-            //txtAddressNFT_WalletScreen.text = PlayerData.NFTRecipient;
-            //Debug.Log(PlayerData.NFTRecipient);
-            //Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+PlayerData.NFTRecipient);
-            //WalletScreen.SetActive(true);
-            //txtScore_WalletScreen.text = "500";
         });
 
         NFTButton.onClick.AddListener(() =>
@@ -249,7 +246,11 @@ public class UIController : MonoBehaviour
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
 
-                NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_0", PlayerPrefs.GetString("suiaddress"));
+                NFTManager.instance.SendNFTOwned(
+                    ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
+                    "NFT_0", 
+                    PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
+                );
 
                 //Total NFT owned by user and its index number
                 if (!GameManager.Instance.NFTOwned.Contains(0))
@@ -295,7 +296,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    NftScreenOpen();
+                    ShowNftScreen();
                 }
             }
         });
@@ -325,7 +326,11 @@ public class UIController : MonoBehaviour
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
 
-                NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_1", PlayerPrefs.GetString("suiaddress"));
+                NFTManager.instance.SendNFTOwned(
+                    ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
+                    "NFT_1", 
+                    PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
+                );
 
                 //Total NFT owned by user and its index number
                 if (!GameManager.Instance.NFTOwned.Contains(1))
@@ -369,7 +374,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    NftScreenOpen();
+                    ShowNftScreen();
                 }
             }
         });
@@ -474,7 +479,11 @@ public class UIController : MonoBehaviour
                     createNFTRequest_anna.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_anna, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
-                    NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_0", PlayerPrefs.GetString("suiaddress"));
+                    NFTManager.instance.SendNFTOwned(
+                        ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
+                        "NFT_0", 
+                        PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
+                    );
                 }
 
                 //Total NFT owned by user and its index number
@@ -556,7 +565,11 @@ public class UIController : MonoBehaviour
                     createNFTRequest_Melloow.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_Melloow, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
-                    NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_1", PlayerPrefs.GetString("suiaddress"));
+                    NFTManager.instance.SendNFTOwned(
+                        ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
+                        "NFT_1", 
+                        PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
+                    );
                 }
 
                 PlayerData.SelectIndex = 1;
@@ -636,7 +649,7 @@ public class UIController : MonoBehaviour
             RequestTokenDto requestTokenDto = new RequestTokenDto();
             requestTokenDto.amount = 100;
             requestTokenDto.recipient = PlayerData.NFTRecipient;
-            NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
+            NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestToken, OnErrorRequestToken);
             LoadingScreen.SetActive(true);
             //link_successful.text = PlayerData.NFTRecipient;
             //Debug.Log(PlayerData.NFTRecipient);
@@ -687,23 +700,30 @@ public class UIController : MonoBehaviour
 
     #region Login Methods 
 
-    //TODO: comment header 
+    /// <summary>
+    /// Generates a randomized string of numbers and letters, to be used as a message to sign in order to verify wallet ownership 
+    /// (part of login process).
+    /// </summary>
+    /// <returns>Randomized alphanumeric string</returns>
     public string GenerateRandomMessage() 
     {
         var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var stringChars = new char[32];
+        var stringChars = new char[SIGNING_MESSAGE_LENGTH];
         var random = new System.Random();
 
         for (int i = 0; i < stringChars.Length; i++)
             stringChars[i] = chars[random.Next(chars.Length)];
 
-        //TODO: remove this and return dynamic message
+        //TODO: remove this and return dynamic message once verification is working from frontend
         return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
         //return new String(stringChars);
     }
 
-    //after signing a message, receives the signature, and displays it back again on the front end
-    //TODO: comment header 
+    /// <summary>
+    /// Called from the Javascript front end after signing a message; passes back the user address and signed message signature.
+    /// </summary>
+    /// <param name="response">A string of two elements delimited by ':'. First element is the signature, the second element is 
+    /// the user's wallet address (which was used to sign the message).</param>
     public void SignMessageCallback(string response)
     {
         Debug.Log("SignMessageCallback");
@@ -734,7 +754,9 @@ public class UIController : MonoBehaviour
 
     #region UI Methods 
 
-    //TODO: comment header 
+    /// <summary>
+    /// Shows the home screen (after logging in).
+    /// </summary>
     void ShowHomeScreen() 
     {
         HomeScreen.SetActive(true);
@@ -748,8 +770,7 @@ public class UIController : MonoBehaviour
         SelectCharacterScreen.SetActive(true);
         SelectCharacter_Overlay.SetActive(false);
         txtMintCharacter.SetActive(false);
-            
-
+        
         if(PlayerPrefs.HasKey("selectedIndex"))
         {
             blockImage.SetActive(false);
@@ -762,7 +783,6 @@ public class UIController : MonoBehaviour
             SelectCharacter_Overlay.SetActive(true);
             isOverlayOn = true;
         }
-
 
         if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
         {
@@ -820,8 +840,10 @@ public class UIController : MonoBehaviour
         }
     }
 
-    //TODO: naming convention? 
-    void NftScreenOpen()
+    /// <summary>
+    /// Opens the NFT 
+    /// </summary>
+    void ShowNftScreen()
     {
         Mint_NFTScreen.SetActive(true);
         if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
@@ -889,10 +911,12 @@ public class UIController : MonoBehaviour
     }
 
     //Call on collect wallet buttons
-    //TODO: comment header 
-    public void SelectNFTS()
+    /// <summary>
+    /// 
+    /// </summary>
+    public void SelectNfts()
     {
-        if (PlayerPrefs.HasKey("suiaddress"))
+        if (PlayerPrefs.HasKey(SuiWallet.WalletAddressKey))
         {
             HomeScreen.SetActive(true);
             PlaySongScreen.SetActive(true);
@@ -906,7 +930,6 @@ public class UIController : MonoBehaviour
             SelectCharacter_Overlay.SetActive(false);
             txtMintCharacter.SetActive(false);
 
-
             if (PlayerPrefs.HasKey("selectedIndex"))
             {
                 blockImage.SetActive(false);
@@ -919,7 +942,6 @@ public class UIController : MonoBehaviour
                 SelectCharacter_Overlay.SetActive(true);
                 isOverlayOn = true;
             }
-
 
             if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
             {
@@ -982,14 +1004,18 @@ public class UIController : MonoBehaviour
         }
     }
 
-    //TODO: comment header 
+    /// <summary>
+    /// Shows the user's wallet and token balance
+    /// </summary>
     public void ShowNFTWallet()
     {
-        NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+        NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
         LoadingScreen.SetActive(true);
     }
 
-    //TODO: comment header 
+    /// <summary>
+    /// Shows the screen that allows users to choose an NFT image as their player avatar. 
+    /// </summary>
     public void ShowPlayerSelectionScreen()
     {
         Debug.Log(PlayerData.SelectIndex);
@@ -1064,15 +1090,12 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private void OnErrorCreateNFT(string Error)
+    private void OnErrorCreateNFT(string error)
     {
-        //Show error
-        LoadingScreen.SetActive(false);
-        ErrorScreen.SetActive(true);
-        txtError_ErrorScreen.text = Error;
+        this.ShowError(error);
     }
 
-    private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
+    private void OnSuccessfulRequestToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         string transactionLink = SuiExplorer.FormatTransactionUri(requestTokenResponseDto.signature);
         PlayerPrefs.SetString("nftSignature_claim", transactionLink);
@@ -1087,11 +1110,9 @@ public class UIController : MonoBehaviour
         Debug.Log("signature...>" + requestTokenResponseDto.signature + PlayerData.totalBalance);
     }
 
-    private void OnErrorRequestPrivateToken(string Error)
+    private void OnErrorRequestToken(string error)
     {
-        LoadingScreen.SetActive(false);
-        ErrorScreen.SetActive(true);
-        txtError_ErrorScreen.text = Error;
+        this.ShowError(error);
     }
 
     private void OnSuccessfulGetTokenBalance(GetTokenBalanceResponseDto getTokenBalanceResponseDto)
@@ -1104,11 +1125,9 @@ public class UIController : MonoBehaviour
         Debug.Log(txtScore_WalletScreen.text);
     }
 
-    private void OnErrorGetTokenBalance(string Error)
+    private void OnErrorGetTokenBalance(string error)
     {
-        LoadingScreen.SetActive(false);
-        ErrorScreen.SetActive(true);
-        txtError_ErrorScreen.text = Error;
+        this.ShowError(error);
     }
 
     private void OnSuccessfulVerifySignature(VerifySignatureResponseDto verifySignatureResponseDto)
@@ -1118,7 +1137,7 @@ public class UIController : MonoBehaviour
         {
             //TODO: use this, or suiaddress, or NFTRecipient? usage seems inconsistent
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
-            PlayerPrefs.SetString("suiaddress", verifySignatureResponseDto.address);
+            PlayerPrefs.SetString(SuiWallet.WalletAddressKey, verifySignatureResponseDto.address);
             PlayerData.NFTRecipient = verifySignatureResponseDto.address;
             
             //allow entry into game
@@ -1133,10 +1152,7 @@ public class UIController : MonoBehaviour
 
     private void OnErrorVerifySignature(string error)
     {
-        //TODO: this code is repeated a bunch of times 
-        LoadingScreen.SetActive(false);
-        ErrorScreen.SetActive(true);
-        txtError_ErrorScreen.text = error;
+        this.ShowError(error);
     }
 
     private void OnSuccessfulCreateNFT_Modify(CreateNFTResponseDto createNFTResponseDto)
@@ -1215,12 +1231,16 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private void OnErrorCreateNFT_Modify(string Error)
+    private void OnErrorCreateNFT_Modify(string error)
     {
-        //Show error
+        this.ShowError(error);
+    }
+
+    private void ShowError(string error) 
+    {
         LoadingScreen.SetActive(false);
         ErrorScreen.SetActive(true);
-        txtError_ErrorScreen.text = Error;
+        txtError_ErrorScreen.text = error;
     }
 
     #endregion 
