@@ -11,6 +11,7 @@ import {
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
+import { table } from 'console'
 import { sign } from 'crypto'
 
 export const strToByteArray = (str: string): number[] => {
@@ -41,6 +42,7 @@ export class SuiService {
         this.signer = new RawSigner(this.keypair, this.provider);
         this.client = new NftClient(this.provider as any);
 
+        //TODO: these can be auto-detected with _detectTokenInfo
         this.packageId = process.env.PACKAGE_ID;
         this.treasuryCap = process.env.TREASURY_CAP;
 
@@ -168,6 +170,50 @@ export class SuiService {
         catch (e) {
             console.error(e);
             output.failureReason = `error: ${e}`;
+        }
+
+        return output;
+    }
+
+    async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
+        let output = null;
+
+        //get owned objects
+        const objects = await this.provider.getOwnedObjects({
+            owner: address,
+            options: {
+                showType: true,
+                showContent: true,
+                showOwner: true
+            }
+        });
+
+        //parse the objects
+        if (objects && objects.data && objects.data.length) {
+            const tCaps = objects.data.filter(o => {
+                return o.data.type.startsWith("0x2::coin::TreasuryCap<") &&
+                    o.data?.type?.endsWith("::beats::BEATS>")
+            });
+
+            if (tCaps && tCaps.length) {
+                const beatsObj = tCaps[tCaps.length - 1];
+
+                //parse out the type to get the package id
+                let packageId = "";
+                let parts = beatsObj.data.type.split('::');
+                let tCap = parts.filter(p => p.startsWith("TreasuryCap<"));
+                if (tCap.length) {
+                    packageId = tCap[0].substring("TreasuryCap<".length);
+                }
+
+                //get package ID & treasury cap
+                if (packageId.length) {
+                    output = {
+                        packageId: packageId,
+                        treasuryCap: beatsObj.data?.objectId
+                    };
+                }
+            }
         }
 
         return output;
