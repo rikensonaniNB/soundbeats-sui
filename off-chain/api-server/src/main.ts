@@ -4,11 +4,12 @@ import { AppModule } from './app.module'
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule)
+    app.enableCors();
 
-    const config = new DocumentBuilder().setTitle('Releap Game Server API').setVersion('0.1').build()
+    const config = new DocumentBuilder().setTitle('Soundbeats API').setVersion('0.1').build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('docs', app, document)
 
-    await app.listen(process.env.port)
+    await app.listen(3000)
 }
 bootstrap()
