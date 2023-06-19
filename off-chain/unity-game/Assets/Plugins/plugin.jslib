@@ -4,12 +4,6 @@ var plugin = {
     CallSuiSignMessage: function(msg)
     {
         window.SuiSignMessage(UTF8ToString(msg));
-    }, 
-    
-    //alerts a message on the client side 
-    DisplayJsMessage: function(msg)
-    {
-        window.alert("From Unity: " + UTF8ToString(msg));
     }
 };
 

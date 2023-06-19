@@ -22,7 +22,6 @@ public class SuiExplorer
 /// </summary>
 public class SuiWallet
 {
-    private const string MnemonicsKey = "MnemonicsKey";
     public static string ActiveWalletAddress = "0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb";
     public static string ErrorMessage = "";
 
@@ -40,6 +39,8 @@ public class SuiWallet
         */
     }
 
+    //TODO: can be removed, most likely
+    /*
     public static string CreateNewWallet()
     {
         var mnemo = Mnemonics.GenerateMnemonic();
@@ -66,10 +67,13 @@ public class SuiWallet
 
         return null;
     }
+    */
 
+    //TODO: need better way to log out ?
     public static void Logout()
     {
-        PlayerPrefs.DeleteKey(MnemonicsKey);
+        //TODO: this key should be a constant
+        PlayerPrefs.DeleteKey("suiaddress"); 
         PlayerPrefs.Save();
     }
 }

@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+//TODO: is this used? 
 public class TransactionsUIController : MonoBehaviour
 {
     public Button IncrementCounterButton;
@@ -18,7 +19,6 @@ public class TransactionsUIController : MonoBehaviour
 
     private async void Start()
     {
-
         IncrementCounterButton.onClick.AddListener(async () =>
         {
             var signer = SuiWallet.GetActiveAddress();
@@ -29,6 +29,8 @@ public class TransactionsUIController : MonoBehaviour
             var args = new object[] { SharedCounterObjectId };
             var gasObjectId = GasObjectIdInput.text;
             var rpcResult = await SuiApi.Client.MoveCallAsync(signer, packageObjectId, module, function, typeArgs, args, gasObjectId, 2000);
+
+            /*
             var keyPair = SuiWallet.GetActiveKeyPair();
 
             var txBytes = rpcResult.Result.TxBytes;
@@ -37,6 +39,7 @@ public class TransactionsUIController : MonoBehaviour
 
             await SuiApi.Client.ExecuteTransactionAsync(txBytes, SuiSignatureScheme.ED25519, signature, pkBase64);
             await RefreshCounter();
+            */
         });
 
 

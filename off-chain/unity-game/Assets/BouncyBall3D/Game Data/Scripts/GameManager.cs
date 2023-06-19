@@ -119,8 +119,11 @@ public class GameManager : Singleton<GameManager>
             bestScore = score;
             PlayerPrefs.SetInt("bestScore", score);
             //SendToDrive.instance.Send();
-            LeaderboardManager.instance.SendBestScore(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_Leaderboard_Create,
-                                                      PlayerPrefs.GetString("suiaddress"),bestScore);
+            LeaderboardManager.instance.SendBestScore(
+                ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_Leaderboard_Create, 
+                PlayerPrefs.GetString("suiaddress"),
+                bestScore
+            );
         }
         ShowLevelProgress();
         if (score > PlayerPrefs.GetInt(LevelGenerator.Instance.currentSong.name))
@@ -142,7 +145,7 @@ public class GameManager : Singleton<GameManager>
             RequestTokenDto requestTokenDto = new RequestTokenDto
             {
                 amount = score,
-                recipient = SuiWallet.ActiveWalletAddress
+                recipient = SuiWallet.GetActiveAddress()
             };
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }

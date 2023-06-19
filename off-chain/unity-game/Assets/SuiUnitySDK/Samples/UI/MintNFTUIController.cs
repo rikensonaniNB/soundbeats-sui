@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+/*
 public class MintNFTUIController : MonoBehaviour
 {
     public Button MintNFTButton;
@@ -80,3 +81,4 @@ public class MintNFTUIController : MonoBehaviour
         NFTImage.sprite = sprite;
     }
 }
+*/

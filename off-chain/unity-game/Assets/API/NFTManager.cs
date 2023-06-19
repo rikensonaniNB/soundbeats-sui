@@ -11,6 +11,7 @@ public class NFTManager : MonoBehaviour
     public static NFTManager instance;
     public List<GETNFTResponse> userList;
     public GameObject uiController;
+    
     private void Awake()
     {
         instance = this;
@@ -19,7 +20,6 @@ public class NFTManager : MonoBehaviour
     [ContextMenu("Send NFT Owned")]
     public void SendNFTOwned(string url, string nft, string address)
     {
-
         StartCoroutine(SendNFTOwned_Post(url, nft, address));
     }
 

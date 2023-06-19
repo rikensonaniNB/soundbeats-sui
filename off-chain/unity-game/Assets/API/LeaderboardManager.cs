@@ -15,7 +15,6 @@ public class LeaderboardManager : MonoBehaviour
     [ContextMenu("Send Best Score - Create Leaderboard")]
     public void SendBestScore(string url, string address, int score)
     {
-        
         StartCoroutine(SendCreateLeaderboard(url, address, score));
     }
 

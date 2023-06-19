@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+/*
 /// <summary>
 /// Mint an NFT using Origin Byte NFT Protocol
 /// </summary>
@@ -115,3 +116,4 @@ public class NftProtocolMintUIController : MonoBehaviour
         NFTImage.sprite = sprite;
     }
 }
+*/

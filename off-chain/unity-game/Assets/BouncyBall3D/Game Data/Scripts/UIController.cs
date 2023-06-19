@@ -8,17 +8,13 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    //TODO: this will be a randomly generated message 
-    private const string MESSAGE_TO_SIGN = "A MESSAGE TO SIGN"; 
     private static string MessageToSign = "";
 
     //call to request the front end Javascript code to sign a message 
     [System.Runtime.InteropServices.DllImport("__Internal")]
     private static extern void CallSuiSignMessage(string msg);
 
-    //call to display a message on the client side 
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void DisplayJsMessage(string msg);
+    #region UI Components 
 
     public Button NewWalletButton;
     public Button NFTButton;
@@ -78,7 +74,6 @@ public class UIController : MonoBehaviour
     public GameObject ErrorScreen;
     public TextMeshProUGUI txtError_ErrorScreen;
 
-
     public TextMeshProUGUI Mint_Text_Anna;
     public TextMeshProUGUI Mint_Text_Mellow;
     public TextMeshProUGUI Mint_Text_Taral;
@@ -93,61 +88,38 @@ public class UIController : MonoBehaviour
     public GameObject setup1Panel;
     public GameObject setup2Panel;
 
+    #endregion
+
     private bool isOverlayOn = true;
     private string NFTLinkAdd;
+
     private void Start()
     {
         ActiveAddressText.text = SuiWallet.GetActiveAddress();
-        PlayerData.NFTRecipent = SuiWallet.GetActiveAddress();
+        PlayerData.NFTRecipient = SuiWallet.GetActiveAddress();
         NewWalletButton.gameObject.SetActive(false);
 
-        if (!PlayerPrefs.HasKey("suiaddress"))
+        ConnectWalletButton.onClick.AddListener(() => {
+            try {
+                MessageToSign = GenerateRandomMessage();
+                //CallSuiSignMessage(MessageToSign); 
+
+                //TODO: replace this with call to CallSuiSignMessage
+                SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
+            }
+            catch(Exception e) {
+                SuiWallet.ErrorMessage = e.ToString();
+            }
+            finally{
+                //TODO: remove this once we have real verification working
+                //PlayerPrefs.SetString("suiaddress", SuiWallet.GetActiveAddress());
+                //ShowHomeScreen(); 
+            }
+        }); 
+       
+        if (PlayerPrefs.HasKey("suiaddress"))
         {
-            ConnectWalletButton.onClick.AddListener(() => {
-                try {
-                    MessageToSign = GenerateRandomMessage();
-                    CallSuiSignMessage(MessageToSign); 
-                }
-                catch(Exception e) {
-                    SuiWallet.ErrorMessage = e.ToString();
-                }
-                finally{
-                    //TODO: remove this once we have real verification working
-                    PlayerPrefs.SetString("suiaddress", SuiWallet.GetActiveAddress());
-                    ShowHomeScreen(); 
-                }
-            }); 
-
-            /*
-            NewWalletButton.onClick.AddListener(() =>
-            {
-                var walletmnemo = SuiWallet.CreateNewWallet();
-                NewWalletMnemonicsText.gameObject.SetActive(true);
-                NewWalletMnemonicsText.text = walletmnemo;
-                NFTLinkAdd = SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
-
-                ActiveAddressText.text = SuiWallet.GetActiveAddress();
-                txtAddressNFT_WalletScreen.text = NFTLinkAdd;
-                PlayerData.NFTRecipent = SuiWallet.GetActiveAddress();
-
-                PlayerPrefs.SetString("suiaddress", SuiWallet.GetActiveAddress());
-            });
-            PlayButton.onClick.AddListener(() =>
-            {
-                SuiWalletScreen.SetActive(false);
-                HomeScreen.SetActive(true);
-                PlaySongScreen.SetActive(true);
-                SelectCharacterScreen.SetActive(true);
-                if (!PlayerPrefs.HasKey("selectedIndex"))
-                {
-                    blockImage.SetActive(true);
-                }
-            });
-            */
-        }
-        else
-        {
-            ShowHomeScreen();
+            ShowHomeScreen(); 
         }
         
         onLogOutButton.onClick.AddListener(() =>
@@ -158,7 +130,7 @@ public class UIController : MonoBehaviour
             PlaySongScreen.SetActive(false);
             PlayerPrefs.DeleteAll();
             PlayerData.SelectedNFTName = "";
-            PlayerData.NFTRecipent = "";
+            PlayerData.NFTRecipient = "";
             PlayerData.NFTAddress ="";
             PlayerData.SelectIndex = 0;
             PlayerData.totalBalance=0;
@@ -166,30 +138,8 @@ public class UIController : MonoBehaviour
             setup1Panel.SetActive(true);
             SuiWalletScreen.SetActive(true);
         });
-
-        /*
-        ImportWalletButton.onClick.AddListener(() =>
-        {
-            ImportWalletScreen.SetActive(false);
-            HomeScreen.SetActive(true);
-            PlaySongScreen.SetActive(true);
-            SelectCharacterScreen.SetActive(true);
-            NewWalletMnemonicsText.gameObject.SetActive(false);
-            SuiWallet.RestoreWalletFromMnemonics(MnemonicsInputField.text);
-            ActiveAddressText.text = SuiWallet.GetActiveAddress();
-            Debug.Log(ActiveAddressText.text);
-            PlayerPrefs.SetString("suiaddress", SuiWallet.GetActiveAddress());
-            PlayerData.NFTRecipent = SuiWallet.GetActiveAddress();
-            NFTLinkAdd = SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
-
-            ActiveAddressText.text = SuiWallet.GetActiveAddress();
-            txtAddressNFT_WalletScreen.text = NFTLinkAdd;
-            NFTManager.instance.GetNFTSCORE(SuiWallet.GetActiveAddress());
-            
-        });
-        */
     
-        ///Home Screen////////////
+        ///Home Screen
         NFTButton.onClick.AddListener(() =>
         {
             Mint_NFTScreen.SetActive(true);
@@ -259,11 +209,11 @@ public class UIController : MonoBehaviour
  
         WalletButton_Home.onClick.AddListener(() =>
         {
-            NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipent, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+            NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
             LoadingScreen.SetActive(true);
-            //txtAddressNFT_WalletScreen.text = PlayerData.NFTRecipent;
-            //Debug.Log(PlayerData.NFTRecipent);
-            //Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+PlayerData.NFTRecipent);
+            //txtAddressNFT_WalletScreen.text = PlayerData.NFTRecipient;
+            //Debug.Log(PlayerData.NFTRecipient);
+            //Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+PlayerData.NFTRecipient);
             //WalletScreen.SetActive(true);
             //txtScore_WalletScreen.text = "500";
         });
@@ -273,9 +223,7 @@ public class UIController : MonoBehaviour
             Mint_NFTScreen.SetActive(true);
         });
 
-        ////////////////////////////////////////
-
-        //Select Character Screen//////
+        //Select Character Screen
         Mint_Button_Anna.onClick.AddListener(() =>
         {
             if (isOverlayOn)
@@ -292,11 +240,11 @@ public class UIController : MonoBehaviour
 
                 PlayerData.SelectIndex = 0;
                 PlayerPrefs.SetString("selectedIndex", "0");
-                CreateNFTRequest createNFTRequest_anna = new CreateNFTRequest();
+                CreateNFTRequestDto createNFTRequest_anna = new CreateNFTRequestDto();
                 createNFTRequest_anna.name = "Anna";
                 createNFTRequest_anna.imageUrl = "char_15.png";
                 createNFTRequest_anna.quantity = 1;
-                createNFTRequest_anna.recipient = SuiWallet.ActiveWalletAddress;
+                createNFTRequest_anna.recipient = SuiWallet.GetActiveAddress();
                 NetworkManager.Instance.CreateNFT(createNFTRequest_anna, OnSuccessfulCreateNFT, OnErrorCreateNFT);
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
@@ -347,7 +295,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    NFTSCREENOPEN();
+                    NftScreenOpen();
                 }
             }
         });
@@ -368,11 +316,11 @@ public class UIController : MonoBehaviour
 
                 PlayerData.SelectIndex = 1;
                 PlayerPrefs.SetString("selectedIndex", "1");
-                CreateNFTRequest createNFTRequest_Melloow = new CreateNFTRequest();
+                CreateNFTRequestDto createNFTRequest_Melloow = new CreateNFTRequestDto();
                 createNFTRequest_Melloow.name = "Melloow";
                 createNFTRequest_Melloow.imageUrl = "char_19.png";
                 createNFTRequest_Melloow.quantity = 1;
-                createNFTRequest_Melloow.recipient = SuiWallet.ActiveWalletAddress;
+                createNFTRequest_Melloow.recipient = SuiWallet.GetActiveAddress();
                 NetworkManager.Instance.CreateNFT(createNFTRequest_Melloow, OnSuccessfulCreateNFT, OnErrorCreateNFT);
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
@@ -421,7 +369,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    NFTSCREENOPEN();
+                    NftScreenOpen();
                 }
             }
         });
@@ -441,11 +389,11 @@ public class UIController : MonoBehaviour
                 PlayerData.SelectedNFTName = "Taral";
 
                 PlayerData.SelectIndex = 2;
-                CreateNFTRequest createNFTRequest_Taral = new CreateNFTRequest();
+                CreateNFTRequestDto createNFTRequest_Taral = new CreateNFTRequestDto();
                 createNFTRequest_Taral.name = "Taral";
                 createNFTRequest_Taral.imageUrl = "char_Taral.png";
                 createNFTRequest_Taral.quantity = 1;
-                createNFTRequest_Taral.recipient = SuiWallet.ActiveWalletAddress;
+                createNFTRequest_Taral.recipient = SuiWallet.GetActiveAddress();
                 NetworkManager.Instance.CreateNFT(createNFTRequest_Taral, OnSuccessfulCreateNFT, OnErrorCreateNFT);
                 LoadingScreen.SetActive(true);
 
@@ -455,8 +403,7 @@ public class UIController : MonoBehaviour
             }
         });
 
-        ////////////////////////////
-        // Mint successful screen///////////////
+        // Mint successful screen
         Mint_SuccessfulScreen_Close.onClick.AddListener(() =>
         {
             Mint_SuccessfulScreen.SetActive(false);
@@ -465,10 +412,8 @@ public class UIController : MonoBehaviour
             txtMintCharacter.SetActive(false);
             isOverlayOn = false;
         });
-       
-        ///////////////////////////////////////////////
       
-        //// Mint NFT Screen////////////////////////////
+        // Mint NFT Screen
         MintNFTScreen_Button_Anna.onClick.AddListener(() =>
         {
             if (PlayerData.SelectIndex != 0 || !PlayerPrefs.HasKey("NFTOwned_count"))
@@ -522,13 +467,11 @@ public class UIController : MonoBehaviour
 
                 if (!GameManager.Instance.NFTOwned.Contains(0))
                 {
-                    /////////////////////////////
-
-                    CreateNFTRequest createNFTRequest_anna = new CreateNFTRequest();
+                    CreateNFTRequestDto createNFTRequest_anna = new CreateNFTRequestDto();
                     createNFTRequest_anna.name = "Anna";
                     createNFTRequest_anna.imageUrl = "char_15.png";
                     createNFTRequest_anna.quantity = 1;
-                    createNFTRequest_anna.recipient = SuiWallet.ActiveWalletAddress;
+                    createNFTRequest_anna.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_anna, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
                     NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_0", PlayerPrefs.GetString("suiaddress"));
@@ -606,11 +549,11 @@ public class UIController : MonoBehaviour
                 {
                     /////////////////////////////
 
-                    CreateNFTRequest createNFTRequest_Melloow = new CreateNFTRequest();
+                    CreateNFTRequestDto createNFTRequest_Melloow = new CreateNFTRequestDto();
                     createNFTRequest_Melloow.name = "Melloow";
                     createNFTRequest_Melloow.imageUrl = "char_19.png";
                     createNFTRequest_Melloow.quantity = 1;
-                    createNFTRequest_Melloow.recipient = SuiWallet.ActiveWalletAddress;
+                    createNFTRequest_Melloow.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_Melloow, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
                     NFTManager.instance.SendNFTOwned(ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, "NFT_1", PlayerPrefs.GetString("suiaddress"));
@@ -661,11 +604,11 @@ public class UIController : MonoBehaviour
 
 
                 PlayerData.SelectIndex = 2;
-                CreateNFTRequest createNFTRequest_Taral = new CreateNFTRequest();
+                CreateNFTRequestDto createNFTRequest_Taral = new CreateNFTRequestDto();
                 createNFTRequest_Taral.name = "Taral";
                 createNFTRequest_Taral.imageUrl = "char_Taral.png";
                 createNFTRequest_Taral.quantity = 1;
-                createNFTRequest_Taral.recipient = SuiWallet.ActiveWalletAddress;
+                createNFTRequest_Taral.recipient = SuiWallet.GetActiveAddress();
                 NetworkManager.Instance.CreateNFT(createNFTRequest_Taral, OnSuccessfulCreateNFT, OnErrorCreateNFT);
                 LoadingScreen.SetActive(true);*/
 
@@ -684,9 +627,7 @@ public class UIController : MonoBehaviour
             Mint_NFTScreen.SetActive(false);
         });
 
-        ///////////////////////////////////////
-
-        /////Wallet Screen//////////////////
+        // Wallet Screen
 
         ClaimTokens_Button.onClick.AddListener(() =>
         {
@@ -694,11 +635,11 @@ public class UIController : MonoBehaviour
           
             RequestTokenDto requestTokenDto = new RequestTokenDto();
             requestTokenDto.amount = 100;
-            requestTokenDto.recipient = PlayerData.NFTRecipent;
+            requestTokenDto.recipient = PlayerData.NFTRecipient;
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
             LoadingScreen.SetActive(true);
-            //link_successful.text = PlayerData.NFTRecipent;
-            //Debug.Log(PlayerData.NFTRecipent);
+            //link_successful.text = PlayerData.NFTRecipient;
+            //Debug.Log(PlayerData.NFTRecipient);
             //Debug.Log(PlayerData.NFTAddress);
             //ClaimTokensScreen.SetActive(true);
             //txtScore_ClaimScreen.text = "100";
@@ -711,14 +652,13 @@ public class UIController : MonoBehaviour
         });
         ////////////////////////////////////
 
-        ///Close Leaderboard/////////////////////
+        // Close Leaderboard/////////////////////
         Close_LeaderboardScreen.onClick.AddListener(() =>
         {
             LeaderboardScreen.SetActive(false);
         });
-        ////////////////////////////////////
         
-        ///ClaimTokens/////////////////////
+        // ClaimTokens
         Close_ClaimTokens.onClick.AddListener(() =>
         {
             ClaimTokensScreen.SetActive(false);
@@ -726,7 +666,6 @@ public class UIController : MonoBehaviour
             txtScore_WalletScreen.text = PlayerData.totalBalance.ToString();
         });
 
-        ///////////////////////////////////
         MintNFT_LinkButton.onClick.AddListener(() =>
         {
             string nftSignature = PlayerPrefs.GetString("nftSignature");
@@ -744,11 +683,27 @@ public class UIController : MonoBehaviour
             Debug.Log("link claim  " + transactionSign);
             Application.OpenURL(transactionSign);
         });
-         
-    ///////////////////////////////////
+    }
+
+    #region Login Methods 
+
+    //TODO: comment header 
+    public string GenerateRandomMessage() 
+    {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var stringChars = new char[32];
+        var random = new System.Random();
+
+        for (int i = 0; i < stringChars.Length; i++)
+            stringChars[i] = chars[random.Next(chars.Length)];
+
+        //TODO: remove this and return dynamic message
+        return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
+        //return new String(stringChars);
     }
 
     //after signing a message, receives the signature, and displays it back again on the front end
+    //TODO: comment header 
     public void SignMessageCallback(string response)
     {
         Debug.Log("SignMessageCallback");
@@ -760,106 +715,113 @@ public class UIController : MonoBehaviour
             string signature = args[0];
             string address = args[1];
 
-            DisplayJsMessage("signed message:" + signature);
-            DisplayJsMessage("wallet address:" + address);
+            Debug.Log("signed message:" + signature);
+            Debug.Log("wallet address:" + address);
 
             //prepare a request to verify the signature
             VerifySignatureDto request = new VerifySignatureDto();
             request.address = address;
-            request.signature = signature;
+            request.signature = System.Web.HttpUtility.UrlEncode(signature);
             request.message = MessageToSign;
         
             //call to verify signature
             NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
+            //this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
         }
     }
 
+    #endregion
+
+    #region UI Methods 
+
+    //TODO: comment header 
     void ShowHomeScreen() 
     {
-            HomeScreen.SetActive(true);
-            PlaySongScreen.SetActive(true);
-            NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
+        HomeScreen.SetActive(true);
+        PlaySongScreen.SetActive(true);
+        NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
           
-            txtAddressNFT_WalletScreen.text = NFTLinkAdd;
-            string nftSignature = PlayerPrefs.GetString("nftSignature");
-            link_successful.text = nftSignature;
+        txtAddressNFT_WalletScreen.text = NFTLinkAdd;
+        string nftSignature = PlayerPrefs.GetString("nftSignature");
+        link_successful.text = nftSignature;
 
-            SelectCharacterScreen.SetActive(true);
-            SelectCharacter_Overlay.SetActive(false);
-            txtMintCharacter.SetActive(false);
+        SelectCharacterScreen.SetActive(true);
+        SelectCharacter_Overlay.SetActive(false);
+        txtMintCharacter.SetActive(false);
             
 
-            if(PlayerPrefs.HasKey("selectedIndex"))
+        if(PlayerPrefs.HasKey("selectedIndex"))
+        {
+            blockImage.SetActive(false);
+            PlayerData.SelectIndex = int.Parse(PlayerPrefs.GetString("selectedIndex"));
+            isOverlayOn = false;
+        }
+        else
+        {
+            blockImage.SetActive(true);
+            SelectCharacter_Overlay.SetActive(true);
+            isOverlayOn = true;
+        }
+
+
+        if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
+        {
+            Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Green;
+            Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
+            Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
+
+            if(PlayerPrefs.GetInt("NFTOwned_count") == 2)
             {
-                blockImage.SetActive(false);
-                PlayerData.SelectIndex = int.Parse(PlayerPrefs.GetString("selectedIndex"));
-                isOverlayOn = false;
+                Mint_Text_Anna.text = "Selected";
+                Mint_Text_Mellow.text = "Select";
+                Mint_Text_Taral.text = "Locked";
             }
             else
             {
-                blockImage.SetActive(true);
-                SelectCharacter_Overlay.SetActive(true);
-                isOverlayOn = true;
-            }
-
-
-            if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
-            {
-                Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Green;
-                Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
-                Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
-
-                if(PlayerPrefs.GetInt("NFTOwned_count") == 2)
-                {
-                    Mint_Text_Anna.text = "Selected";
-                    Mint_Text_Mellow.text = "Select";
-                    Mint_Text_Taral.text = "Locked";
-                }
-                else
-                {
-                    Mint_Text_Anna.text = "Selected";
-                    Mint_Text_Mellow.text = "Mint NFT";
-                    Mint_Text_Taral.text = "Locked";
-                }  
-
-                PlayerData.SelectedNFTName = "Anna";
-            }
-            else if (PlayerData.SelectIndex == 1 && PlayerPrefs.HasKey("selectedIndex"))
-            {
-                Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
-                Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Green;
-                Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
-
-                if (PlayerPrefs.GetInt("NFTOwned_count") == 2)
-                {
-                    Mint_Text_Anna.text = "Select";
-                    Mint_Text_Mellow.text = "Selected";
-                    Mint_Text_Taral.text = "Locked";
-                }
-                else
-                {
-                    Mint_Text_Anna.text = "Mint NFT";
-                    Mint_Text_Mellow.text = "Selected";
-                    Mint_Text_Taral.text = "Locked";
-                }
-
-                PlayerData.SelectedNFTName = "Melloow";
-            }
-            else if (PlayerData.SelectIndex == 2)
-            {
-                Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
-                Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
-                Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Green;
-
-                Mint_Text_Anna.text = "Mint NFT";
+                Mint_Text_Anna.text = "Selected";
                 Mint_Text_Mellow.text = "Mint NFT";
-                Mint_Text_Taral.text = "NFT Owned";
+                Mint_Text_Taral.text = "Locked";
+            }  
 
-                PlayerData.SelectedNFTName = "Taral";
+            PlayerData.SelectedNFTName = "Anna";
+        }
+        else if (PlayerData.SelectIndex == 1 && PlayerPrefs.HasKey("selectedIndex"))
+        {
+            Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
+            Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Green;
+            Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
+
+            if (PlayerPrefs.GetInt("NFTOwned_count") == 2)
+            {
+                Mint_Text_Anna.text = "Select";
+                Mint_Text_Mellow.text = "Selected";
+                Mint_Text_Taral.text = "Locked";
             }
+            else
+            {
+                Mint_Text_Anna.text = "Mint NFT";
+                Mint_Text_Mellow.text = "Selected";
+                Mint_Text_Taral.text = "Locked";
+            }
+
+            PlayerData.SelectedNFTName = "Melloow";
+        }
+        else if (PlayerData.SelectIndex == 2)
+        {
+            Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
+            Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
+            Mint_Button_Taral.GetComponent<Image>().sprite = sprite_Green;
+
+            Mint_Text_Anna.text = "Mint NFT";
+            Mint_Text_Mellow.text = "Mint NFT";
+            Mint_Text_Taral.text = "NFT Owned";
+
+            PlayerData.SelectedNFTName = "Taral";
+        }
     }
 
-    void NFTSCREENOPEN()
+    //TODO: naming convention? 
+    void NftScreenOpen()
     {
         Mint_NFTScreen.SetActive(true);
         if (PlayerData.SelectIndex == 0 && PlayerPrefs.HasKey("selectedIndex"))
@@ -927,6 +889,7 @@ public class UIController : MonoBehaviour
     }
 
     //Call on collect wallet buttons
+    //TODO: comment header 
     public void SelectNFTS()
     {
         if (PlayerPrefs.HasKey("suiaddress"))
@@ -1019,25 +982,62 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public string GenerateRandomMessage() 
+    //TODO: comment header 
+    public void ShowNFTWallet()
     {
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var stringChars = new char[32];
-        var random = new Random();
-
-        for (int i = 0; i < stringChars.Length; i++)
-            stringChars[i] = chars[random.Next(chars.Length)];
-
-        return new String(stringChars);
+        NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+        LoadingScreen.SetActive(true);
     }
+
+    //TODO: comment header 
+    public void ShowPlayerSelectionScreen()
+    {
+        Debug.Log(PlayerData.SelectIndex);
+        Mint_NFTScreen.SetActive(true);
+        if (PlayerData.SelectIndex==0)
+        {
+            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Green;
+            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
+            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
+
+            MintNFTScreen_Text_Anna.text = "NFT Owned";
+            MintNFTScreen_Text_Mellow.text = "Mint NFT";
+            MintNFTScreen_Text_Taral.text = "Mint NFT";
+
+        }
+        else if (PlayerData.SelectIndex==1)
+        {
+            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
+            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Green;
+            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
+
+            MintNFTScreen_Text_Anna.text = "Mint NFT";
+            MintNFTScreen_Text_Mellow.text = "NFT Owned";
+            MintNFTScreen_Text_Taral.text = "Mint NFT";
+        }
+        else if (PlayerData.SelectIndex==2)
+        {
+            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
+            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
+            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Green;
+
+            MintNFTScreen_Text_Anna.text = "Mint NFT";
+            MintNFTScreen_Text_Mellow.text = "Mint NFT";
+            MintNFTScreen_Text_Taral.text = "NFT Owned";
+        }
+    }
+
+    #endregion
+
+    #region API Callbacks 
 
     private void OnSuccessfulCreateNFT(CreateNFTResponseDto createNFTResponseDto)
     {
         PlayerData.NFTAddress = createNFTResponseDto.addresses[0].ToString();
        
-        string NFTAdd = SuiExplorer.FormatTransactionUri(createNFTResponseDto.signature);
-        link_successful.text = NFTAdd;
-        PlayerPrefs.SetString("nftSignature", NFTAdd);
+        string nftLink = SuiExplorer.FormatTransactionUri(createNFTResponseDto.signature);
+        link_successful.text = nftLink;
+        PlayerPrefs.SetString("nftSignature", nftLink);
 
         LoadingScreen.SetActive(false);
         if (PlayerData.SelectIndex==0)
@@ -1081,6 +1081,7 @@ public class UIController : MonoBehaviour
         LoadingScreen.SetActive(false);
         ClaimTokensScreen.SetActive(true);
        
+        //TODO: this should be gotten from the response; should not be counted manually
         PlayerData.totalBalance += 100;
         txtScore_ClaimScreen.text = "100";
         Debug.Log("signature...>" + requestTokenResponseDto.signature + PlayerData.totalBalance);
@@ -1113,15 +1114,26 @@ public class UIController : MonoBehaviour
     private void OnSuccessfulVerifySignature(VerifySignatureResponseDto verifySignatureResponseDto)
     {
         //set active wallet address 
-        //PlayerPrefs.SetString("suiaddress", verifySignatureResponseDto.address);
-        
-        //allow entry into game
-        ShowHomeScreen();
+        if (verifySignatureResponseDto.verified) 
+        {
+            //TODO: use this, or suiaddress, or NFTRecipient? usage seems inconsistent
+            SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
+            PlayerPrefs.SetString("suiaddress", verifySignatureResponseDto.address);
+            PlayerData.NFTRecipient = verifySignatureResponseDto.address;
+            
+            //allow entry into game
+            ShowHomeScreen();
+        }
+        else 
+        {
+            ErrorScreen.SetActive(true);
+            txtError_ErrorScreen.text = verifySignatureResponseDto.address + ", " + verifySignatureResponseDto.failureReason;
+        }
     }
 
     private void OnErrorVerifySignature(string error)
     {
-        //TODO: this code is repeated many times 
+        //TODO: this code is repeated a bunch of times 
         LoadingScreen.SetActive(false);
         ErrorScreen.SetActive(true);
         txtError_ErrorScreen.text = error;
@@ -1211,46 +1223,5 @@ public class UIController : MonoBehaviour
         txtError_ErrorScreen.text = Error;
     }
 
-    public void ShowNFTWallet()
-    {
-        NetworkManager.Instance.GetPrivateTokenBalance(PlayerData.NFTRecipent, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
-        LoadingScreen.SetActive(true);
-    }
-
-    public void ShowPlayerSelectionScreen()
-    {
-        Debug.Log(PlayerData.SelectIndex);
-        Mint_NFTScreen.SetActive(true);
-        if (PlayerData.SelectIndex==0)
-        {
-            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Green;
-            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
-            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
-
-            MintNFTScreen_Text_Anna.text = "NFT Owned";
-            MintNFTScreen_Text_Mellow.text = "Mint NFT";
-            MintNFTScreen_Text_Taral.text = "Mint NFT";
-
-        }
-        else if (PlayerData.SelectIndex==1)
-        {
-            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
-            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Green;
-            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Pink;
-
-            MintNFTScreen_Text_Anna.text = "Mint NFT";
-            MintNFTScreen_Text_Mellow.text = "NFT Owned";
-            MintNFTScreen_Text_Taral.text = "Mint NFT";
-        }
-        else if (PlayerData.SelectIndex==2)
-        {
-            MintNFTScreen_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
-            MintNFTScreen_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
-            MintNFTScreen_Button_Taral.GetComponent<Image>().sprite = sprite_Green;
-
-            MintNFTScreen_Text_Anna.text = "Mint NFT";
-            MintNFTScreen_Text_Mellow.text = "Mint NFT";
-            MintNFTScreen_Text_Taral.text = "NFT Owned";
-        }
-    }
+    #endregion 
 }

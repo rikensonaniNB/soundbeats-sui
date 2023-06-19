@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerData 
 {
     public static string SelectedNFTName;
-    public static string NFTRecipent;
+    public static string NFTRecipient;
     public static string NFTAddress;
    // public static int balance;
     public static int SelectIndex = 0;
