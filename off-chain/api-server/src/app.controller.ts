@@ -6,6 +6,8 @@ import {
     MintNftResponseDto,
     GetTokenBalanceDto,
     GetTokenBalanceResponseDto,
+    GetBeatsNftsDto,
+    GetBeatsNftsResponseDto,
     MintTokenDto,
     MintTokenResponseDto,
     VerifySignatureDto,
@@ -56,6 +58,16 @@ export class AppController {
             throw new Error('wallet cannot be null or empty')
         }
         return await this.suiService.getTokenBalance(wallet)
+    }
+
+    @ApiOperation({ summary: 'Get list of user-owned NFTs' })
+    @Get('/api/v1/nfts')
+    async getBeatsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatsNftsResponseDto> {
+        const { wallet } = query
+        if (wallet == null || wallet == '') {
+            throw new Error('wallet cannot be null or empty')
+        }
+        return await this.suiService.getUserNFTs(wallet)
     }
 
     @ApiOperation({ summary: 'Verify a signed message' })

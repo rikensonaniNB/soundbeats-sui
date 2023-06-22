@@ -23,6 +23,11 @@ export class GetTokenBalanceDto {
     wallet: string
 }
 
+export class GetBeatsNftsDto {
+    @ApiProperty({ description: 'The address of the wallet' })
+    wallet: string
+}
+
 export class MintNftResponseDto {
     @ApiProperty({ description: 'The signature of the transaction' })
     signature: string
@@ -43,6 +48,16 @@ export class MintTokenResponseDto {
 export class GetTokenBalanceResponseDto {
     @ApiProperty({ description: 'The balance of the wallet' })
     balance: number
+}
+
+export class BeatsNftDto {
+    name: string
+    url: string
+}
+
+export class GetBeatsNftsResponseDto {
+    @ApiProperty({ description: 'The unique names of NFTs owned' })
+    nfts: BeatsNftDto[]
 }
 
 export class VerifySignatureDto {

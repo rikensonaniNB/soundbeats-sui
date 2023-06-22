@@ -19,6 +19,8 @@ export const strToByteArray = (str: string): number[] => {
     return Array.from(utf8Encode.encode(str).values())
 }
 
+//TODO: better exception handling in each method 
+
 @Injectable()
 export class SuiService {
     signer: RawSigner
@@ -48,6 +50,13 @@ export class SuiService {
 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         console.log('admin address:', suiAddress);
+
+        this._detectTokenInfo(suiAddress).then((response) => {
+            if (response && response.packageId && response.treasuryCap) {
+                this.packageId = response.packageId;
+                this.treasuryCap = response.treasuryCap;
+            }
+        });
     }
 
     async mintNfts(
@@ -170,6 +179,47 @@ export class SuiService {
         catch (e) {
             console.error(e);
             output.failureReason = `error: ${e}`;
+        }
+
+        return output;
+    }
+
+    async getUserNFTs(address: string): Promise<{ nfts: { name: string, url: string }[] }> {
+        const output: { nfts: { name: string, url: string }[] } = { nfts: [] };
+
+        //get objects owned by user
+        const response = await this.provider.getOwnedObjects({
+            owner: address,
+            options: {
+                showType: true,
+                showContent: true
+            }
+        });
+
+        if (response && response.data && response.data.length) {
+
+            //get objects which are BEATS NFTs
+            const beatsNfts = response.data.filter(o => {
+                return o.data.type.startsWith(this.packageId) &&
+                    o.data?.type?.endsWith("::beats_nft::BeatsNft");
+            });
+
+            //get list of unique names for all BEATS NFTs owned
+            for (let i = 0; i < beatsNfts.length; i++) {
+                const nft = beatsNfts[i];
+                if (nft.data.content['fields'] &&
+                    nft.data.content['fields']['name'] &&
+                    nft.data.content['fields']['url']
+                ) {
+                    const nftName = nft.data.content['fields']['name'];
+                    const nftUrl = nft.data.content['fields']['url'];
+
+                    //only add if name is unique
+                    if (!output.nfts.some(nft => nft.name == nftName)) {
+                        output.nfts.push({ name: nftName, url: nftUrl });
+                    }
+                }
+            }
         }
 
         return output;
