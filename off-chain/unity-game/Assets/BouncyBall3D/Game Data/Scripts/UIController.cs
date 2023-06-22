@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     private const int SIGNING_MESSAGE_LENGTH = 32;
+    private const bool FAKE_SIGNIN = true;
 
     private static string MessageToSign = "";
 
@@ -104,18 +105,15 @@ public class UIController : MonoBehaviour
         ConnectWalletButton.onClick.AddListener(() => {
             try {
                 MessageToSign = GenerateRandomMessage();
-                //CallSuiSignMessage(MessageToSign); 
 
-                //TODO: replace this with call to CallSuiSignMessage
-                SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
+                //this is for development only
+                if (FAKE_SIGNIN) 
+                    SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
+                else  
+                    CallSuiSignMessage(MessageToSign); 
             }
             catch(Exception e) {
                 SuiWallet.ErrorMessage = e.ToString();
-            }
-            finally{
-                //TODO: remove this once we have real verification working
-                //PlayerPrefs.SetString("suiaddress", SuiWallet.GetActiveAddress());
-                //ShowHomeScreen(); 
             }
         }); 
        
@@ -169,7 +167,7 @@ public class UIController : MonoBehaviour
                     MintNFTScreen_Text_Mellow.text = "Mint NFT";
                     MintNFTScreen_Text_Taral.text = "Locked";
                 }
-                
+
             }
             else if (PlayerData.SelectIndex==1)
             {
@@ -183,7 +181,6 @@ public class UIController : MonoBehaviour
                     MintNFTScreen_Text_Anna.text = "NFT Owned";
                     MintNFTScreen_Text_Mellow.text = "NFT Owned";
                     MintNFTScreen_Text_Taral.text = "Locked";
-
                 }
                 else
                 {
@@ -714,9 +711,11 @@ public class UIController : MonoBehaviour
         for (int i = 0; i < stringChars.Length; i++)
             stringChars[i] = chars[random.Next(chars.Length)];
 
-        //TODO: remove this and return dynamic message once verification is working from frontend
-        return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
-        //return new String(stringChars);
+        //this is for development only
+        if (FAKE_SIGNIN) 
+            return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
+
+        return new String(stringChars);
     }
 
     /// <summary>
@@ -1130,6 +1129,34 @@ public class UIController : MonoBehaviour
         this.ShowError(error);
     }
 
+    private void OnSuccessfulGetBeatsNfts(GetBeatsNftsResponseDto getNftsResponseDto)
+    {
+        GameManager.Instance.NFTOwned.Clear();
+
+        //figure out which nfts they own 
+        foreach(BeatsNftoDto nft in getNftsResponseDto.nfts) {
+            if (nft.name == "Anna") {
+                GameManager.Instance.NFTOwned.Add(0); 
+                PlayerPrefs.SetString("selectedIndex", "0");
+            }
+            else if (nft.name == "Melloow") {
+                GameManager.Instance.NFTOwned.Add(1); 
+                PlayerPrefs.SetString("selectedIndex", "1");
+            }
+        }
+        
+        PlayerPrefs.SetString("NFTOwned_Count", getNftsResponseDto.nfts.Length.ToString());
+
+        //allow entry into game
+        ShowHomeScreen();
+    }
+
+    private void OnErrorGetBeatsNfts(string error)
+    {
+        ShowHomeScreen();
+        this.ShowError(error);
+    }
+
     private void OnSuccessfulVerifySignature(VerifySignatureResponseDto verifySignatureResponseDto)
     {
         //set active wallet address 
@@ -1139,9 +1166,9 @@ public class UIController : MonoBehaviour
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
             PlayerPrefs.SetString(SuiWallet.WalletAddressKey, verifySignatureResponseDto.address);
             PlayerData.NFTRecipient = verifySignatureResponseDto.address;
-            
-            //allow entry into game
-            ShowHomeScreen();
+
+            //get user owned NFTs
+            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.address, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts); 
         }
         else 
         {

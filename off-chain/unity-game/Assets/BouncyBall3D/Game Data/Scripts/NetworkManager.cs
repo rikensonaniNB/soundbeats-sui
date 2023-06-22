@@ -17,6 +17,7 @@ public class ServerConfig
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
     public const string API_GET_PRIVATE_TOKEN_BALANCE = "api/v1/token?wallet=";
+    public const string API_GET_BEATS_NFTS = "api/v1/nfts?wallet=";
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
 
     //URL of Leaderboard and NFT
@@ -72,7 +73,25 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet);
         
-        SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), callbackOnSuccess, callbackOnFail, "get");
+        SendRequest(
+            string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), 
+            callbackOnSuccess, 
+            callbackOnFail, 
+            "get"
+        );
+    }
+
+    //TODO: comment header
+    public void GetUserOwnedBeatsNfts(string wallet, UnityAction<GetBeatsNftsResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        Debug.Log(ServerConfig.API_GET_BEATS_NFTS+wallet);
+
+        SendRequest(
+            string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_BEATS_NFTS+wallet), 
+            callbackOnSuccess, 
+            callbackOnFail, 
+            "get"
+        );
     }
 
     /// <summary>
@@ -291,7 +310,19 @@ public class RequestTokenDto
 public class RequestTokenResponseDto
 {
     public string signature;//The signature of the transaction
+}
 
+[Serializable]
+public class BeatsNftoDto 
+{
+    public string name;
+    public string address;
+}
+
+[Serializable]
+public class GetBeatsNftsResponseDto
+{
+    public BeatsNftoDto[] nfts;
 }
 
 [Serializable]

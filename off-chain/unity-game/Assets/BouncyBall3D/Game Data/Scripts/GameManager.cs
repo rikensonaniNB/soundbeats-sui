@@ -153,6 +153,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
+    //TODO: is this used? 
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);
