@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+//TODO: can be removed? 
 // Convenience methods
+/*
 public static class SuiHelper
 {
     public static async Task<List<string>> GetCoinObjectIdsOwnedByAddressAsync(string address, string coinType = SuiConstants.SUI_COIN_TYPE)
@@ -38,3 +40,4 @@ public static class SuiHelper
         return result;
     }
 }
+*/

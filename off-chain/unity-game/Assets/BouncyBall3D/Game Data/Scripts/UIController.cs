@@ -243,11 +243,14 @@ public class UIController : MonoBehaviour
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
 
+                //TODO: can be removed 
+                /*
                 NFTManager.instance.SendNFTOwned(
                     ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
                     "NFT_0", 
                     PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
                 );
+                */
 
                 //Total NFT owned by user and its index number
                 if (!GameManager.Instance.NFTOwned.Contains(0))
@@ -323,11 +326,15 @@ public class UIController : MonoBehaviour
                 LoadingScreen.SetActive(true);
                 blockImage.SetActive(false);
 
+                
+                //TODO: can be removed 
+                /*
                 NFTManager.instance.SendNFTOwned(
                     ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
                     "NFT_1", 
                     PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
                 );
+                */
 
                 //Total NFT owned by user and its index number
                 if (!GameManager.Instance.NFTOwned.Contains(1))
@@ -476,11 +483,15 @@ public class UIController : MonoBehaviour
                     createNFTRequest_anna.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_anna, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
+                        
+                    //TODO: can be removed 
+                    /*
                     NFTManager.instance.SendNFTOwned(
                         ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
                         "NFT_0", 
                         PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
                     );
+                    */
                 }
 
                 //Total NFT owned by user and its index number
@@ -562,11 +573,15 @@ public class UIController : MonoBehaviour
                     createNFTRequest_Melloow.recipient = SuiWallet.GetActiveAddress();
                     NetworkManager.Instance.CreateNFT(createNFTRequest_Melloow, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
                     LoadingScreen.SetActive(true);
+                    
+                    //TODO: can be removed 
+                    /*
                     NFTManager.instance.SendNFTOwned(
                         ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_NFT_Create, 
                         "NFT_1", 
                         PlayerPrefs.GetString(SuiWallet.WalletAddressKey)
                     );
+                    */
                 }
 
                 PlayerData.SelectIndex = 1;

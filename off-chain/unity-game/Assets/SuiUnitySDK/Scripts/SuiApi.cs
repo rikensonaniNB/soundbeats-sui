@@ -1,6 +1,8 @@
 using Suinet.Rpc;
 using Suinet.Rpc.Types;
 
+//TODO: can be removed? 
+/*
 public static class SuiApi
 {
     public static IJsonRpcApiClient Client { get; private set; }
@@ -11,3 +13,4 @@ public static class SuiApi
         Client = new SuiJsonRpcApiClient(rpcClient);
     }
 }
+*/

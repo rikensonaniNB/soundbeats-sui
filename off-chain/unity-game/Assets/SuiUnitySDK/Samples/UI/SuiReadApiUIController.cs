@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 
+//TODO: can be removed? 
+/*
 public class SuiReadApiUIController : MonoBehaviour
 {
     public Button GetObjectsOwnedByAddressButton;
@@ -21,3 +23,4 @@ public class SuiReadApiUIController : MonoBehaviour
         });
     }
 }
+*/

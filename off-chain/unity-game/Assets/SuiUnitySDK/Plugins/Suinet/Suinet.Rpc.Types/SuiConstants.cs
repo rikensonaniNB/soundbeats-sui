@@ -1,4 +1,7 @@
-﻿namespace Suinet.Rpc.Types
+﻿
+    //TODO: can be removed?
+/*
+namespace Suinet.Rpc.Types
 {
     public static class SuiConstants
     {
@@ -12,3 +15,4 @@
         public const int SUI_ADDRESS_LENGTH = 20;
     }
 }
+*/
