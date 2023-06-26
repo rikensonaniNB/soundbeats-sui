@@ -4,7 +4,10 @@ import {
     Keypair,
     RawSigner,
     TransactionBlock,
+    localnetConnection,
     devnetConnection,
+    testnetConnection,
+    mainnetConnection,
     verifyMessage,
     IntentScope,
     fromSerializedSignature
@@ -13,6 +16,8 @@ import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
 import { table } from 'console'
 import { sign } from 'crypto'
+
+//TODO: add comment headers to methods 
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -37,8 +42,8 @@ export class SuiService {
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
-        //TODO: should be not hard-coded to devnet this.provider = new JsonRpcProvider(rpc);
-        this.provider = new JsonRpcProvider(devnetConnection);
+        //create connect to the correct environment
+        this.provider = this._createRpcProvider(process.env.SUI_ENVIRONMENT)
 
         //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
@@ -267,5 +272,20 @@ export class SuiService {
         }
 
         return output;
+    }
+        
+    _createRpcProvider(environment: String): JsonRpcProvider {
+        switch(environment.toUpperCase()) {
+            case "LOCALNET": 
+                return new JsonRpcProvider(localnetConnection);
+            case "DEVNET": 
+                return new JsonRpcProvider(devnetConnection);
+            case "TESTNET": 
+                return new JsonRpcProvider(testnetConnection);
+            case "MAINNET": 
+                return new JsonRpcProvider(mainnetConnection);
+        }
+    
+        return new JsonRpcProvider(devnetConnection);
     }
 }
