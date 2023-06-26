@@ -14,8 +14,6 @@ import {
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
-import { table } from 'console'
-import { sign } from 'crypto'
 
 //TODO: add comment headers to methods 
 
