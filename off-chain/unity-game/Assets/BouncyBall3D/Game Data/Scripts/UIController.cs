@@ -90,7 +90,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI MintNFTScreen_Text_Taral;
 
     public TMP_InputField MnemonicsInputField;
-    public GameObject ImportWalletScreen;
+    public GameObject ImportWalletScreen; //TODO: can remove 
     public GameObject blockImage;
     public GameObject setup1Panel;
     public GameObject setup2Panel;
@@ -164,7 +164,7 @@ public class UIController : MonoBehaviour
             HomeScreen.SetActive(false);
             SelectCharacterScreen.SetActive(false);
             PlaySongScreen.SetActive(false);
-            
+
             //retain selected index 
             int selectedIndex = -1; 
             
@@ -254,8 +254,11 @@ public class UIController : MonoBehaviour
  
         WalletButton_Home.onClick.AddListener(() =>
         {
-            NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
-            LoadingScreen.SetActive(true);
+            if (SuiWallet.HasActiveAddress()) 
+            {
+                NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+                LoadingScreen.SetActive(true);
+            }
         });
 
         NFTButton.onClick.AddListener(() =>
@@ -266,7 +269,7 @@ public class UIController : MonoBehaviour
         //Select Character Screen
         Mint_Button_Anna.onClick.AddListener(() =>
         {
-            if (isOverlayOn)
+            if (isOverlayOn && SuiWallet.HasActiveAddress())
             {
                 Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Green;
                 Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
@@ -350,7 +353,7 @@ public class UIController : MonoBehaviour
 
         Mint_Button_Marshmallow.onClick.AddListener(() =>
         {
-            if (isOverlayOn)
+            if (isOverlayOn && SuiWallet.HasActiveAddress())
             {
                 Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
                 Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Green;
@@ -432,7 +435,7 @@ public class UIController : MonoBehaviour
 
         Mint_Button_Taral.onClick.AddListener(() =>
         {
-            if (isOverlayOn)
+            if (isOverlayOn && SuiWallet.HasActiveAddress())
             {
                 /*Mint_Button_Anna.GetComponent<Image>().sprite = sprite_Pink;
                 Mint_Button_Marshmallow.GetComponent<Image>().sprite = sprite_Pink;
@@ -521,7 +524,7 @@ public class UIController : MonoBehaviour
                 PlayerData.SelectIndex = 0;
                 PlayerPrefs.SetString("selectedIndex", "0");
 
-                if (!GameManager.Instance.NFTOwned.Contains(0))
+                if (!GameManager.Instance.NFTOwned.Contains(0) && SuiWallet.HasActiveAddress())
                 {
                     CreateNFTRequestDto createNFTRequest_anna = new CreateNFTRequestDto();
                     createNFTRequest_anna.name = "Anna";
@@ -607,7 +610,7 @@ public class UIController : MonoBehaviour
                     Mint_Text_Taral.text = "Locked";
                 }
                 
-                if(!GameManager.Instance.NFTOwned.Contains(1))
+                if(!GameManager.Instance.NFTOwned.Contains(1) && SuiWallet.HasActiveAddress())
                 {
                     /////////////////////////////
 
@@ -701,19 +704,21 @@ public class UIController : MonoBehaviour
 
         ClaimTokens_Button.onClick.AddListener(() =>
         {
-            WalletScreen.SetActive(false);
-          
-            RequestTokenDto requestTokenDto = new RequestTokenDto();
-            requestTokenDto.amount = 100;
-            requestTokenDto.recipient = PlayerData.NFTRecipient;
-            NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestToken, OnErrorRequestToken);
-            LoadingScreen.SetActive(true);
-            //link_successful.text = PlayerData.NFTRecipient;
-            //Debug.Log(PlayerData.NFTRecipient);
-            //Debug.Log(PlayerData.NFTAddress);
-            //ClaimTokensScreen.SetActive(true);
-            //txtScore_ClaimScreen.text = "100";
-           
+            if (SuiWallet.HasActiveAddress()) 
+            {
+                WalletScreen.SetActive(false);
+            
+                RequestTokenDto requestTokenDto = new RequestTokenDto();
+                requestTokenDto.amount = 100;
+                requestTokenDto.recipient = PlayerData.NFTRecipient;
+                NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestToken, OnErrorRequestToken);
+                LoadingScreen.SetActive(true);
+                //link_successful.text = PlayerData.NFTRecipient;
+                //Debug.Log(PlayerData.NFTRecipient);
+                //Debug.Log(PlayerData.NFTAddress);
+                //ClaimTokensScreen.SetActive(true);
+                //txtScore_ClaimScreen.text = "100";
+            }
         });
 
         Close_WalletScreen.onClick.AddListener(() =>
@@ -1082,8 +1087,11 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowNFTWallet()
     {
-        NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
-        LoadingScreen.SetActive(true);
+        if (SuiWallet.HasActiveAddress()) 
+        {
+            NetworkManager.Instance.GetTokenBalance(PlayerData.NFTRecipient, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+            LoadingScreen.SetActive(true);
+        }
     }
 
     /// <summary>

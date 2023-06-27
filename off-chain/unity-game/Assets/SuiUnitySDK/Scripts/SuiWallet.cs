@@ -24,12 +24,18 @@ public class SuiWallet
 {
     public const string WalletAddressKey = "suiaddress"; 
 
-    public static string ActiveWalletAddress = "0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb";
+    public static string ActiveWalletAddress = "";
     public static string ErrorMessage = "";
 
+    //TODO: this should use playerPrefs only
     public static string GetActiveAddress()
     {
         return SuiWallet.ActiveWalletAddress; 
+    }
+
+    public static bool HasActiveAddress()
+    {
+        return ActiveWalletAddress != null && ActiveWalletAddress.Length > 0;
     }
 
     public static void Logout()
