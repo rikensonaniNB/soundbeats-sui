@@ -153,10 +153,10 @@ public class UIController : MonoBehaviour
             }
         }); 
        
-        if (PlayerPrefs.HasKey(SuiWallet.WalletAddressKey))
+        /*if (PlayerPrefs.HasKey(SuiWallet.WalletAddressKey))
         {
             ShowHomeScreen(); 
-        }
+        }*/
         
         onLogOutButton.onClick.AddListener(() =>
         {
@@ -164,7 +164,17 @@ public class UIController : MonoBehaviour
             HomeScreen.SetActive(false);
             SelectCharacterScreen.SetActive(false);
             PlaySongScreen.SetActive(false);
+            
+            //retain selected index 
+            int selectedIndex = -1; 
+            
+            if (PlayerPrefs.HasKey("selectedIndex")) 
+                selectedIndex = PlayerPrefs.GetInt("selectedIndex");
             PlayerPrefs.DeleteAll();
+
+            if (selectedIndex >= 0)
+                PlayerPrefs.SetInt("selectedIndex", selectedIndex);
+
             PlayerData.SelectedNFTName = "";
             PlayerData.NFTRecipient = "";
             PlayerData.NFTAddress ="";
@@ -1201,13 +1211,23 @@ public class UIController : MonoBehaviour
         foreach(BeatsNftoDto nft in getNftsResponseDto.nfts) {
             if (nft.name == "Anna") {
                 GameManager.Instance.NFTOwned.Add(0); 
-                PlayerPrefs.SetString("selectedIndex", "0");
+                //PlayerPrefs.SetString("selectedIndex", "0");
             }
             else if (nft.name == "Melloow") {
                 GameManager.Instance.NFTOwned.Add(1); 
-                PlayerPrefs.SetString("selectedIndex", "1");
+                //PlayerPrefs.SetString("selectedIndex", "1");
             }
         }
+        
+        //TODO: this seems very hacky; find out why this is needed
+        for (int i = 0; i < GameManager.Instance.NFTOwned.Count; i++)
+            PlayerPrefs.SetInt("NFTOwned_" + i, GameManager.Instance.NFTOwned[i]);
+
+        //handle selected index 
+        /*if (PlayerPrefs.GetInt("selectedIndex") >= getNftsResponseDto.nfts.Length) {
+            int selectedIndex = getNftsResponseDto.nfts.Length > 0 ? getNftsResponseDto.nfts.Length : 0; 
+            PlayerPrefs.SetInt("selectedIndex", selectedIndex);
+        }*/
         
         PlayerPrefs.SetString("NFTOwned_Count", getNftsResponseDto.nfts.Length.ToString());
 
