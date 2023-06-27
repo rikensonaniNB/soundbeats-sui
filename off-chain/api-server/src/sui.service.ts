@@ -32,10 +32,12 @@ export class SuiService {
     keypair: Keypair
     packageId: string
     treasuryCap: string
-    balanceMap: Map<string, number>
+    balanceMap: Map<string, number> //TODO: not using balanceMap for anything meaningful?
+    leaderboardMap: Map<string, number>
 
     constructor() {
-        this.balanceMap = new Map()
+        this.balanceMap = new Map(); 
+        this.leaderboardMap = new Map();
 
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
@@ -229,11 +231,23 @@ export class SuiService {
     }
 
     getLeaderboardScore(address: string): { score: number } {
-        return { score: 0 };
+        const output = { score: 0 };
+
+        if (this.leaderboardMap.has(address))
+            output.score = this.leaderboardMap.get(address); 
+
+        return output; 
     }
 
     addLeaderboardScore(address: string, score: number): { score: number }  {
-        return { score: 0 };
+        const output = { score: 0 };
+
+        if (this.leaderboardMap.has(address))
+            output.score = this.leaderboardMap.get(address); 
+            output.score += score;
+            this.leaderboardMap.set(address, output.score);
+
+        return output; 
     }
 
     async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
