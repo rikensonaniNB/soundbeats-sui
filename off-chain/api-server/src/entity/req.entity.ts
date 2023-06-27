@@ -77,3 +77,25 @@ export class VerifySignatureResponseDto {
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
     failureReason: string
 }
+
+export class GetLeaderboardDto {
+    @ApiProperty({ description: 'The address of the wallet of the user' })
+    wallet: string
+}
+
+export class GetLeaderboardResponseDto {
+    @ApiProperty({ description: 'The total score of the user' })
+    score: number
+}
+
+export class AddLeaderboardDto {
+    @ApiProperty({ description: 'The address of the wallet of the user' })
+    wallet: string
+    @ApiProperty({ description: 'The score to add' })
+    score: number
+}
+
+export class AddLeaderboardResponseDto {
+    @ApiProperty({ description: 'The total score of the user' })
+    score: number
+}

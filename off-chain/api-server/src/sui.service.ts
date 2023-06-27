@@ -228,6 +228,14 @@ export class SuiService {
         return output;
     }
 
+    getLeaderboardScore(address: string): { score: number } {
+        return { score: 0 };
+    }
+
+    addLeaderboardScore(address: string, score: number): { score: number }  {
+        return { score: 0 };
+    }
+
     async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
         let output = null;
 

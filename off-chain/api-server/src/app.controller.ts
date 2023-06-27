@@ -12,6 +12,10 @@ import {
     MintTokenResponseDto,
     VerifySignatureDto,
     VerifySignatureResponseDto,
+    GetLeaderboardDto, 
+    GetLeaderboardResponseDto, 
+    AddLeaderboardDto, 
+    AddLeaderboardResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 
@@ -21,59 +25,59 @@ export class AppController {
 
     @Get('/')
     healthcheck() {
-        return 'ok'
+        return 'ok';
     }
 
     @ApiOperation({ summary: 'Create NFT' })
     @Post('/api/v1/nfts')
     async mintNft(@Body() body: MintNftDto): Promise<MintNftResponseDto> {
-        const { name, recipient, imageUrl, quantity } = body
+        const { name, recipient, imageUrl, quantity } = body;
         if (body.name == null || body.name == '') {
-            throw new Error('name cannot be null or empty')
+            throw new Error('name cannot be null or empty');
         }
         if (imageUrl == null || imageUrl == '') {
-            throw new Error('imageUrl cannot be null or empty')
+            throw new Error('imageUrl cannot be null or empty');
         }
-        return await this.suiService.mintNfts(recipient, name, "Soundbeats NFT", imageUrl, quantity ?? 1)
+        return await this.suiService.mintNfts(recipient, name, "Soundbeats NFT", imageUrl, quantity ?? 1);
     }
 
     @ApiOperation({ summary: 'Request private token' })
     @Post('/api/v1/token')
     async mintToken(@Body() body: MintTokenDto): Promise<MintTokenResponseDto> {
-        const { amount, recipient } = body
+        const { amount, recipient } = body;
         if (amount == null || amount <= 0) {
-            throw new Error('amount cannot be null, zero or negative')
+            throw new Error('amount cannot be null, zero or negative');
         }
         if (recipient == null || recipient == '') {
-            throw new Error('recipient cannot be null or empty')
+            throw new Error('recipient cannot be null or empty');
         }
-        return await this.suiService.mintTokens(recipient, amount)
+        return await this.suiService.mintTokens(recipient, amount);
     }
 
     @ApiOperation({ summary: 'Get private token balance' })
     @Get('/api/v1/token')
     async getTokenBalance(@Query() query: GetTokenBalanceDto): Promise<GetTokenBalanceResponseDto> {
-        const { wallet } = query
+        const { wallet } = query;
         if (wallet == null || wallet == '') {
-            throw new Error('wallet cannot be null or empty')
+            throw new Error('wallet cannot be null or empty');
         }
-        return await this.suiService.getTokenBalance(wallet)
+        return await this.suiService.getTokenBalance(wallet);
     }
 
     @ApiOperation({ summary: 'Get list of user-owned NFTs' })
     @Get('/api/v1/nfts')
     async getBeatsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatsNftsResponseDto> {
-        const { wallet } = query
+        const { wallet } = query;
         if (wallet == null || wallet == '') {
-            throw new Error('wallet cannot be null or empty')
+            throw new Error('wallet cannot be null or empty'); 
         }
-        return await this.suiService.getUserNFTs(wallet)
+        return await this.suiService.getUserNFTs(wallet); 
     }
 
     @ApiOperation({ summary: 'Verify a signed message' })
     @Get('/api/v1/verify')
     async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
-        const { address, signature, message } = query
+        const { address, signature, message } = query; 
         if (address == null || address == '') {
             throw new Error('address cannot be null or empty')
         }
@@ -84,5 +88,25 @@ export class AppController {
             throw new Error('message cannot be null or empty')
         }
         return await this.suiService.verifySignature(address, signature, message)
+    }
+
+    @ApiOperation({ summary: 'Get a user score from the leaderboard' })
+    @Get('/api/v1/leaderboard')
+    async getLeaderboardScore(@Query() query: GetLeaderboardDto): Promise<GetLeaderboardResponseDto> {
+        const { wallet } = query; 
+        return this.suiService.getLeaderboardScore(wallet);
+    }
+
+    @ApiOperation({ summary: 'Add to a user score on the leaderboard' })
+    @Post('/api/v1/leaderboard')
+    async addLeaderboardScore(@Body() body: AddLeaderboardDto): Promise<AddLeaderboardResponseDto> {
+        const { score, wallet } = body;
+        if (score == null || score <= 0) {
+            throw new Error('score cannot be null, zero or negative');
+        }
+        if (wallet == null || wallet == '') {
+            throw new Error('wallet cannot be null or empty');
+        }
+        return await this.suiService.addLeaderboardScore(wallet, score);
     }
 }
