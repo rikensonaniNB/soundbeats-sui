@@ -95,6 +95,7 @@ public class UIController : MonoBehaviour
 
     private bool isOverlayOn = true;
     private string NFTLinkAdd;
+    private string NFTLinkText;
 
     private void Start()
     {
@@ -232,6 +233,7 @@ public class UIController : MonoBehaviour
 
                 PlayerData.SelectedNFTName = "Anna";
 
+                //TODO: similar code is repeated many times 
                 PlayerData.SelectIndex = 0;
                 PlayerPrefs.SetString("selectedIndex", "0");
                 CreateNFTRequestDto createNFTRequest_anna = new CreateNFTRequestDto();
@@ -776,8 +778,9 @@ public class UIController : MonoBehaviour
         HomeScreen.SetActive(true);
         PlaySongScreen.SetActive(true);
         NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
-          
-        txtAddressNFT_WalletScreen.text = NFTLinkAdd;
+        NFTLinkText = SuiWallet.GetActiveAddress();
+        
+        txtAddressNFT_WalletScreen.text = NFTLinkText;
         string nftSignature = PlayerPrefs.GetString("nftSignature");
         link_successful.text = nftSignature;
 
@@ -935,8 +938,9 @@ public class UIController : MonoBehaviour
             HomeScreen.SetActive(true);
             PlaySongScreen.SetActive(true);
             NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.GetActiveAddress());
+            NFTLinkText = SuiWallet.GetActiveAddress();
 
-            txtAddressNFT_WalletScreen.text = NFTLinkAdd;
+            txtAddressNFT_WalletScreen.text = NFTLinkText;
             string nftSignature = PlayerPrefs.GetString("nftSignature");
             link_successful.text = nftSignature;
 
