@@ -17,6 +17,10 @@ public class UIController : MonoBehaviour
     [System.Runtime.InteropServices.DllImport("__Internal")]
     private static extern void CallSuiSignMessage(string msg);
 
+    //call to request the front end Javascript to detect presence of Martian wallet 
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void DetectMartianWallet(); 
+
     #region UI Components 
 
     public Button NewWalletButton;
@@ -793,6 +797,18 @@ public class UIController : MonoBehaviour
             NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
             //this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
         }
+    }
+
+    /// <summary>
+    /// After detecting the presence or non-presence of martian wallet, the front-end will call this callback. 
+    /// </summary>
+    /// <param name="detected"></param>
+    public void DetectMartianWalletCallback(int detected)
+    {
+        if (detected > 0)
+            Debug.Log("DetectMartianWalletCallback true");
+        else
+            Debug.Log("DetectMartianWalletCallback false");
     }
 
     #endregion
