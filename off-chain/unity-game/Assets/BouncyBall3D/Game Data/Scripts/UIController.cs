@@ -97,11 +97,42 @@ public class UIController : MonoBehaviour
     private string NFTLinkAdd;
     private string NFTLinkText;
 
+    private struct NftUiElements
+    {
+        public TextMeshProUGUI MintNftScreenText; 
+        public TextMeshProUGUI MintText;
+        public Button MintButton;
+        public Button MintNftScreenButton; 
+        public Sprite CharacterSprite;
+    }
+
+    private NftUiElements NftUiElements_Anna; 
+    private NftUiElements NftUiElements_Taral;
+    private NftUiElements NftUiElements_Marshmallow;
+
     private void Start()
     {
         ActiveAddressText.text = SuiWallet.GetActiveAddress();
         PlayerData.NFTRecipient = SuiWallet.GetActiveAddress();
         NewWalletButton.gameObject.SetActive(false);
+
+        NftUiElements_Anna.MintNftScreenText = MintNFTScreen_Text_Anna;
+        NftUiElements_Anna.MintText = Mint_Text_Anna;
+        NftUiElements_Anna.MintButton = Mint_Button_Anna;
+        NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
+        NftUiElements_Anna.CharacterSprite = Character_Anna;
+
+        NftUiElements_Taral.MintNftScreenText = MintNFTScreen_Text_Taral;
+        NftUiElements_Taral.MintText = Mint_Text_Taral;
+        NftUiElements_Taral.MintButton = Mint_Button_Taral;
+        NftUiElements_Taral.MintNftScreenButton = MintNFTScreen_Button_Taral;
+        NftUiElements_Taral.CharacterSprite = Character_Taral;
+        
+        NftUiElements_Marshmallow.MintNftScreenText = MintNFTScreen_Text_Mellow;
+        NftUiElements_Marshmallow.MintText = Mint_Text_Mellow;
+        NftUiElements_Marshmallow.MintButton = Mint_Button_Marshmallow;
+        NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
+        NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
 
         ConnectWalletButton.onClick.AddListener(() => {
             try {
@@ -560,8 +591,6 @@ public class UIController : MonoBehaviour
                     Mint_Text_Anna.text = "Mint NFT";
                     Mint_Text_Mellow.text = "Selected";
                     Mint_Text_Taral.text = "Locked";
-
-                    
                 }
                 
                 if(!GameManager.Instance.NFTOwned.Contains(1))
