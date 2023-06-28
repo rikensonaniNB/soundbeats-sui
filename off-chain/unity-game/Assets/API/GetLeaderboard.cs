@@ -7,6 +7,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
+//TODO: is this used? Is it needed? 
 public class GetLeaderboard : MonoBehaviour
 {
     public List<LeaderboardData> leaderboardList;

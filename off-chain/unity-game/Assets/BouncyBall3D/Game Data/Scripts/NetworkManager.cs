@@ -112,17 +112,28 @@ public class NetworkManager : Singleton<NetworkManager>
         ), callbackOnSuccess, callbackOnFail, "get");
     }
 
-    //TODO: comment header 
-    public void SendLeaderboardScore(string address, int score, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    /// <summary>
+    /// Sends the latest score for the given user to the leaderboard. 
+    /// </summary>
+    /// <param name="wallet">User's wallet address</param>
+    /// <param name="score">The score to send</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void SendLeaderboardScore(string wallet, int score, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         CreateLeaderboard_Post body = new CreateLeaderboard_Post(); 
-        body.wallet = address; 
+        body.wallet = wallet; 
         body.score = score;
 
         SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
     }
 
-    //TODO: comment header 
+    /// <summary>
+    /// Sends the latest score for the given user to the leaderboard. 
+    /// </summary>
+    /// <param name="body">The body of the post.</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
     public void SendLeaderboardScore(CreateLeaderboard_Post body, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
@@ -130,7 +141,11 @@ public class NetworkManager : Singleton<NetworkManager>
         SendRequest(string.Format(ServerConfig.LeaderboardNFT_API_URL_FORMAT, ServerConfig.API_POST_Leaderboard_Create), callbackOnSuccess, callbackOnFail, "post", dictionary);
     }
 
-    //TODO: comment header 
+    /// <summary>
+    /// Retrieves the current leaderboard data from the server. 
+    /// </summary>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
     public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         Debug.Log(ServerConfig.API_GET_Leaderboard);

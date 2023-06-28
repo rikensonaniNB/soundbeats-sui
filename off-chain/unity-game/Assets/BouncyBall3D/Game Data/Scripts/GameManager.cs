@@ -65,6 +65,7 @@ public class GameManager : Singleton<GameManager>
             scoreAnim.SetTrigger("Up");
     }
     public Text ScoreWin;
+
     public void PlayerWin()
     {
         gameState = GameState.Win;
@@ -79,20 +80,24 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
 
+        //TODO: repeated code 
         //replace best score 
-        if (bestScore > PlayerPrefs.GetInt("bestScore", 0)) 
+        if (score > bestScore)
         {
             bestScore = score;
             PlayerPrefs.SetInt("bestScore", score);
         }
         
         //send score to leaderboard
-        NetworkManager.Instance.SendLeaderboardScore(
-            PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
-            score, 
-            null, 
-            null
-        );
+        if (SuiWallet.HasActiveAddress()) 
+        {
+            NetworkManager.Instance.SendLeaderboardScore(
+                PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
+                score, 
+                null, 
+                null
+            );
+        }
 
         ShowLevelProgress();
         ScoreWin.text = score.ToString();
@@ -125,18 +130,25 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
         
-        //if (score > bestScore)
-        //{
+        //TODO: repeated code 
+        //replace best score 
+        if (score > bestScore)
+        {
             bestScore = score;
             PlayerPrefs.SetInt("bestScore", score);
-            //SendToDrive.instance.Send();
+        }
+
+        //send score to leaderboard
+        if (SuiWallet.HasActiveAddress()) 
+        {
             NetworkManager.Instance.SendLeaderboardScore(
                 PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
                 bestScore, 
                 null, 
                 null
             );
-        //}
+        }
+            
         ShowLevelProgress();
         if (score > PlayerPrefs.GetInt(LevelGenerator.Instance.currentSong.name))
         {
@@ -164,12 +176,12 @@ public class GameManager : Singleton<GameManager>
         score = 0;
     }
 
-
     //TODO: is this used? 
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);
     }
+
     private void OnErrorRequestPrivateToken(string Error)
     {
         Debug.Log("Error on RequestPrivateToken " + Error);
@@ -295,7 +307,6 @@ public class GameManager : Singleton<GameManager>
         Time.timeScale = 1;
         pauseButton.SetActive(true);
     }
-
 
     public void onPause()
     {
