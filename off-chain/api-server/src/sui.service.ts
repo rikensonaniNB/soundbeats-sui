@@ -14,6 +14,7 @@ import {
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
+import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 
 //TODO: add comment headers to methods 
 
@@ -28,17 +29,17 @@ export const strToByteArray = (str: string): number[] => {
 export class SuiService {
     signer: RawSigner
     provider: JsonRpcProvider
-    client: NftClient
+    client: NftClient //TODO: not used
     keypair: Keypair
     packageId: string
     treasuryCap: string
     balanceMap: Map<string, number> //TODO: not using balanceMap for anything meaningful?
-    leaderboardMap: Map<string, number>
+    leaderboard: ILeaderboard
 
     constructor() {
         this.balanceMap = new Map();
-        this.leaderboardMap = new Map();
-
+        this.leaderboard = getLeaderboardInstance();
+        
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
@@ -145,8 +146,6 @@ export class SuiService {
 
     async getTokenBalance(address: string): Promise<{ balance: number }> {
 
-        //await this.mintTokens("0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb", 100);
-        console.log(address);
         const tokenType = `${this.packageId}::beats::BEATS`;
         const result = await this.provider.getBalance({
             owner: address,
@@ -231,38 +230,17 @@ export class SuiService {
     }
 
     getLeaderboardScore(wallet: string): { wallet: string, score: number } {
-        const output = { wallet, score: 0 };
-
-        if (this.leaderboardMap.has(wallet))
-            output.score = this.leaderboardMap.get(wallet);
-
-        return output;
+        return this.leaderboard.getLeaderboardScore(wallet);
     }
 
     getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] } {
-        let output = { scores: [] };
-
-        if (wallet && wallet.length > 0) {
-            output.scores.push(this.getLeaderboardScore(wallet));
-        }
-        else {
-            this.leaderboardMap.forEach((value: number, key: string) => {
-                output.scores.push({ wallet: key, score: value });
-            });
-        }
-
-        return output;
+        //if (wallet && wallet.length)
+        //    this.leaderboard.addLeaderboardScore(wallet, 100);
+        return this.leaderboard.getLeaderboardScores(wallet);
     }
 
     addLeaderboardScore(address: string, score: number): { score: number } {
-        const output = { score: 0 };
-
-        if (this.leaderboardMap.has(address))
-            output.score = this.leaderboardMap.get(address);
-        output.score += score;
-        this.leaderboardMap.set(address, output.score);
-
-        return output;
+        return this.leaderboard.addLeaderboardScore(address, score);
     }
 
     async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
@@ -311,8 +289,8 @@ export class SuiService {
 
     _createRpcProvider(environment: String): JsonRpcProvider {
         if (!environment)
-            environment = "DEVNET";
-
+            environment = "DEVNET"; 
+            
         switch (environment.toUpperCase()) {
             case "LOCALNET":
                 return new JsonRpcProvider(localnetConnection);
