@@ -79,13 +79,19 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
 
-        bestScore = score;
-        PlayerPrefs.SetInt("bestScore", score);
-        //SendToDrive.instance.Send();
-        NetworkManager.instance.SendLeaderboardScore(
-            ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_Leaderboard_Create, 
+        //replace best score 
+        if (bestScore > PlayerPrefs.GetInt("bestScore", 0)) 
+        {
+            bestScore = score;
+            PlayerPrefs.SetInt("bestScore", score);
+        }
+        
+        //send score to leaderboard
+        NetworkManager.Instance.SendLeaderboardScore(
             PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
-            bestScore
+            score, 
+            null, 
+            null
         );
 
         ShowLevelProgress();
@@ -124,10 +130,11 @@ public class GameManager : Singleton<GameManager>
             bestScore = score;
             PlayerPrefs.SetInt("bestScore", score);
             //SendToDrive.instance.Send();
-            NetworkManager.instance.SendLeaderboardScore(
-                ServerConfig.LeaderboardNFT_API_URL_FORMAT + ServerConfig.API_POST_Leaderboard_Create, 
+            NetworkManager.Instance.SendLeaderboardScore(
                 PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
-                bestScore
+                bestScore, 
+                null, 
+                null
             );
         //}
         ShowLevelProgress();

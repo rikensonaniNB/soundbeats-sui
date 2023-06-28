@@ -113,6 +113,16 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     //TODO: comment header 
+    public void SendLeaderboardScore(string address, int score, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        CreateLeaderboard_Post body = new CreateLeaderboard_Post(); 
+        body.wallet = address; 
+        body.score = score;
+
+        SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
+    }
+
+    //TODO: comment header 
     public void SendLeaderboardScore(CreateLeaderboard_Post body, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
