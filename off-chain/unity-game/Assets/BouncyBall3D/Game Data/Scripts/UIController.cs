@@ -10,7 +10,6 @@ public class UIController : MonoBehaviour
 {
     private const int SIGNING_MESSAGE_LENGTH = 32;
     private const bool FAKE_SIGNIN = true;
-
     private static string MessageToSign = "";
 
     //call to request the front end Javascript code to sign a message 
@@ -20,6 +19,8 @@ public class UIController : MonoBehaviour
     //call to request the front end Javascript to detect presence of Martian wallet 
     [System.Runtime.InteropServices.DllImport("__Internal")]
     private static extern void DetectMartianWallet(); 
+
+    private bool MartianWalletNotFound = false;
 
     #region UI Components 
 
@@ -138,15 +139,22 @@ public class UIController : MonoBehaviour
         NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
         NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
 
+        //DetectMartianWalletCallback(0);
+
         ConnectWalletButton.onClick.AddListener(() => {
             try {
-                MessageToSign = GenerateRandomMessage();
+                if (this.MartianWalletNotFound) {
+                    Application.OpenURL("https://chrome.google.com/webstore/detail/martian-wallet-for-sui-ap/efbglgofoippbgcjepnhiblaibcnclgk");
+                }
+                else {
+                    MessageToSign = GenerateRandomMessage();
 
-                //this is for development only
-                if (FAKE_SIGNIN) 
-                    SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
-                else  
-                    CallSuiSignMessage(MessageToSign); 
+                    //this is for development only
+                    if (FAKE_SIGNIN) 
+                        SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
+                    else  
+                        CallSuiSignMessage(MessageToSign); 
+                }
             }
             catch(Exception e) {
                 SuiWallet.ErrorMessage = e.ToString();
@@ -820,10 +828,20 @@ public class UIController : MonoBehaviour
     /// <param name="detected"></param>
     public void DetectMartianWalletCallback(int detected)
     {
-        if (detected > 0)
-            Debug.Log("DetectMartianWalletCallback true");
-        else
+        if (detected == 0)
+        {
             Debug.Log("DetectMartianWalletCallback false");
+            //ShowError("You need to download that martian wallet sir");
+            this.MartianWalletNotFound = true;
+            var tmpText = ConnectWalletButton.GetComponentInChildren<TextMeshProUGUI>();
+            tmpText.text = "Get Martian Wallet";
+        }
+        else 
+        {
+            this.MartianWalletNotFound = false;
+            var tmpText = ConnectWalletButton.GetComponentInChildren<TextMeshProUGUI>();
+            tmpText.text = "Connect Wallet";
+        }
     }
 
     #endregion
