@@ -12,9 +12,9 @@ import {
     MintTokenResponseDto,
     VerifySignatureDto,
     VerifySignatureResponseDto,
-    GetLeaderboardDto, 
-    GetLeaderboardResponseDto, 
-    AddLeaderboardDto, 
+    GetLeaderboardDto,
+    GetLeaderboardResponseDto,
+    AddLeaderboardDto,
     AddLeaderboardResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
@@ -69,15 +69,15 @@ export class AppController {
     async getBeatsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatsNftsResponseDto> {
         const { wallet } = query;
         if (wallet == null || wallet == '') {
-            throw new Error('wallet cannot be null or empty'); 
+            throw new Error('wallet cannot be null or empty');
         }
-        return await this.suiService.getUserNFTs(wallet); 
+        return await this.suiService.getUserNFTs(wallet);
     }
 
     @ApiOperation({ summary: 'Verify a signed message' })
     @Get('/api/v1/verify')
     async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
-        const { address, signature, message } = query; 
+        const { address, signature, message } = query;
         if (address == null || address == '') {
             throw new Error('address cannot be null or empty')
         }
@@ -93,8 +93,11 @@ export class AppController {
     @ApiOperation({ summary: 'Get a user score from the leaderboard' })
     @Get('/api/v1/leaderboard')
     async getLeaderboardScore(@Query() query: GetLeaderboardDto): Promise<GetLeaderboardResponseDto> {
-        const { wallet } = query; 
-        return this.suiService.getLeaderboardScore(wallet);
+        const { wallet } = query;
+        if (!wallet || wallet == '') {
+            return this.suiService.getLeaderboardScores(null);
+        }
+        return this.suiService.getLeaderboardScores(wallet);
     }
 
     @ApiOperation({ summary: 'Add to a user score on the leaderboard' })

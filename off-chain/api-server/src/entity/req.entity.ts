@@ -83,9 +83,16 @@ export class GetLeaderboardDto {
     wallet: string
 }
 
-export class GetLeaderboardResponseDto {
-    @ApiProperty({ description: 'The total score of the user' })
+export class LeaderboardDto {
+    @ApiProperty({ description: 'The address of the wallet of the user' })
+    wallet: string
+    @ApiProperty({ description: 'The total score of the users' })
     score: number
+}
+
+export class GetLeaderboardResponseDto {
+    @ApiProperty({ description: 'The total score of each user' })
+    scores: LeaderboardDto[]
 }
 
 export class AddLeaderboardDto {

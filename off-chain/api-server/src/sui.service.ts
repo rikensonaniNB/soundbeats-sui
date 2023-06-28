@@ -36,7 +36,7 @@ export class SuiService {
     leaderboardMap: Map<string, number>
 
     constructor() {
-        this.balanceMap = new Map(); 
+        this.balanceMap = new Map();
         this.leaderboardMap = new Map();
 
         //derive keypair
@@ -230,24 +230,39 @@ export class SuiService {
         return output;
     }
 
-    getLeaderboardScore(address: string): { score: number } {
-        const output = { score: 0 };
+    getLeaderboardScore(wallet: string): { wallet: string, score: number } {
+        const output = { wallet, score: 0 };
 
-        if (this.leaderboardMap.has(address))
-            output.score = this.leaderboardMap.get(address); 
+        if (this.leaderboardMap.has(wallet))
+            output.score = this.leaderboardMap.get(wallet);
 
-        return output; 
+        return output;
     }
 
-    addLeaderboardScore(address: string, score: number): { score: number }  {
+    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] } {
+        let output = { scores: [] };
+
+        if (wallet && wallet.length > 0) {
+            output.scores.push(this.getLeaderboardScore(wallet));
+        }
+        else {
+            this.leaderboardMap.forEach((value: number, key: string) => {
+                output.scores.push({ wallet: key, score: value });
+            });
+        }
+
+        return output;
+    }
+
+    addLeaderboardScore(address: string, score: number): { score: number } {
         const output = { score: 0 };
 
         if (this.leaderboardMap.has(address))
-            output.score = this.leaderboardMap.get(address); 
-            output.score += score;
-            this.leaderboardMap.set(address, output.score);
+            output.score = this.leaderboardMap.get(address);
+        output.score += score;
+        this.leaderboardMap.set(address, output.score);
 
-        return output; 
+        return output;
     }
 
     async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
@@ -293,19 +308,22 @@ export class SuiService {
 
         return output;
     }
-        
+
     _createRpcProvider(environment: String): JsonRpcProvider {
-        switch(environment.toUpperCase()) {
-            case "LOCALNET": 
+        if (!environment)
+            environment = "DEVNET";
+
+        switch (environment.toUpperCase()) {
+            case "LOCALNET":
                 return new JsonRpcProvider(localnetConnection);
-            case "DEVNET": 
+            case "DEVNET":
                 return new JsonRpcProvider(devnetConnection);
-            case "TESTNET": 
+            case "TESTNET":
                 return new JsonRpcProvider(testnetConnection);
-            case "MAINNET": 
+            case "MAINNET":
                 return new JsonRpcProvider(mainnetConnection);
         }
-    
+
         return new JsonRpcProvider(devnetConnection);
     }
 }
