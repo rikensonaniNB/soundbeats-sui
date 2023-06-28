@@ -21,11 +21,15 @@ public class ServerConfig
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
 
     //URL of Leaderboard and NFT
-    public const string LeaderboardNFT_API_URL_FORMAT = "http://45.79.126.10:3009/user/";
-    public const string API_POST_Leaderboard_Create = "leaderboard/create";
-    public const string API_POST_NFT_Create = "NFT/create";
-    public const string API_GET_Leaderboard = "leaderboard";
+    //TODO: rename 
+    public const string LeaderboardNFT_API_URL_FORMAT = "http://43.206.80.52/{0}";
+    public const string API_POST_Leaderboard_Create = "api/v1/leaderboard";
+    public const string API_GET_Leaderboard = "api/v1/leaderboard";
+
+    //TODO: not used
     public const string API_GET_NFT = "NFT";
+    //TODO: not used
+    public const string API_POST_NFT_Create = "NFT/create";
 }
 
 public class NetworkManager : Singleton<NetworkManager>
@@ -106,6 +110,27 @@ public class NetworkManager : Singleton<NetworkManager>
             ServerConfig.SERVER_API_URL_FORMAT, 
             String.Format(ServerConfig.API_VERIFY_SIGNATURE, body.address, body.signature, body.message)
         ), callbackOnSuccess, callbackOnFail, "get");
+    }
+
+    //TODO: comment header 
+    public void SendLeaderboardScore(CreateLeaderboard_Post body, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        var json = JsonConvert.SerializeObject(body);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        SendRequest(string.Format(ServerConfig.LeaderboardNFT_API_URL_FORMAT, ServerConfig.API_POST_Leaderboard_Create), callbackOnSuccess, callbackOnFail, "post", dictionary);
+    }
+
+    //TODO: comment header 
+    public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        Debug.Log(ServerConfig.API_GET_Leaderboard);
+        
+        SendRequest(
+            string.Format(ServerConfig.LeaderboardNFT_API_URL_FORMAT, ServerConfig.API_GET_Leaderboard), 
+            callbackOnSuccess, 
+            callbackOnFail, 
+            "get"
+        );
     }
 
     #endregion
@@ -347,13 +372,28 @@ public class VerifySignatureResponseDto
     public string failureReason; 
 }
 
+//TODO: rename 
 [Serializable]
 public class CreateLeaderboard_Post
 {
-    public string wallet_address;
+    public string wallet;
     public int score;
 }
 
+[Serializable]
+public class LeaderboardScoreDto
+{
+    public string wallet;
+    public int score;
+}
+
+[Serializable]
+public class LeaderboardResponseDto
+{
+    public LeaderboardScoreDto[] scores;
+}
+
+//TODO: remove?
 [Serializable]
 public class LeaderBoardDatum
 {

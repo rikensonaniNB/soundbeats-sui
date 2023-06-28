@@ -12,16 +12,16 @@ public class LeaderboardManager : MonoBehaviour
         instance = this;
     }
 
-    [ContextMenu("Send Best Score - Create Leaderboard")]
-    public void SendBestScore(string url, string address, int score)
+    [ContextMenu("Send Score - Create Leaderboard")]
+    public void SendScore(string url, string address, int score)
     {
         StartCoroutine(SendCreateLeaderboard(url, address, score));
     }
-
+    
     IEnumerator SendCreateLeaderboard(string url, string address, int score)
     {
         CreateLeaderboard_Post data = new CreateLeaderboard_Post();
-        data.wallet_address = address;
+        data.wallet = address;
         data.score = score;
         string jsonData = JsonUtility.ToJson(data);
         byte[] postData = System.Text.Encoding.UTF8.GetBytes(jsonData);
@@ -44,8 +44,5 @@ public class LeaderboardManager : MonoBehaviour
             }
         }
     }
-    
-
-    
 }
 
