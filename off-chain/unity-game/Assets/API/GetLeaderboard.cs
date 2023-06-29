@@ -7,108 +7,68 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
-//TODO: is this used? Is it needed? 
 public class GetLeaderboard : MonoBehaviour
 {
-    public List<LeaderboardData> leaderboardList;
     public GameObject prefabObj;
     public Transform parentObj;
 
     void Start()
     {
-        GetLeaderboardAPI();
     }
 
+    /// <summary>
+    /// This method kicks off the process of calling the API method to get leaderboard scores, and displaying them 
+    /// in the display table. 
+    /// </summary>
     [ContextMenu("Get Leaderboard")]
     public void GetLeaderboardAPI()
     {
-        StartCoroutine(GetLeaderboards());
+        NetworkManager.Instance.GetLeaderboard(OnGetLeaderboardsSuccess, OnGetLeaderboardError);
     }
 
-    IEnumerator GetLeaderboards()
+    /// <summary>
+    /// Clears the UI row items in the leaderboard display table. 
+    /// </summary>
+    private void ClearList()
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get("http://45.79.126.10:3009/user/leaderboard"))
+        foreach (Transform s in parentObj.transform)
         {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log("Error: " + webRequest.error);
-            }
-            else
-            {
-                string jsonResponse = webRequest.downloadHandler.text;
-                Debug.Log("Json Response" + jsonResponse);
-                LeaderboardResponse response = JsonConvert.DeserializeObject<LeaderboardResponse>(jsonResponse);
-                Debug.Log("Response" + response.data.Count);
-                // Do something with the leaderboard data, e.g. add it to a custom class
-                //MyLeaderboardClass myLeaderboard = new MyLeaderboardClass();
-                leaderboardList.Clear();
-                foreach (Transform s in parentObj.transform)
-                {
-                    Destroy(s.gameObject);
-                }
-                foreach (LeaderboardData data in response.data)
-                {
-                    Debug.Log(response.data.Count);
-                    Debug.Log(data._id);
-                    Debug.Log(data.wallet_address);
-                    Debug.Log(data.score);
-                    LeaderboardData leaderboard = new LeaderboardData(data._id, data.wallet_address, data.score, data.__v);
-                    leaderboardList.Add(leaderboard);
-                    leaderboardList = leaderboardList.OrderByDescending(x => x.score).ToList();
-                    //myLeaderboard.AddData(data._id, data.wallet_address, data.score, data.__v);
-                }
-                foreach (var data in leaderboardList)
-                {
-                    var dataObject = Instantiate(prefabObj, parentObj);
-                    dataObject.GetComponent<Image>().color = SuiWallet.GetActiveAddress() == data.wallet_address ? Color.green : Color.grey;
-                    dataObject.transform.GetChild(0).GetComponent<Text>().text = data.wallet_address;
-                    dataObject.transform.GetChild(3).GetComponent<Text>().text = data.score.ToString();
-                }
-            }
+            Destroy(s.gameObject);
         }
     }
 
-    [System.Serializable]
-    public class LeaderboardData
+    /// <summary>
+    /// Adds the items in the given response to the UI table as rows. 
+    /// </summary>
+    /// <param name="response">Response from API call to get leaderboard scores.</param>
+    private void DisplayList(LeaderboardResponseDto response)
     {
-        public string _id;
-        public string wallet_address;
-        public int score;
-        public int __v;
-
-        [SerializeField]
-        public LeaderboardData(string id, string walletAddress, int _score, int version)
+        foreach (var score in response.scores)
         {
-            _id = id;
-            wallet_address = walletAddress;
-            score = _score;
-            __v = version;
+            var dataObject = Instantiate(prefabObj, parentObj);
+            dataObject.GetComponent<Image>().color = SuiWallet.GetActiveAddress() == score.wallet ? Color.green : Color.grey;
+            dataObject.transform.GetChild(0).GetComponent<Text>().text = score.wallet;
+            dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
         }
     }
 
-    [System.Serializable]
-    public class LeaderboardResponse
+    /// <summary>
+    /// Executes when the API call to get leaderboard scores succeeds. 
+    /// </summary>
+    /// <param name="response">API response object</param>
+    private void OnGetLeaderboardsSuccess(LeaderboardResponseDto response) 
     {
-        public bool success;
-        public List<LeaderboardData> data;
+        ClearList(); 
+        DisplayList(response);
     }
-}
-[Serializable]
-public class MyLeaderboardClass
-{
-    private List<string> ids = new List<string>();
-    private List<string> walletAddresses = new List<string>();
-    private List<int> scores = new List<int>();
-    private List<int> versions = new List<int>();
 
-    [SerializeField]
-    public void AddData(string id, string walletAddress, int score, int version)
+    //TODO: do on error? 
+    /// <summary>
+    /// Executes when the API call to get leaderboard scores fails.
+    /// </summary>
+    /// <param name="error">Error message</param>
+    private void OnGetLeaderboardError(string error) 
     {
-        ids.Add(id);
-        walletAddresses.Add(walletAddress);
-        scores.Add(score);
-        versions.Add(version);
+
     }
 }

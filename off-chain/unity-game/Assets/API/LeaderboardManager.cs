@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+//TODO: I think this whole class can be removed
 public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager instance;
