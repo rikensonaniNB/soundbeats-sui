@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 public class ServerConfig
 {
     // URL with place to put API method in it.
-    public const string SERVER_API_URL_FORMAT = "http://43.206.80.52/{0}";
+    public const string SERVER_API_URL_FORMAT = "http://api.soundbeats.io/{0}";
     public const string API_POST_CREATE_NFT = "api/v1/nfts";
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
@@ -21,15 +21,9 @@ public class ServerConfig
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
 
     //URL of Leaderboard and NFT
-    //TODO: rename 
-    public const string LeaderboardNFT_API_URL_FORMAT = "http://43.206.80.52/{0}";
-    public const string API_POST_Leaderboard_Create = "api/v1/leaderboard";
+    public const string LEADERBOARD_API_URL_FORMAT = "http://api.soundbeats.io/{0}";
+    public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
     public const string API_GET_Leaderboard = "api/v1/leaderboard";
-
-    //TODO: not used
-    public const string API_GET_NFT = "NFT";
-    //TODO: not used
-    public const string API_POST_NFT_Create = "NFT/create";
 }
 
 public class NetworkManager : Singleton<NetworkManager>
@@ -85,7 +79,12 @@ public class NetworkManager : Singleton<NetworkManager>
         );
     }
 
-    //TODO: comment header
+    /// <summary>
+    /// Gets the list of unique NFT types owned by the given wallet.
+    /// </summary>
+    /// <param name="wallet">Wallet address to query for NFTs</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
     public void GetUserOwnedBeatsNfts(string wallet, UnityAction<GetBeatsNftsResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         Debug.Log(ServerConfig.API_GET_BEATS_NFTS+wallet);
@@ -121,7 +120,7 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="callbackOnFail">Callback on fail.</param>
     public void SendLeaderboardScore(string wallet, int score, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
-        CreateLeaderboard_Post body = new CreateLeaderboard_Post(); 
+        CreateLeaderboardDto body = new CreateLeaderboardDto(); 
         body.wallet = wallet; 
         body.score = score;
 
@@ -134,11 +133,11 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="body">The body of the post.</param>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
-    public void SendLeaderboardScore(CreateLeaderboard_Post body, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    public void SendLeaderboardScore(CreateLeaderboardDto body, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        SendRequest(string.Format(ServerConfig.LeaderboardNFT_API_URL_FORMAT, ServerConfig.API_POST_Leaderboard_Create), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        SendRequest(string.Format(ServerConfig.LEADERBOARD_API_URL_FORMAT, ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
     }
 
     /// <summary>
@@ -151,7 +150,7 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log(ServerConfig.API_GET_Leaderboard);
         
         SendRequest(
-            string.Format(ServerConfig.LeaderboardNFT_API_URL_FORMAT, ServerConfig.API_GET_Leaderboard), 
+            string.Format(ServerConfig.LEADERBOARD_API_URL_FORMAT, ServerConfig.API_GET_Leaderboard), 
             callbackOnSuccess, 
             callbackOnFail, 
             "get"
@@ -248,7 +247,7 @@ public class NetworkManager : Singleton<NetworkManager>
         }
     }
 
-    //TODO: this class is insane, we need to get rid of 
+    //TODO: (MED) this class is insane, we need to get rid of 
     public class Root
     {
         public int amount { get; set; }
@@ -397,9 +396,8 @@ public class VerifySignatureResponseDto
     public string failureReason; 
 }
 
-//TODO: rename 
 [Serializable]
-public class CreateLeaderboard_Post
+public class CreateLeaderboardDto
 {
     public string wallet;
     public int score;
@@ -416,16 +414,6 @@ public class LeaderboardScoreDto
 public class LeaderboardResponseDto
 {
     public LeaderboardScoreDto[] scores;
-}
-
-//TODO: remove?
-[Serializable]
-public class LeaderBoardDatum
-{
-    public string _id;
-    public string wallet_address;
-    public int score;
-    public int __v;
 }
 
 #endregion

@@ -27,7 +27,7 @@ public class SuiWallet
     public static string ActiveWalletAddress = "";
     public static string ErrorMessage = "";
 
-    //TODO: this should use playerPrefs only
+    //TODO: (MED) this should use playerPrefs only
     public static string GetActiveAddress()
     {
         return SuiWallet.ActiveWalletAddress; 

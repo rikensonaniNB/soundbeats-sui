@@ -62,7 +62,7 @@ public class GetLeaderboard : MonoBehaviour
         DisplayList(response);
     }
 
-    //TODO: do on error? 
+    //TODO: (MED) do on error? 
     /// <summary>
     /// Executes when the API call to get leaderboard scores fails.
     /// </summary>

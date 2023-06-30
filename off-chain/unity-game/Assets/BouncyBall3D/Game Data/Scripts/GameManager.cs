@@ -80,7 +80,7 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
 
-        //TODO: repeated code 
+        //TODO: (HIGH) repeated code 
         //replace best score 
         if (score > bestScore)
         {
@@ -130,7 +130,7 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
         
-        //TODO: repeated code 
+        //TODO: (HIGH) repeated code 
         //replace best score 
         if (score > bestScore)
         {
@@ -176,7 +176,7 @@ public class GameManager : Singleton<GameManager>
         score = 0;
     }
 
-    //TODO: is this used? 
+    //TODO: (HIGH) is this used? 
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);

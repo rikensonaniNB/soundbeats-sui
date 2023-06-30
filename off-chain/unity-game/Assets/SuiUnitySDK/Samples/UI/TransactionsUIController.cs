@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-//TODO: can be removed probably 
+//TODO: (MED) can be removed probably 
 /*
 public class TransactionsUIController : MonoBehaviour
 {

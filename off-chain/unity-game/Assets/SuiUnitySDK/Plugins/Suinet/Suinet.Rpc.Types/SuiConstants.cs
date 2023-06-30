@@ -1,5 +1,5 @@
 ﻿
-    //TODO: can be removed?
+    //TODO: (MED) can be removed?
 /*
 namespace Suinet.Rpc.Types
 {

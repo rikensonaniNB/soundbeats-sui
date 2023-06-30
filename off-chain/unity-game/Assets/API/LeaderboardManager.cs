@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-//TODO: I think this whole class can be removed
+//TODO: (MED) I think this whole class can be removed
 public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager instance;
@@ -21,7 +21,7 @@ public class LeaderboardManager : MonoBehaviour
     
     IEnumerator SendCreateLeaderboard(string url, string address, int score)
     {
-        CreateLeaderboard_Post data = new CreateLeaderboard_Post();
+        CreateLeaderboardDto data = new CreateLeaderboardDto();
         data.wallet = address;
         data.score = score;
         string jsonData = JsonUtility.ToJson(data);

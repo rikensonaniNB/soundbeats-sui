@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Text.RegularExpressions;
 
-//TODO: can this all be removed? 
+//TODO: (MED) can this all be removed? 
 public class NFTManager : MonoBehaviour
 {
     public static NFTManager instance;
@@ -74,78 +74,4 @@ public class NFTManager : MonoBehaviour
         public string nft;
         public int __v;
     }
-
-    //TODO: this should be removable
-    /*
-    [ContextMenu("Get NFT Owned And Score")]
-    public void GetNFTSCORE(string address)
-    {
-        StartCoroutine(GetNFTSCORE_Post(address));
-    }
-
-    IEnumerator GetNFTSCORE_Post(string address)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get("http://45.79.126.10:3009/user/NFT/" + address))
-        {
-            yield return webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log("Error: " + webRequest.error);
-            }
-            else
-            {
-                string jsonResponse = webRequest.downloadHandler.text;
-                Debug.Log("Json Response" + jsonResponse);
-                GETNFTResponse response = JsonConvert.DeserializeObject<GETNFTResponse>(jsonResponse);
-                Debug.Log("Response" + response.NFTs.Count);
-                Debug.Log("Response" + response.leaderBoardData.Count);
-                // Do something with the leaderboard data, e.g. add it to a custom class
-                //MyLeaderboardClass myLeaderboard = new MyLeaderboardClass();
-                int count = 0;
-
-                foreach (NFT data in response.NFTs)
-                {
-                    Debug.Log(response.NFTs.Count);
-                    Debug.Log(data._id);
-                    Debug.Log(data.wallet_address);
-                    Debug.Log(data.nft);
-                    Debug.Log(int.Parse(data.nft.Substring(4)));
-                    PlayerPrefs.SetInt("NFTOwned_count", response.NFTs.Count);
-                    PlayerPrefs.SetInt("NFTOwned_" + count, int.Parse(data.nft.Substring(4)));
-                    count += 1;
-                    //myLeaderboard.AddData(data._id, data.wallet_address, data.score, data.__v);
-                }
-
-                if(PlayerPrefs.HasKey("NFTOwned_count"))
-                {
-                    for (int i = 0; i < PlayerPrefs.GetInt("NFTOwned_count"); i++)
-                    {
-                        GameManager.Instance.NFTOwned.Add(PlayerPrefs.GetInt("NFTOwned_" + i));
-                        PlayerPrefs.SetString("selectedIndex", PlayerPrefs.GetInt("NFTOwned_" + i).ToString());
-                        PlayerData.SelectIndex = PlayerPrefs.GetInt("NFTOwned_" + i);
-                    }
-                    uiController.GetComponent<UIController>().SelectNfts();
-                }
-
-                foreach (LeaderBoardDatum data in response.leaderBoardData)
-                {
-                    Debug.Log(response.leaderBoardData.Count);
-                    Debug.Log(data._id);
-                    Debug.Log(data.wallet_address);
-                    Debug.Log(data.score);
-                    PlayerPrefs.SetInt("bestScore", data.score);
-                }
-            }
-        }
-    }
-
-    [Serializable]
-    public class GETNFTResponse
-    {
-        public bool success;
-        public List<NFT> NFTs;
-        public List<LeaderBoardDatum> leaderBoardData;
-    }
-    */ 
 }

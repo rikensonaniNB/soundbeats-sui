@@ -1,7 +1,7 @@
 using Suinet.Rpc;
 using Suinet.Rpc.Types;
 
-//TODO: can be removed? 
+//TODO: (MED) can be removed? 
 /*
 public static class SuiApi
 {
