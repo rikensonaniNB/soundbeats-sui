@@ -57,6 +57,7 @@ export class SuiService {
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         console.log('admin address:', suiAddress);
 
+        //detect token info from blockchain 
         this._detectTokenInfo(suiAddress).then((response) => {
             if (response && response.packageId && response.treasuryCap) {
                 this.packageId = response.packageId;
@@ -65,6 +66,17 @@ export class SuiService {
         });
     }
 
+    /**
+     * Mints NFTs with the given properties in the given quantity to the specified 
+     * recipient wallet address. 
+     * 
+     * @param recipient 
+     * @param name 
+     * @param description 
+     * @param imageUrl 
+     * @param quantity 
+     * @returns MintNftResponseDto
+     */
     async mintNfts(
         recipient: string,
         name: string,
@@ -109,6 +121,13 @@ export class SuiService {
         return { signature, addresses }
     }
 
+    /**
+     * Mints tokens in the given quantity to the specified recipient. 
+     * 
+     * @param recipient 
+     * @param amount 
+     * @returns 
+     */
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string }> {
         const prevBalance = this.balanceMap.get(recipient) ?? 0
         this.balanceMap.set(recipient, prevBalance + amount);
