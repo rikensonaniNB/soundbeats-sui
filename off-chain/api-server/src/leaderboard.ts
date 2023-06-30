@@ -6,6 +6,10 @@ export interface ILeaderboard {
     addLeaderboardScore(wallet: string, score: number): { score: number }
 }
 
+/***
+ * Implementation of ILeaderboard that just stores the data in memory (which is wiped out when 
+ * the application is restarted; so this is more used for testing)
+ */
 class LeaderboardMemory implements ILeaderboard {
     leaderboardMap: Map<string, number>
 
@@ -50,6 +54,11 @@ class LeaderboardMemory implements ILeaderboard {
     }
 }
 
+/**
+ * Implementation of ILeaderboard that stores data in local JSON files. 
+ * While this is still used for testing, it's a step beyond LeaderboardMemory, as it persists 
+ * the data. 
+ */
 class LeaderboardJsonFile extends LeaderboardMemory {
 
     constructor() {
@@ -89,6 +98,11 @@ class LeaderboardJsonFile extends LeaderboardMemory {
     }
 }
 
+/**
+ * Returns an instance of ILeaderboard that will be used for accessing the leaderboard database.
+ * 
+ * @returns ILeaderboard instance 
+ */
 export function getLeaderboardInstance(): ILeaderboard {
     return new LeaderboardJsonFile();
 }

@@ -16,8 +16,6 @@ import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 
-//TODO: add comment headers to methods 
-
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
     return Array.from(utf8Encode.encode(str).values())
@@ -163,20 +161,34 @@ export class SuiService {
         return { signature };
     }
 
-    async getTokenBalance(address: string): Promise<{ balance: number }> {
+    /**
+     * Retrieves the balance of BEATS token from the blockchain, for the given wallet address. 
+     * 
+     * @param wallet 
+     * @returns GetTokenBalanceResponseDto
+     */
+    async getTokenBalance(wallet: string): Promise<{ balance: number }> {
 
         const tokenType = `${this.packageId}::beats::BEATS`;
         const result = await this.provider.getBalance({
-            owner: address,
+            owner: wallet,
             coinType: tokenType
         });
         return { balance: parseInt(result.totalBalance) };
     }
 
-    async verifySignature(address: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string }> {
+    /**
+     * Verifies that the signature of the given message originated from the given wallet address. 
+     * 
+     * @param wallet 
+     * @param signature 
+     * @param message 
+     * @returns VerifySignatureResponseDto
+     */
+    async verifySignature(wallet: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string }> {
         const output = {
             verified: false,
-            address: address,
+            address: wallet,
             failureReason: ""
         };
 
@@ -184,7 +196,7 @@ export class SuiService {
             const sig = fromSerializedSignature(signature);
 
             //signature pubkey should match address given
-            if (sig.pubKey.toSuiAddress() == address) {
+            if (sig.pubKey.toSuiAddress() == wallet) {
                 output.verified = await verifyMessage(
                     new TextEncoder().encode(message),
                     signature,
@@ -207,12 +219,19 @@ export class SuiService {
         return output;
     }
 
-    async getUserNFTs(address: string): Promise<{ nfts: { name: string, url: string }[] }> {
+    /**
+     * Examines all instances of BEATS NFTs owned by the given wallet address, and returns a list 
+     * of the unique NFT types owned by the address.  
+     * 
+     * @param wallet 
+     * @returns GetBeatsNftsResponseDto
+     */
+    async getUserNFTs(wallet: string): Promise<{ nfts: { name: string, url: string }[] }> {
         const output: { nfts: { name: string, url: string }[] } = { nfts: [] };
 
         //get objects owned by user
         const response = await this.provider.getOwnedObjects({
-            owner: address,
+            owner: wallet,
             options: {
                 showType: true,
                 showContent: true
@@ -248,26 +267,55 @@ export class SuiService {
         return output;
     }
 
+    /**
+     * Returns the leaderboard score of the given wallet (default 0). 
+     * 
+     * @param wallet 
+     * @returns LeaderboardDto
+     */
     getLeaderboardScore(wallet: string): { wallet: string, score: number } {
         return this.leaderboard.getLeaderboardScore(wallet);
     }
 
+    /**
+     * Returns all leaderboard scores, or the leaderboard score of the given wallet only, 
+     * if the wallet parameter is provided (i.e., if 'wallet' is null or undefined, returns ALL scores)
+     * 
+     * @param wallet 
+     * @returns GetLeaderboardResponseDto
+     */
     getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] } {
         //if (wallet && wallet.length)
         //    this.leaderboard.addLeaderboardScore(wallet, 100);
         return this.leaderboard.getLeaderboardScores(wallet);
     }
 
-    addLeaderboardScore(address: string, score: number): { score: number } {
-        return this.leaderboard.addLeaderboardScore(address, score);
+    /**
+     * Adds a new leaderboard score for the given wallet address. 
+     * 
+     * @param wallet 
+     * @param score 
+     * @returns LeaderboardDto
+     */
+    addLeaderboardScore(wallet: string, score: number): { score: number } {
+        return this.leaderboard.addLeaderboardScore(wallet, score);
     }
 
-    async _detectTokenInfo(address: string): Promise<{ packageId: string, treasuryCap: string } | null> {
+    /**
+     * From objects owned by the admin wallet, extracts the package id and object id of the 
+     * BEATS token and NFT library. 
+     * 
+     * NOTE: 20 nights in the ice is a long time, when there's hostiles on the hill
+     * 
+     * @param wallet 
+     * @returns A package id and treasury cap id
+     */
+    async _detectTokenInfo(wallet: string): Promise<{ packageId: string, treasuryCap: string } | null> {
         let output = null;
 
         //get owned objects
         const objects = await this.provider.getOwnedObjects({
-            owner: address,
+            owner: wallet,
             options: {
                 showType: true,
                 showContent: true,
@@ -306,6 +354,14 @@ export class SuiService {
         return output;
     }
 
+    /**
+     * Creates a Json RPC provider for the given environment (default devnet)
+     * 
+     * NOTE: it's not about what you wear; it's all about where you are
+     * 
+     * @param environment 
+     * @returns JsonRpcProvider
+     */
     _createRpcProvider(environment: String): JsonRpcProvider {
         if (!environment)
             environment = "DEVNET"; 
