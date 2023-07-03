@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     private const int SIGNING_MESSAGE_LENGTH = 32;
-    private const bool FAKE_SIGNIN = true;
+    private const bool FAKE_SIGNIN = false;
     private static string MessageToSign = "";
 
     //call to request the front end Javascript code to sign a message 
