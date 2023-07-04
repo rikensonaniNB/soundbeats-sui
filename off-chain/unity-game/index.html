@@ -119,11 +119,11 @@
       //Handles request from the Unity code to sign a given message, then sends the signature back to Unity
       window.SuiSignMessage = async function(data){ 
         if (window.martian) {
-		      await(sleep(200));
+		      //await(sleep(200));
 
           window.martian.sui.connect().then(async () => {
-		        await(sleep(500));
-            await window.martian.sui.isConnected(); 
+		        //await(sleep(500));
+            //await window.martian.sui.isConnected(); 
 
             window.martian.sui.signMessage({message:toUTF8Array(data)}).then((signature) => {
               console.log('account ', window.martian.sui.accounts[0].address)
