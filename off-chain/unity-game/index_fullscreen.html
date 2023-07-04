@@ -109,7 +109,7 @@
       }
           
       //Handles request from the Unity code to sign a given message, then sends the signature back to Unity
-      window.SuiSignMessage = function(data){ 
+      window.SuiSignMessage = async function(data){ 
         if (window.martian) {
 		      await(sleep(200));
 
