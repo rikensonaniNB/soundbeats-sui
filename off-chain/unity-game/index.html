@@ -136,7 +136,7 @@
           
       //Detects presence of Martian wallet, then sends a message back to Unity if not present
       window.DetectMartianWallet = async function(data){ 
-		    await(sleep(200));
+		    //await(sleep(200));
         const detected = window.martian ? 1 : 0;
         
         unityGameInstance.SendMessage("Menu", "DetectMartianWalletCallback", detected);
