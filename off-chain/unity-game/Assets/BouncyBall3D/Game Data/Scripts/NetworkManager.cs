@@ -30,9 +30,8 @@ public class ServerConfig
     public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
 
     //URL of Leaderboard and NFT
-    public const string LEADERBOARD_API_URL_FORMAT = "http://{0}/{1}";
     public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
-    public const string API_GET_Leaderboard = "api/v1/leaderboard";
+    public const string API_GET_LEADERBOARD = "api/v1/leaderboard";
 
     public static string GetServerDomain()
     {
@@ -167,7 +166,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         var json = JsonConvert.SerializeObject(body);
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        SendRequest(string.Format(ServerConfig.LEADERBOARD_API_URL_FORMAT, ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
     }
 
     /// <summary>
@@ -177,10 +176,10 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="callbackOnFail">Callback on fail.</param>
     public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
-        Debug.Log(ServerConfig.API_GET_Leaderboard);
+        Debug.Log(ServerConfig.API_GET_LEADERBOARD);
         
         SendRequest(
-            string.Format(ServerConfig.LEADERBOARD_API_URL_FORMAT, ServerConfig.API_GET_Leaderboard), 
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_LEADERBOARD), 
             callbackOnSuccess, 
             callbackOnFail, 
             "get"
