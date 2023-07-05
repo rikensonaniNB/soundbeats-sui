@@ -49,7 +49,7 @@ class LeaderboardMemory implements ILeaderboard {
         if (this.leaderboardMap.has(wallet))
             output.score = this.leaderboardMap.get(wallet);
 
-        output.score += score;
+        output.score = parseInt(output.score.toString()) + parseInt(score.toString());
         this.leaderboardMap.set(wallet, output.score);
 
         return output;
