@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 class ResponseDtoBase {
-    @ApiProperty({ network: 'The current network (e.g. devnet)' })
+    @ApiProperty({ description: 'The current network (e.g. devnet)' })
     network: string
 }
 
@@ -43,8 +43,6 @@ export class MintNftResponseDto extends ResponseDtoBase {
 export class RequestNFTResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The signature of the transaction' })
     signature: string
-    @ApiProperty({ network: 'The current network (e.g. devnet)' })
-    network: string
 }
 
 export class MintTokenResponseDto extends ResponseDtoBase {

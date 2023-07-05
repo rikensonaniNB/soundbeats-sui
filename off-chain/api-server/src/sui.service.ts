@@ -37,18 +37,20 @@ export class SuiService {
 
     constructor() {
         this.balanceMap = new Map();
-        this.leaderboard = getLeaderboardInstance();
-        
+
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
         //create connect to the correct environment
         this.network = process.env.SUI_NETWORK;
-        this.provider = this._createRpcProvider(this.network)
+        this.provider = this._createRpcProvider(this.network);
 
         //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
         this.client = new NftClient(this.provider as any);
+
+        //leaderboard
+        this.leaderboard = getLeaderboardInstance(this.network);
 
         //TODO: these can be auto-detected with _detectTokenInfo
         this.packageId = process.env.PACKAGE_ID;
@@ -160,7 +162,7 @@ export class SuiService {
         }
 
         const signature = result.effects?.transactionDigest;
-        return { signature };
+        return { signature, network: this.network };
     }
 
     /**
@@ -176,8 +178,8 @@ export class SuiService {
             owner: wallet,
             coinType: tokenType
         });
-        return { 
-            balance: parseInt(result.totalBalance), network:this.network 
+        return {
+            balance: parseInt(result.totalBalance), network: this.network
         };
     }
 
@@ -193,8 +195,8 @@ export class SuiService {
         const output = {
             verified: false,
             address: wallet,
-            failureReason: "", 
-            network:this.network 
+            failureReason: "",
+            network: this.network
         };
 
         try {
@@ -232,7 +234,7 @@ export class SuiService {
      * @returns GetBeatsNftsResponseDto
      */
     async getUserNFTs(wallet: string): Promise<{ nfts: { name: string, url: string }[]; network: string }> {
-        const output: { nfts: { name: string, url: string }[]; network:string  } = { nfts: [], network: this.network};
+        const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
         const response = await this.provider.getOwnedObjects({
@@ -289,7 +291,7 @@ export class SuiService {
      * @param wallet 
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number; network: string }[] } {
+    getLeaderboardScores(wallet: string): { scores: { wallet: string; score: number }[]; network: string } {
         //if (wallet && wallet.length)
         //    this.leaderboard.addLeaderboardScore(wallet, 100);
         return this.leaderboard.getLeaderboardScores(wallet);
@@ -369,8 +371,8 @@ export class SuiService {
      */
     _createRpcProvider(environment: String): JsonRpcProvider {
         if (!environment)
-            environment = "DEVNET"; 
-            
+            environment = "DEVNET";
+
         switch (environment.toUpperCase()) {
             case "LOCALNET":
                 return new JsonRpcProvider(localnetConnection);

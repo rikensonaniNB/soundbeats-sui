@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 
 export interface ILeaderboard {
-    getLeaderboardScore(wallet: string): { wallet: string, score: number };
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] }
-    addLeaderboardScore(wallet: string, score: number): { score: number }
+    getLeaderboardScore(wallet: string): { wallet: string, score: number, network: string };
+    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[], network: string }
+    addLeaderboardScore(wallet: string, score: number): { score: number, network: string }
 }
 
 /***
@@ -105,6 +105,6 @@ class LeaderboardJsonFile extends LeaderboardMemory {
  * 
  * @returns ILeaderboard instance 
  */
-export function getLeaderboardInstance(): ILeaderboard {
-    return new LeaderboardJsonFile();
+export function getLeaderboardInstance(network: string): ILeaderboard {
+    return new LeaderboardJsonFile(network);
 }
