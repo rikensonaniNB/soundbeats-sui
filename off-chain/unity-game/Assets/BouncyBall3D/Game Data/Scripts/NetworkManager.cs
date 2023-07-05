@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 public class ServerConfig
 {
     // URL with place to put API method in it.
-    public const string SERVER_API_URL_FORMAT = "http://api.soundbeats.io/{0}";
+    public const string SERVER_API_URL_FORMAT = "http://{0}/{1}";
     public const string API_POST_CREATE_NFT = "api/v1/nfts";
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
@@ -20,10 +20,29 @@ public class ServerConfig
     public const string API_GET_BEATS_NFTS = "api/v1/nfts?wallet=";
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
 
+    //devnet urls
+    public const string API_DOMAIN_DEVNET = "dev-api.soundbeats.io";
+
+    //testnet urls 
+    public const string API_DOMAIN_TESTNET = "test-api.soundbeats.io";
+
+    //mainnet urls 
+    public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
+
     //URL of Leaderboard and NFT
-    public const string LEADERBOARD_API_URL_FORMAT = "http://api.soundbeats.io/{0}";
+    public const string LEADERBOARD_API_URL_FORMAT = "http://{0}/{1}";
     public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
     public const string API_GET_Leaderboard = "api/v1/leaderboard";
+
+    public static string GetServerDomain()
+    {
+        return API_DOMAIN_TESTNET; 
+    }
+ 
+    public static string FormatServerUrl(string path = "") 
+    {
+        return String.Format(ServerConfig.SERVER_API_URL_FORMAT, GetServerDomain(), path);
+    }
 }
 
 public class NetworkManager : Singleton<NetworkManager>
@@ -41,7 +60,13 @@ public class NetworkManager : Singleton<NetworkManager>
         //Debug.Log("Json   " + json);
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         //Debug.Log("Dictionary  " + dictionary["signature"]);
-        SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_POST_CREATE_NFT), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        SendRequest(
+            ServerConfig.FormatServerUrl(ServerConfig.API_POST_CREATE_NFT), 
+            callbackOnSuccess, 
+            callbackOnFail, 
+            "post", 
+            dictionary
+        );
     }
 
     /// <summary>
@@ -59,7 +84,13 @@ public class NetworkManager : Singleton<NetworkManager>
         {
             Debug.Log("You have " + items.Value + " " + items.Key);
         }
-        SendRequest(string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_POST_REQUEST_PRIVATE_TOKEN), callbackOnSuccess, callbackOnFail, "postToken",dictionary);
+        SendRequest(
+            ServerConfig.FormatServerUrl(ServerConfig.API_POST_REQUEST_PRIVATE_TOKEN), 
+            callbackOnSuccess, 
+            callbackOnFail, 
+            "postToken",
+            dictionary
+        );
     }
 
     /// <summary>
@@ -72,7 +103,7 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet);
         
         SendRequest(
-            string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), 
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_PRIVATE_TOKEN_BALANCE+wallet), 
             callbackOnSuccess, 
             callbackOnFail, 
             "get"
@@ -90,7 +121,7 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log(ServerConfig.API_GET_BEATS_NFTS+wallet);
 
         SendRequest(
-            string.Format(ServerConfig.SERVER_API_URL_FORMAT, ServerConfig.API_GET_BEATS_NFTS+wallet), 
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_BEATS_NFTS+wallet), 
             callbackOnSuccess, 
             callbackOnFail, 
             "get"
@@ -105,9 +136,8 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="callbackOnFail">Callback on fail.</param>
     public void VerifySignature(VerifySignatureDto body, UnityAction<VerifySignatureResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
-        SendRequest(string.Format(
-            ServerConfig.SERVER_API_URL_FORMAT, 
-            String.Format(ServerConfig.API_VERIFY_SIGNATURE, body.address, body.signature, body.message)
+        SendRequest(
+            ServerConfig.FormatServerUrl(String.Format(ServerConfig.API_VERIFY_SIGNATURE, body.address, body.signature, body.message)
         ), callbackOnSuccess, callbackOnFail, "get");
     }
 
