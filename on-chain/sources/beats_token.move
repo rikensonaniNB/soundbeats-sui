@@ -1,5 +1,6 @@
 module soundbeats::beats {
     use std::option;
+    use sui::url;
     use sui::coin::{Self, Coin, TreasuryCap};
     use sui::transfer;
     use sui::tx_context::{Self, TxContext};
@@ -13,7 +14,17 @@ module soundbeats::beats {
     /// registered once.
     fun init(witness: BEATS, ctx: &mut TxContext) {
         // Get a treasury cap for the coin and give it to the transaction sender
-        let (treasury_cap, metadata) = coin::create_currency<BEATS>(witness, 2, b"BEATS", b"", b"", option::none(), ctx);
+        //let foo = option::Option<sui::url> { vec: b"" };
+        
+        let (treasury_cap, metadata) = coin::create_currency<BEATS>(
+            witness, 
+            2, 
+            b"BEATS", 
+            b"Soundbeats", 
+            b"Soundbeats", 
+            option::some(url::new_unsafe_from_bytes(b"http://game.soundbeats.io/beats-icon.png")),
+            ctx
+        );
         transfer::public_freeze_object(metadata);
         transfer::public_transfer(treasury_cap, tx_context::sender(ctx))
     }
