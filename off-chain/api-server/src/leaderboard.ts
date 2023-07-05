@@ -11,14 +11,16 @@ export interface ILeaderboard {
  * the application is restarted; so this is more used for testing)
  */
 class LeaderboardMemory implements ILeaderboard {
-    leaderboardMap: Map<string, number>
+    leaderboardMap: Map<string, number>;
+    network: string;
 
-    constructor() {
+    constructor(network: string) {
         this.leaderboardMap = new Map();
+        this.network = network;
     }
 
-    getLeaderboardScore(wallet: string): { wallet: string, score: number } {
-        const output = { wallet, score: 0 };
+    getLeaderboardScore(wallet: string): { wallet: string, score: number, network: string } {
+        const output = { wallet, score: 0, network: this.network };
 
         if (this.leaderboardMap.has(wallet))
             output.score = this.leaderboardMap.get(wallet);
@@ -26,8 +28,8 @@ class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] } {
-        let output = { scores: [] };
+    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[], network: string } {
+        let output = { scores: [], network: this.network };
 
         if (wallet && wallet.length > 0) {
             output.scores.push(this.getLeaderboardScore(wallet));
@@ -41,8 +43,8 @@ class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    addLeaderboardScore(wallet: string, score: number): { score: number } {
-        const output = { score: 0 };
+    addLeaderboardScore(wallet: string, score: number): { score: number, network: string } {
+        const output = { score: 0, network: this.network };
 
         if (this.leaderboardMap.has(wallet))
             output.score = this.leaderboardMap.get(wallet);
@@ -61,12 +63,12 @@ class LeaderboardMemory implements ILeaderboard {
  */
 class LeaderboardJsonFile extends LeaderboardMemory {
 
-    constructor() {
-        super();
+    constructor(network: string) {
+        super(network);
         this._readFromFiles();
     }
 
-    addLeaderboardScore(wallet: string, score: number): { score: number } {
+    addLeaderboardScore(wallet: string, score: number): { score: number, network: string } {
         const output = super.addLeaderboardScore(wallet, score);
 
         this._writeToFile(wallet);

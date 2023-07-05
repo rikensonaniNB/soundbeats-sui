@@ -33,6 +33,7 @@ export class SuiService {
     treasuryCap: string
     balanceMap: Map<string, number> //TODO: not using balanceMap for anything meaningful?
     leaderboard: ILeaderboard
+    network: string
 
     constructor() {
         this.balanceMap = new Map();
@@ -42,7 +43,8 @@ export class SuiService {
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
         //create connect to the correct environment
-        this.provider = this._createRpcProvider(process.env.SUI_ENVIRONMENT)
+        this.network = process.env.SUI_NETWORK;
+        this.provider = this._createRpcProvider(this.network)
 
         //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
@@ -81,7 +83,7 @@ export class SuiService {
         description: string,
         imageUrl: string,
         quantity: number,
-    ): Promise<{ signature: string; addresses: string[] }> {
+    ): Promise<{ signature: string; addresses: string[]; network: string }> {
 
         //mint nft to recipient 
         const tx = new TransactionBlock();
@@ -116,7 +118,7 @@ export class SuiService {
         const signature = result.effects.transactionDigest
         const addresses = result.effects.created?.map((obj) => obj.reference.objectId) ?? []
 
-        return { signature, addresses }
+        return { signature, addresses, network: this.network }
     }
 
     /**
@@ -126,7 +128,7 @@ export class SuiService {
      * @param amount 
      * @returns 
      */
-    async mintTokens(recipient: string, amount: number): Promise<{ signature: string }> {
+    async mintTokens(recipient: string, amount: number): Promise<{ signature: string; network: string }> {
         const prevBalance = this.balanceMap.get(recipient) ?? 0
         this.balanceMap.set(recipient, prevBalance + amount);
 
@@ -167,14 +169,16 @@ export class SuiService {
      * @param wallet 
      * @returns GetTokenBalanceResponseDto
      */
-    async getTokenBalance(wallet: string): Promise<{ balance: number }> {
+    async getTokenBalance(wallet: string): Promise<{ balance: number; network: string }> {
 
         const tokenType = `${this.packageId}::beats::BEATS`;
         const result = await this.provider.getBalance({
             owner: wallet,
             coinType: tokenType
         });
-        return { balance: parseInt(result.totalBalance) };
+        return { 
+            balance: parseInt(result.totalBalance), network:this.network 
+        };
     }
 
     /**
@@ -185,11 +189,12 @@ export class SuiService {
      * @param message 
      * @returns VerifySignatureResponseDto
      */
-    async verifySignature(wallet: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string }> {
+    async verifySignature(wallet: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string; network: string }> {
         const output = {
             verified: false,
             address: wallet,
-            failureReason: ""
+            failureReason: "", 
+            network:this.network 
         };
 
         try {
@@ -226,8 +231,8 @@ export class SuiService {
      * @param wallet 
      * @returns GetBeatsNftsResponseDto
      */
-    async getUserNFTs(wallet: string): Promise<{ nfts: { name: string, url: string }[] }> {
-        const output: { nfts: { name: string, url: string }[] } = { nfts: [] };
+    async getUserNFTs(wallet: string): Promise<{ nfts: { name: string, url: string }[]; network: string }> {
+        const output: { nfts: { name: string, url: string }[]; network:string  } = { nfts: [], network: this.network};
 
         //get objects owned by user
         const response = await this.provider.getOwnedObjects({
@@ -273,7 +278,7 @@ export class SuiService {
      * @param wallet 
      * @returns LeaderboardDto
      */
-    getLeaderboardScore(wallet: string): { wallet: string, score: number } {
+    getLeaderboardScore(wallet: string): { wallet: string, score: number; network: string } {
         return this.leaderboard.getLeaderboardScore(wallet);
     }
 
@@ -284,7 +289,7 @@ export class SuiService {
      * @param wallet 
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[] } {
+    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number; network: string }[] } {
         //if (wallet && wallet.length)
         //    this.leaderboard.addLeaderboardScore(wallet, 100);
         return this.leaderboard.getLeaderboardScores(wallet);
@@ -297,7 +302,7 @@ export class SuiService {
      * @param score 
      * @returns LeaderboardDto
      */
-    addLeaderboardScore(wallet: string, score: number): { score: number } {
+    addLeaderboardScore(wallet: string, score: number): { score: number; network: string } {
         return this.leaderboard.addLeaderboardScore(wallet, score);
     }
 

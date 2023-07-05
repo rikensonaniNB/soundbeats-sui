@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+class ResponseDtoBase {
+    @ApiProperty({ network: 'The current network (e.g. devnet)' })
+    network: string
+}
+
 export class MintNftDto {
     @ApiProperty({ description: 'Name of the NFT' })
     name: string
@@ -28,24 +33,26 @@ export class GetBeatsNftsDto {
     wallet: string
 }
 
-export class MintNftResponseDto {
+export class MintNftResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The signature of the transaction' })
     signature: string
     @ApiProperty({ description: 'The list of NFT addresses minted' })
     addresses: string[]
 }
 
-export class RequestNFTResponseDto {
+export class RequestNFTResponseDto extends ResponseDtoBase {
+    @ApiProperty({ description: 'The signature of the transaction' })
+    signature: string
+    @ApiProperty({ network: 'The current network (e.g. devnet)' })
+    network: string
+}
+
+export class MintTokenResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The signature of the transaction' })
     signature: string
 }
 
-export class MintTokenResponseDto {
-    @ApiProperty({ description: 'The signature of the transaction' })
-    signature: string
-}
-
-export class GetTokenBalanceResponseDto {
+export class GetTokenBalanceResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The balance of the wallet' })
     balance: number
 }
@@ -55,7 +62,7 @@ export class BeatsNftDto {
     url: string
 }
 
-export class GetBeatsNftsResponseDto {
+export class GetBeatsNftsResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The unique names of NFTs owned' })
     nfts: BeatsNftDto[]
 }
@@ -69,7 +76,7 @@ export class VerifySignatureDto {
     message: string
 }
 
-export class VerifySignatureResponseDto {
+export class VerifySignatureResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'Whether or not the signature was verified' })
     verified: boolean
     @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
@@ -90,7 +97,7 @@ export class LeaderboardDto {
     score: number
 }
 
-export class GetLeaderboardResponseDto {
+export class GetLeaderboardResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The total score of each user' })
     scores: LeaderboardDto[]
 }
@@ -102,7 +109,7 @@ export class AddLeaderboardDto {
     score: number
 }
 
-export class AddLeaderboardResponseDto {
+export class AddLeaderboardResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The total score of the user' })
     score: number
 }
