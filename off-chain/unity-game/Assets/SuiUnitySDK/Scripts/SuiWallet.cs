@@ -4,7 +4,7 @@ using UnityEngine;
 public class SuiExplorer 
 {
     public const string ExplorerUri = "https://suiexplorer.com/"; 
-    public const string Network = "devnet";
+    public const string Network = "testnet";
 
     public static string FormatAddressUri(string address)
     {
