@@ -143,7 +143,7 @@ public class GameManager : Singleton<GameManager>
         {
             NetworkManager.Instance.SendLeaderboardScore(
                 PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
-                bestScore, 
+                score, 
                 null, 
                 null
             );
