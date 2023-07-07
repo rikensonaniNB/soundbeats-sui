@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//TODO: is this used?
 public class SavingHandler : Singleton<SavingHandler>
 {
     public int bestScore = 0;

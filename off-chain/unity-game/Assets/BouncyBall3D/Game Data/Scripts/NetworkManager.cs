@@ -391,7 +391,7 @@ public class RequestTokenResponseDto
 }
 
 [Serializable]
-public class BeatsNftoDto 
+public class BeatsNftDto 
 {
     public string name;
     public string address;
@@ -400,7 +400,7 @@ public class BeatsNftoDto
 [Serializable]
 public class GetBeatsNftsResponseDto
 {
-    public BeatsNftoDto[] nfts;
+    public BeatsNftDto[] nfts;
 }
 
 [Serializable]

@@ -23,11 +23,16 @@ public class SuiExplorer
 public class SuiWallet
 {
     public const string WalletAddressKey = "suiaddress"; 
-
-    public static string ActiveWalletAddress = "";
     public static string ErrorMessage = "";
 
-    //TODO: (MED) this should use playerPrefs only
+    public static string ActiveWalletAddress {
+        get { return PlayerPrefs.GetString(WalletAddressKey); }
+        set {
+            PlayerPrefs.SetString(WalletAddressKey, value);
+        }
+    }
+    
+    //TODO: can get rid of this, since we have the property 
     public static string GetActiveAddress()
     {
         return SuiWallet.ActiveWalletAddress; 
