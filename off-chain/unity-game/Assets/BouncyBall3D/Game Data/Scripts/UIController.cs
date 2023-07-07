@@ -165,7 +165,8 @@ public class UIController : MonoBehaviour
         NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
         NftUiElements_Anna.CharacterSprite = Character_Anna;
         NftUiElements_Anna.Name = "Anna";
-        NftUiElements_Anna.ImageUrl = "char_15.png";
+        //TODO: hard-coded for now, but make it dynamic
+        NftUiElements_Anna.ImageUrl = "http://game.soundbeats.io/nft-images/Anna.png";
         NftUiElements_Anna.SelectedSprite = sprite_Green;
         NftUiElements_Anna.UnselectedSprite = sprite_Pink;
         
@@ -176,7 +177,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
         NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
         NftUiElements_Marshmallow.Name = "Melloow";
-        NftUiElements_Marshmallow.ImageUrl = "char_19.png";
+        NftUiElements_Marshmallow.ImageUrl = "http://game.soundbeats.io/nft-images/Melloow.png";
         NftUiElements_Marshmallow.SelectedSprite = sprite_Green;
         NftUiElements_Marshmallow.UnselectedSprite = sprite_Pink;
 
@@ -188,7 +189,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Taral.CharacterSprite = Character_Taral;
         NftUiElements_Taral.Locked = true;
         NftUiElements_Taral.Name = "Taral";
-        NftUiElements_Taral.ImageUrl = "char_Taral.png";
+        NftUiElements_Taral.ImageUrl = "http://game.soundbeats.io/nft-images/Taral.png";
         NftUiElements_Taral.SelectedSprite = sprite_Green;
         NftUiElements_Taral.UnselectedSprite = sprite_Pink;
 
