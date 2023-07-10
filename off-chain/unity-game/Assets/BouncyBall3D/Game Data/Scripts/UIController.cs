@@ -1,3 +1,5 @@
+//#define FAKE_SIGNIN
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,12 +8,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-//TODO: make public what should be public, private what should be private
-
 public class UIController : MonoBehaviour
-{
+{ 
     private const int SIGNING_MESSAGE_LENGTH = 32;
-    private const bool FAKE_SIGNIN = false;
     private static string MessageToSign = "";
 
     //call to request the front end Javascript code to sign a message 
@@ -175,7 +174,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
         NftUiElements_Anna.CharacterSprite = Character_Anna;
         NftUiElements_Anna.Name = "Anna";
-        //TODO: hard-coded for now, but make it dynamic
+        //TODO: (HIGH) hard-coded for now, but make it dynamic
         NftUiElements_Anna.ImageUrl = "http://game.soundbeats.io/nft-images/Anna.png";
         NftUiElements_Anna.SelectedSprite = sprite_Green;
         NftUiElements_Anna.UnselectedSprite = sprite_Pink;
@@ -213,10 +212,11 @@ public class UIController : MonoBehaviour
                     MessageToSign = GenerateRandomMessage();
 
                     //this is for development only
-                    if (FAKE_SIGNIN) 
+                    #if FAKE_SIGNIN
                         SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
-                    else  
+                    #else  
                         CallSuiSignMessage(MessageToSign); 
+                    #endif
                 }
             }
             catch(Exception e) {
@@ -245,7 +245,7 @@ public class UIController : MonoBehaviour
             if (selectedIndex >= 0)
                 PlayerPrefsExtra.SetInt("selectedIndex", selectedIndex);
 
-            //TODO: replace all PlayerData with UserData 
+            //TODO: (HIGH) replace all PlayerData with UserData 
             PlayerData.NFTAddress ="";
             PlayerData.totalBalance = 0;
 
@@ -392,7 +392,7 @@ public class UIController : MonoBehaviour
     /// (part of login process).
     /// </summary>
     /// <returns>Randomized alphanumeric string</returns>
-    public string GenerateRandomMessage() 
+    private string GenerateRandomMessage() 
     {
         var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var stringChars = new char[SIGNING_MESSAGE_LENGTH];
@@ -402,10 +402,11 @@ public class UIController : MonoBehaviour
             stringChars[i] = chars[random.Next(chars.Length)];
 
         //this is for development only
-        if (FAKE_SIGNIN) 
+        #if FAKE_SIGNIN
             return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
-
-        return new String(stringChars);
+        #else
+            return new String(stringChars);
+        #endif
     }
 
     /// <summary>
@@ -413,7 +414,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     /// <param name="response">A string of two elements delimited by ':'. First element is the signature, the second element is 
     /// the user's wallet address (which was used to sign the message).</param>
-    public void SignMessageCallback(string response)
+    private void SignMessageCallback(string response)
     {
         Debug.Log("SignMessageCallback");
         string[] args = response.Split(':'); 
@@ -443,7 +444,7 @@ public class UIController : MonoBehaviour
     /// After detecting the presence or non-presence of martian wallet, the front-end will call this callback. 
     /// </summary>
     /// <param name="detected"></param>
-    public void DetectMartianWalletCallback(int detected)
+    private void DetectMartianWalletCallback(int detected)
     {
         if (detected == 0)
         {
@@ -468,7 +469,7 @@ public class UIController : MonoBehaviour
     /// <summary>
     /// Shows the home screen (after logging in).
     /// </summary>
-    void ShowHomeScreen() 
+    private void ShowHomeScreen() 
     {
         HomeScreen.SetActive(true);
         PlaySongScreen.SetActive(true);
@@ -503,12 +504,12 @@ public class UIController : MonoBehaviour
     /// <summary>
     /// Opens the NFT 
     /// </summary>
-    void ShowNftScreen()
+    private void ShowNftScreen()
     {
         Mint_NFTScreen.SetActive(true);
     }
 
-    //TODO: I don't think this method is ever called 
+    //TODO: (LOW) I don't think this method is ever called 
     public void SelectNfts()
     { 
         if (PlayerPrefsExtra.HasKey(SuiWallet.WalletAddressKey))
@@ -561,7 +562,7 @@ public class UIController : MonoBehaviour
     /// <summary>
     /// Shows the screen that allows users to choose an NFT image as their player avatar. 
     /// </summary>
-    //TODO: not sure when this is ever called
+    //TODO: (LOW) not sure when this is ever called
     public void ShowPlayerSelectionScreen()
     {
         this.SetSelectedNfts();
@@ -572,7 +573,7 @@ public class UIController : MonoBehaviour
     /// This handles the Mint NFT or Select button click on the home screen. 
     /// </summary>
     /// <param name="index"></param>
-    public void MintButtonClick(int index) {
+    private void MintButtonClick(int index) {
         var selectedNft = this.NftUiList[index];
 
         //ignore the locked 
@@ -587,7 +588,7 @@ public class UIController : MonoBehaviour
             blockImage.SetActive(false);
 
             //Total NFT owned by user and its index number
-            //TODO: what is this doing? 
+            //TODO: (MED) what is this doing? 
             if (!GameManager.Instance.NFTOwned.Contains(index))
             {
                 GameManager.Instance.NFTOwned.Add(index);
@@ -616,7 +617,7 @@ public class UIController : MonoBehaviour
     /// the top right corner. 
     /// </summary>
     /// <param name="index">The index of the clicked item.</param>
-    public void MintNftScreenButtonClick(int index) 
+    private void MintNftScreenButtonClick(int index) 
     {
         var selectedItem = this.NftUiList[index]; 
 
@@ -631,7 +632,7 @@ public class UIController : MonoBehaviour
         }
 
         //Total NFT owned by user and its index number
-        //TODO: not sure why this is needed 
+        //TODO: (MED) not sure why this is needed 
         if(!GameManager.Instance.NFTOwned.Contains(index))
         {
             GameManager.Instance.NFTOwned.Add(index);
@@ -642,7 +643,11 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void SetSelectedNft(int index)
+    /// <summary>
+    /// Sets the NFT that's currently selected, and updates the UI accordingly. 
+    /// </summary>
+    /// <param name="index">The index of the selected NFT.</param>
+    private void SetSelectedNft(int index)
     {
         if (UserData.OwnsNft(index))
             UserData.SelectedNftIndex = index;
@@ -653,7 +658,7 @@ public class UIController : MonoBehaviour
     /// This goes through the list of NFT UI elements, and sets the correct colors, text, etc. for each one based on 
     /// whether or not the NFT is owned, selected, or locked.
     /// </summary>
-    public void SetSelectedNfts() 
+    private void SetSelectedNfts() 
     {
         for (int n=0; n<this.NftUiList.Count; n++) 
         {
@@ -742,8 +747,9 @@ public class UIController : MonoBehaviour
         //set active wallet address 
         if (verifySignatureResponseDto.verified) 
         {
-            if (FAKE_SIGNIN)
+            #if FAKE_SIGNIN
                 verifySignatureResponseDto.address = "0xb1e46b730d2be47e337ac1275fca9a56fa27b6b244b154f8a6f6899de69c1cf0"; 
+            #endif 
 
             //TODO: (HIGH) use this, or suiaddress, or NFTRecipient? usage seems inconsistent
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 

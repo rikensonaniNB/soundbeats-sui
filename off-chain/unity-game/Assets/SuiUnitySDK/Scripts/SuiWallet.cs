@@ -31,12 +31,6 @@ public class SuiWallet
             PlayerPrefs.SetString(WalletAddressKey, value);
         }
     }
-    
-    //TODO: can get rid of this, since we have the property 
-    public static string GetActiveAddress()
-    {
-        return SuiWallet.ActiveWalletAddress; 
-    }
 
     public static bool HasActiveAddress()
     {

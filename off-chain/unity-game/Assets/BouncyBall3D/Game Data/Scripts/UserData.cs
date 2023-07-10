@@ -107,7 +107,7 @@ public class UserData
         if (OwnedNftCount == 0)
             SelectedNftIndex = -1;
         
-        //TODO: probably can remove this key soon
+        //TODO: (HIGH) probably can remove this key soon
         PlayerPrefsExtra.SetInt("NFTOwned_Count", OwnedNftCount);
     }
 }
