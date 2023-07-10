@@ -1,5 +1,5 @@
 //FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-#define FAKE_SIGNIN
+//#define FAKE_SIGNIN
 
 using System;
 using System.Collections;
@@ -17,12 +17,6 @@ public class UIController : MonoBehaviour
     //call to request the front end Javascript code to sign a message 
     [System.Runtime.InteropServices.DllImport("__Internal")]
     private static extern void CallSuiSignMessage(string msg);
-
-    //call to request the front end Javascript to detect presence of Martian wallet 
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void DetectMartianWallet(); 
-
-    private bool MartianWalletNotFound = false;
 
     #region UI Components 
 
@@ -93,7 +87,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI MintNFTScreen_Text_Taral;
 
     public TMP_InputField MnemonicsInputField;
-    public GameObject ImportWalletScreen; //TODO: can remove, maybe
+    public GameObject ImportWalletScreen; //TODO: (LOW) can remove, maybe
     public GameObject blockImage;
     public GameObject setup1Panel;
     public GameObject setup2Panel;
@@ -432,28 +426,6 @@ public class UIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// After detecting the presence or non-presence of martian wallet, the front-end will call this callback. 
-    /// </summary>
-    /// <param name="detected"></param>
-    private void DetectMartianWalletCallback(int detected)
-    {
-        if (detected == 0)
-        {
-            Debug.Log("DetectMartianWalletCallback false");
-            //ShowError("You need to download that martian wallet sir");
-            this.MartianWalletNotFound = true;
-            var tmpText = ConnectWalletButton.GetComponentInChildren<TextMeshProUGUI>();
-            tmpText.text = "Get Martian Wallet";
-        }
-        else 
-        {
-            this.MartianWalletNotFound = false;
-            var tmpText = ConnectWalletButton.GetComponentInChildren<TextMeshProUGUI>();
-            tmpText.text = "Connect Wallet";
-        }
-    }
-
     #endregion
 
     #region UI Methods 
@@ -705,7 +677,7 @@ public class UIController : MonoBehaviour
         if (verifySignatureResponseDto.verified) 
         {
             #if FAKE_SIGNIN
-                verifySignatureResponseDto.address = "0x594682d8cf8039961214b2097952faff743c22d143a1533d5daf181a0b980fa7"; 
+                verifySignatureResponseDto.address = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938"; 
             #endif 
 
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 

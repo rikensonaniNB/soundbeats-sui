@@ -4,11 +4,6 @@ var plugin = {
     CallSuiSignMessage: function(msg)
     {
         window.SuiSignMessage(UTF8ToString(msg));
-    }, 
-
-    //calls the client side script to try to detect presence of martian wallet
-    DetectMartianWallet: function() {
-        window.DetectMartianWallet();
     }
 };
 
