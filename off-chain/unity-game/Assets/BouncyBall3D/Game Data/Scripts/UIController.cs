@@ -1,3 +1,4 @@
+//FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
 //#define FAKE_SIGNIN
 
 using System;
@@ -174,8 +175,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
         NftUiElements_Anna.CharacterSprite = Character_Anna;
         NftUiElements_Anna.Name = "Anna";
-        //TODO: (HIGH) hard-coded for now, but make it dynamic
-        NftUiElements_Anna.ImageUrl = "http://game.soundbeats.io/nft-images/Anna.png";
+        NftUiElements_Anna.ImageUrl = ServerData.NftImageUrlBase + "Anna.png";
         NftUiElements_Anna.SelectedSprite = sprite_Green;
         NftUiElements_Anna.UnselectedSprite = sprite_Pink;
         
@@ -186,7 +186,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
         NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
         NftUiElements_Marshmallow.Name = "Melloow";
-        NftUiElements_Marshmallow.ImageUrl = "http://game.soundbeats.io/nft-images/Melloow.png";
+        NftUiElements_Marshmallow.ImageUrl = ServerData.NftImageUrlBase + "Melloow.png";
         NftUiElements_Marshmallow.SelectedSprite = sprite_Green;
         NftUiElements_Marshmallow.UnselectedSprite = sprite_Pink;
 
@@ -198,26 +198,20 @@ public class UIController : MonoBehaviour
         NftUiElements_Taral.CharacterSprite = Character_Taral;
         NftUiElements_Taral.Locked = true;
         NftUiElements_Taral.Name = "Taral";
-        NftUiElements_Taral.ImageUrl = "http://game.soundbeats.io/nft-images/Taral.png";
+        NftUiElements_Taral.ImageUrl = ServerData.NftImageUrlBase + "Taral.png";
         NftUiElements_Taral.SelectedSprite = sprite_Green;
         NftUiElements_Taral.UnselectedSprite = sprite_Pink;
 
         //Connect Wallet (click connect button)
         ConnectWalletButton.onClick.AddListener(() => {
             try {
-                if (this.MartianWalletNotFound) {
-                    Application.OpenURL("https://chrome.google.com/webstore/detail/martian-wallet-for-sui-ap/efbglgofoippbgcjepnhiblaibcnclgk");
-                }
-                else {
-                    MessageToSign = GenerateRandomMessage();
+                MessageToSign = GenerateRandomMessage();
 
-                    //this is for development only
-                    #if FAKE_SIGNIN
-                        SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
-                    #else  
-                        CallSuiSignMessage(MessageToSign); 
-                    #endif
-                }
+                #if FAKE_SIGNIN
+                    SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
+                #else  
+                    CallSuiSignMessage(MessageToSign); 
+                #endif
             }
             catch(Exception e) {
                 SuiWallet.ErrorMessage = e.ToString();

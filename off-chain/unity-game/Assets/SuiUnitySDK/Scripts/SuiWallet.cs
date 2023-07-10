@@ -3,17 +3,14 @@ using UnityEngine;
 
 public class SuiExplorer 
 {
-    public const string ExplorerUri = "https://suiexplorer.com/"; 
-    public const string Network = "testnet";
-
     public static string FormatAddressUri(string address)
     {
-        return System.String.Format("{0}address/{1}?network={2}", SuiExplorer.ExplorerUri, address, SuiExplorer.Network);
+        return System.String.Format("{0}address/{1}?network={2}", ServerData.SuiExplorerUrl, address, ServerData.SuiNetworkEnvironment);
     }
 
     public static string FormatTransactionUri(string txid)
     {
-        return System.String.Format("{0}txblock/{1}?network={2}", SuiExplorer.ExplorerUri, txid, SuiExplorer.Network);
+        return System.String.Format("{0}txblock/{1}?network={2}", ServerData.SuiExplorerUrl, txid, ServerData.SuiNetworkEnvironment);
     }
 }
 
