@@ -81,13 +81,8 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
 
-        //TODO: (HIGH) repeated code 
         //replace best score 
-        if (score > bestScore)
-        {
-            bestScore = score;
-            PlayerPrefsExtra.SetInt("bestScore", score);
-        }
+        bestScore = this.GetBestScore(score, bestScore); 
         
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
@@ -131,13 +126,8 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
         
-        //TODO: (HIGH) repeated code 
         //replace best score 
-        if (score > bestScore)
-        {
-            bestScore = score;
-            PlayerPrefsExtra.SetInt("bestScore", score);
-        }
+        bestScore = this.GetBestScore(score, bestScore); 
 
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
@@ -176,7 +166,17 @@ public class GameManager : Singleton<GameManager>
         score = 0;
     }
 
-    //TODO: (HIGH) is this used? 
+    private void GetBestScore(int score, int bestScore) 
+    {
+        if (score > bestScore)
+        {
+            bestScore = score;
+            PlayerPrefsExtra.SetInt("bestScore", score);
+        }
+
+        return bestScore;
+    }
+
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);

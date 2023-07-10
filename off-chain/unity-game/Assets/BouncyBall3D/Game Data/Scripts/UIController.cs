@@ -751,7 +751,6 @@ public class UIController : MonoBehaviour
                 verifySignatureResponseDto.address = "0xb1e46b730d2be47e337ac1275fca9a56fa27b6b244b154f8a6f6899de69c1cf0"; 
             #endif 
 
-            //TODO: (HIGH) use this, or suiaddress, or NFTRecipient? usage seems inconsistent
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
 
             //get user owned NFTs
