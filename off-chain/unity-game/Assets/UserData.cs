@@ -14,6 +14,26 @@ public class UserData
         get { return SuiWallet.ActiveWalletAddress; }
     }
 
+    public static int TokenBalance
+    {
+        get {
+            return PlayerPrefsExtra.GetInt("tokenBalance", 0);
+        }
+        set {
+            PlayerPrefsExtra.SetInt("tokenBalance", value);
+        }
+    }
+
+    public static int BestScore
+    {
+        get {
+            return PlayerPrefsExtra.GetInt("bestScore", 0);
+        }
+        set {
+            PlayerPrefsExtra.SetInt("bestScore", value);
+        }
+    }
+
     public static int OwnedNftCount 
     {
         get { 
@@ -37,14 +57,12 @@ public class UserData
             else {
                 if (OwnsNft(value)) {
                     PlayerPrefsExtra.SetInt("selectedIndex", value); 
-                    PlayerData.SelectIndex = value;
                 }
                 else {
                     if (OwnedNftCount > 0) {
                         for(int n=_nftNames.Length-1; n>0; n--) {
                             if (_nfts[_nftNames[n]]) {
                                 PlayerPrefsExtra.SetInt("selectedIndex", n); 
-                                PlayerData.SelectIndex = n;
                             }
                         }
                     }
@@ -95,10 +113,6 @@ public class UserData
             AddNft(dto.name);
         }
 
-        //TODO: (HIGH) this seems very hacky; find out why this is needed
-        for (int i = 0; i < GameManager.Instance.NFTOwned.Count; i++)
-            PlayerPrefsExtra.SetInt("NFTOwned_" + i, GameManager.Instance.NFTOwned[i]);
-
         //handle selected index 
         if (!PlayerPrefsExtra.HasKey("selectedIndex") && OwnedNftCount > 0) {
             SelectedNftIndex = 0;
@@ -107,8 +121,5 @@ public class UserData
         //remove the selected index if no owned nfts
         if (OwnedNftCount == 0)
             SelectedNftIndex = -1;
-        
-        //TODO: (HIGH) probably can remove this key soon
-        PlayerPrefsExtra.SetInt("NFTOwned_Count", OwnedNftCount);
     }
 }

@@ -1,5 +1,5 @@
 //FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-//#define FAKE_SIGNIN
+#define FAKE_SIGNIN
 
 using System;
 using System.Collections;
@@ -175,7 +175,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
         NftUiElements_Anna.CharacterSprite = Character_Anna;
         NftUiElements_Anna.Name = "Anna";
-        NftUiElements_Anna.ImageUrl = ServerData.NftImageUrlBase + "Anna.png";
+        NftUiElements_Anna.ImageUrl = GameData.NftImageUrlBase + "Anna.png";
         NftUiElements_Anna.SelectedSprite = sprite_Green;
         NftUiElements_Anna.UnselectedSprite = sprite_Pink;
         
@@ -186,7 +186,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
         NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
         NftUiElements_Marshmallow.Name = "Melloow";
-        NftUiElements_Marshmallow.ImageUrl = ServerData.NftImageUrlBase + "Melloow.png";
+        NftUiElements_Marshmallow.ImageUrl = GameData.NftImageUrlBase + "Melloow.png";
         NftUiElements_Marshmallow.SelectedSprite = sprite_Green;
         NftUiElements_Marshmallow.UnselectedSprite = sprite_Pink;
 
@@ -198,7 +198,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Taral.CharacterSprite = Character_Taral;
         NftUiElements_Taral.Locked = true;
         NftUiElements_Taral.Name = "Taral";
-        NftUiElements_Taral.ImageUrl = ServerData.NftImageUrlBase + "Taral.png";
+        NftUiElements_Taral.ImageUrl = GameData.NftImageUrlBase + "Taral.png";
         NftUiElements_Taral.SelectedSprite = sprite_Green;
         NftUiElements_Taral.UnselectedSprite = sprite_Pink;
 
@@ -239,9 +239,7 @@ public class UIController : MonoBehaviour
             if (selectedIndex >= 0)
                 PlayerPrefsExtra.SetInt("selectedIndex", selectedIndex);
 
-            //TODO: (HIGH) replace all PlayerData with UserData 
-            PlayerData.NFTAddress ="";
-            PlayerData.totalBalance = 0;
+            UserData.TokenBalance = 0;
 
             setup2Panel.SetActive(false);
             setup1Panel.SetActive(true);
@@ -346,7 +344,7 @@ public class UIController : MonoBehaviour
         {
             ClaimTokensScreen.SetActive(false);
             WalletScreen.SetActive(true);
-            txtScore_WalletScreen.text = PlayerData.totalBalance.ToString();
+            txtScore_WalletScreen.text = UserData.TokenBalance.ToString();
         });
 
         MintNFT_LinkButton.onClick.AddListener(() =>
@@ -506,7 +504,7 @@ public class UIController : MonoBehaviour
     //TODO: (LOW) I don't think this method is ever called 
     public void SelectNfts()
     { 
-        if (PlayerPrefsExtra.HasKey(SuiWallet.WalletAddressKey))
+        if (SuiWallet.HasActiveAddress())
         {
             HomeScreen.SetActive(true);
             PlaySongScreen.SetActive(true);
@@ -521,7 +519,7 @@ public class UIController : MonoBehaviour
             SelectCharacter_Overlay.SetActive(false);
             txtMintCharacter.SetActive(false);
 
-            if (PlayerPrefsExtra.HasKey("selectedIndex"))
+            if (UserData.HasSelectedNft)
             {
                 blockImage.SetActive(false);
                 isOverlayOn = false;
@@ -580,18 +578,6 @@ public class UIController : MonoBehaviour
             this.CreateNFT(selectedNft.Name, selectedNft.ImageUrl);
             LoadingScreen.SetActive(true);
             blockImage.SetActive(false);
-
-            //Total NFT owned by user and its index number
-            //TODO: (MED) what is this doing? 
-            if (!GameManager.Instance.NFTOwned.Contains(index))
-            {
-                GameManager.Instance.NFTOwned.Add(index);
-
-                PlayerPrefsExtra.SetInt("NFTOwned_count", GameManager.Instance.NFTOwned.Count);
-
-                for (int i = 0; i < GameManager.Instance.NFTOwned.Count; i++)
-                    PlayerPrefsExtra.SetInt("NFTOwned_" + i, GameManager.Instance.NFTOwned[i]);
-            }
         }
         else
         {
@@ -623,17 +609,6 @@ public class UIController : MonoBehaviour
         }
         else {
             this.SetSelectedNft(index);
-        }
-
-        //Total NFT owned by user and its index number
-        //TODO: (MED) not sure why this is needed 
-        if(!GameManager.Instance.NFTOwned.Contains(index))
-        {
-            GameManager.Instance.NFTOwned.Add(index);
-            PlayerPrefsExtra.SetInt("NFTOwned_count", GameManager.Instance.NFTOwned.Count);
-
-            for (int i = 0; i < GameManager.Instance.NFTOwned.Count; i++)
-                PlayerPrefsExtra.SetInt("NFTOwned_" + i, GameManager.Instance.NFTOwned[i]);
         }
     }
 
@@ -685,9 +660,9 @@ public class UIController : MonoBehaviour
         ClaimTokensScreen.SetActive(true);
        
         //TODO: (LOW) this should be gotten from the response; should not be counted manually
-        PlayerData.totalBalance += 100;
+        UserData.TokenBalance += 100;
         txtScore_ClaimScreen.text = "100";
-        Debug.Log("signature...>" + requestTokenResponseDto.signature + PlayerData.totalBalance);
+        Debug.Log("signature...>" + requestTokenResponseDto.signature + UserData.TokenBalance);
     }
 
     private void OnErrorRequestToken(string error)
@@ -700,7 +675,7 @@ public class UIController : MonoBehaviour
         LoadingScreen.SetActive(false);
         WalletScreen.SetActive(true);
         Debug.Log(getTokenBalanceResponseDto.balance);
-        PlayerData.totalBalance = getTokenBalanceResponseDto.balance;
+        UserData.TokenBalance = getTokenBalanceResponseDto.balance;
         txtScore_WalletScreen.text = getTokenBalanceResponseDto.balance.ToString();
         Debug.Log(txtScore_WalletScreen.text);
     }
@@ -712,18 +687,6 @@ public class UIController : MonoBehaviour
 
     private void OnSuccessfulGetBeatsNfts(GetBeatsNftsResponseDto getNftsResponseDto)
     {
-        GameManager.Instance.NFTOwned.Clear();
-
-        //figure out which nfts they own 
-        foreach(BeatsNftDto nft in getNftsResponseDto.nfts) {
-            if (nft.name == "Anna") {
-                GameManager.Instance.NFTOwned.Add(0); 
-            }
-            else if (nft.name == "Melloow") {
-                GameManager.Instance.NFTOwned.Add(1); 
-            }
-        }
-        
         UserData.SetOwnedNfts(getNftsResponseDto); 
 
         //allow entry into game
@@ -742,7 +705,7 @@ public class UIController : MonoBehaviour
         if (verifySignatureResponseDto.verified) 
         {
             #if FAKE_SIGNIN
-                verifySignatureResponseDto.address = "0xb1e46b730d2be47e337ac1275fca9a56fa27b6b244b154f8a6f6899de69c1cf0"; 
+                verifySignatureResponseDto.address = "0x594682d8cf8039961214b2097952faff743c22d143a1533d5daf181a0b980fa7"; 
             #endif 
 
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
@@ -767,9 +730,6 @@ public class UIController : MonoBehaviour
         //add the new NFT to user data 
         var newNft = this.NftUiList[this.NftMintCandidateIndex]; 
         UserData.AddNft(newNft.Name);
-
-        //this is probably not necessary 
-        PlayerData.NFTAddress = createNFTResponseDto.addresses[0];
 
         //display the transaction link 
         string NFTAdd = SuiExplorer.FormatTransactionUri(createNFTResponseDto.signature);

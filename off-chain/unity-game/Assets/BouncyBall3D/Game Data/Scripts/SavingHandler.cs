@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
-//TODO: is this used?
+//TODO: (LOW) is this used?
 public class SavingHandler : Singleton<SavingHandler>
 {
     public int bestScore = 0;
 
+    //TODO: (HIGH) this must not load on Awake, or else it will get the last user's high score (if this is used at all)
     protected override void Awake()
     {
         base.Awake();
@@ -13,11 +14,11 @@ public class SavingHandler : Singleton<SavingHandler>
 
     public void LoadData()
     {
-        bestScore = PlayerPrefs.GetInt("bestScore", 0);
+        bestScore = UserData.BestScore;
     }
 
     public void SaveData()
     {
-        PlayerPrefs.GetInt("bestScore", bestScore);
+        UserData.BestScore = bestScore;
     }
 }

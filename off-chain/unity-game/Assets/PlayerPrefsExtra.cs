@@ -55,6 +55,11 @@ public static class PlayerPrefsExtra
 		return PlayerPrefs.HasKey(GetQualifiedKey(key));
 	}
 
+	public static void DeleteKey(string key) 
+	{
+		PlayerPrefs.DeleteKey(GetQualifiedKey(key));
+	}
+
 	public static void Save() 
 	{
 		PlayerPrefs.Save();

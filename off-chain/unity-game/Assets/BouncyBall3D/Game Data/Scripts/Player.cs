@@ -79,16 +79,16 @@ public class Player : MonoBehaviour
 
         //ResetPlayer();
         StartCoroutine(GameManager.Instance.GameStartText());
-        jumpingPart = Selected_character[PlayerData.SelectIndex].transform;
+        jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
-        marshmello_Animator = Selected_character[PlayerData.SelectIndex].GetComponent<Animator>();
+        marshmello_Animator = Selected_character[UserData.SelectedNftIndex].GetComponent<Animator>();
         
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
-        Text_Name.text = Selected_character[PlayerData.SelectIndex].name;
+        Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
 
 
-        characters[PlayerData.SelectIndex].SetActive(true);
+        characters[UserData.SelectedNftIndex].SetActive(true);
 
         marshmello_Animator.Play("Idle");
     }
@@ -99,18 +99,18 @@ public class Player : MonoBehaviour
         canMove = false;
         platformHitCount = 1;
 
-        jumpingPart = Selected_character[PlayerData.SelectIndex].transform;
+        jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
-        marshmello_Animator = Selected_character[PlayerData.SelectIndex].GetComponent<Animator>();
+        marshmello_Animator = Selected_character[UserData.SelectedNftIndex].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
-        Text_Name.text = Selected_character[PlayerData.SelectIndex].name;
+        Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
 
         var obj = transform;
         obj.position = new Vector3(0f, 0.3900146f, 0f);
         obj.rotation = Quaternion.identity;
-        Selected_character[PlayerData.SelectIndex].gameObject.transform.position = Vector3.zero;
-        Selected_character[PlayerData.SelectIndex].gameObject.transform.rotation = Quaternion.identity;
+        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = Vector3.zero;
+        Selected_character[UserData.SelectedNftIndex].gameObject.transform.rotation = Quaternion.identity;
     }
     
 

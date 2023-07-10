@@ -70,19 +70,19 @@ public class SongHolder : MonoBehaviour
        
         UIManager.Instance.CloseMenu();
 
-        if (PlayerData.SelectIndex==0)
+        if (UserData.SelectedNftIndex==0)
         {
             player.GetComponent<Player>().Selected_character[0].SetActive(true);
             player.GetComponent<Player>().Selected_character[1].SetActive(false);
             player.GetComponent<Player>().Selected_character[2].SetActive(false);
         }
-        else if (PlayerData.SelectIndex==1)
+        else if (UserData.SelectedNftIndex==1)
         {
             player.GetComponent<Player>().Selected_character[0].SetActive(false);
             player.GetComponent<Player>().Selected_character[1].SetActive(true);
             player.GetComponent<Player>().Selected_character[2].SetActive(false);
         }
-        else if (PlayerData.SelectIndex==2)
+        else if (UserData.SelectedNftIndex==2)
         {
             player.GetComponent<Player>().Selected_character[0].SetActive(false);
             player.GetComponent<Player>().Selected_character[1].SetActive(false);

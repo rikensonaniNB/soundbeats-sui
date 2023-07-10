@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager>
 {
-    public PlayerData playerData = new PlayerData();
     public int score = 0;
     public int bestScore = 0;
     public int star = 0;
@@ -43,19 +42,13 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject quitScreen;
     [SerializeField] GameObject pauseButton;
 
-    public List<int> NFTOwned = new List<int>();
-
     protected override void Awake()
     {
         base.Awake();
 
         //TODO: really not sure about any of this code here - these keys are just... 
         player = FindObjectOfType<Player>();
-        bestScore = PlayerPrefsExtra.GetInt("bestScore", 0);
-        for(int i=0;i< PlayerPrefsExtra.GetInt("NFTOwned_count");i++)
-        {
-            NFTOwned.Add(PlayerPrefsExtra.GetInt("NFTOwned_" + i));
-        }
+        bestScore = UserData.BestScore;
     }
 
     private void Start()
@@ -88,7 +81,7 @@ public class GameManager : Singleton<GameManager>
         if (SuiWallet.HasActiveAddress()) 
         {
             NetworkManager.Instance.SendLeaderboardScore(
-                PlayerPrefsExtra.GetString(SuiWallet.WalletAddressKey),
+                UserData.WalletAddress,
                 score, 
                 null, 
                 null
@@ -112,8 +105,8 @@ public class GameManager : Singleton<GameManager>
         //    ServicesManager.instance.ShowInterstitialAdmob();
         //    ServicesManager.instance.ShowInterstitialUnityAds();
         //}
-        Debug.Log("SelectIndex...>" + PlayerData.SelectIndex);
-        var myPlayer = player.Selected_character[PlayerData.SelectIndex].gameObject;
+        Debug.Log("SelectIndex...>" + UserData.SelectedNftIndex);
+        var myPlayer = player.Selected_character[UserData.SelectedNftIndex].gameObject;
         Debug.Log("PlayerFailed...>" + myPlayer.name);
         gameState = GameState.Lost;
         SoundManager.Instance.StopTrack();
@@ -133,7 +126,7 @@ public class GameManager : Singleton<GameManager>
         if (SuiWallet.HasActiveAddress()) 
         {
             NetworkManager.Instance.SendLeaderboardScore(
-                PlayerPrefsExtra.GetString(SuiWallet.WalletAddressKey),
+                UserData.WalletAddress,
                 score, 
                 null, 
                 null
@@ -166,12 +159,12 @@ public class GameManager : Singleton<GameManager>
         score = 0;
     }
 
-    private void GetBestScore(int score, int bestScore) 
+    private int GetBestScore(int score, int bestScore) 
     {
         if (score > bestScore)
         {
             bestScore = score;
-            PlayerPrefsExtra.SetInt("bestScore", score);
+            UserData.BestScore = bestScore;
         }
 
         return bestScore;
