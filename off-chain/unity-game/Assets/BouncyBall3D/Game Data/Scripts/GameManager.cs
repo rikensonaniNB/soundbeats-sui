@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class GameManager : Singleton<GameManager>
 {
     public int score = 0;
-    public int bestScore = 0;
     public int star = 0;
     public GameObject gameStartText;
 
@@ -46,9 +45,7 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
 
-        //TODO: really not sure about any of this code here - these keys are just... 
         player = FindObjectOfType<Player>();
-        bestScore = UserData.BestScore;
     }
 
     private void Start()
@@ -75,7 +72,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         //replace best score 
-        bestScore = this.GetBestScore(score, bestScore); 
+        int bestScore = this.GetBestScore(score); 
         
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
@@ -120,7 +117,7 @@ public class GameManager : Singleton<GameManager>
         }
         
         //replace best score 
-        bestScore = this.GetBestScore(score, bestScore); 
+        int bestScore = this.GetBestScore(score); 
 
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
@@ -159,8 +156,9 @@ public class GameManager : Singleton<GameManager>
         score = 0;
     }
 
-    private int GetBestScore(int score, int bestScore) 
+    private int GetBestScore(int score) 
     {
+        int bestScore = UserData.BestScore;
         if (score > bestScore)
         {
             bestScore = score;
