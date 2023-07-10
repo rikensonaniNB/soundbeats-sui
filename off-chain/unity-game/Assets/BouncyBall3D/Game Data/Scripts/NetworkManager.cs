@@ -276,8 +276,7 @@ public class NetworkManager : Singleton<NetworkManager>
         }
     }
 
-    //TODO: (MED) this class is insane, we need to get rid of 
-    public class Root
+    public class BasicPostRequestBody
     {
         public int amount { get; set; }
         public string recipient { get; set; }
@@ -293,7 +292,7 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <typeparam name="T">Data Model Type.</typeparam>
     private IEnumerator RequestTokenCoroutine_Post<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, Dictionary<string, string> body)
     {
-        Root form = new Root();
+        BasicPostRequestBody form = new BasicPostRequestBody();
         int index = 0;
 
         foreach (KeyValuePair<string, string> post_arg in body)
@@ -306,11 +305,8 @@ public class NetworkManager : Singleton<NetworkManager>
             }
             else
                 form.recipient = post_arg.Value;
-            
         }
         Debug.Log("key   " + form.amount + "   value  " + form.recipient);
-        //body.Clear();
-        //request = UnityWebRequest.Post(url, form);
 
         using (var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST))
         {
