@@ -43,10 +43,11 @@ public class GetLeaderboard : MonoBehaviour
     /// <param name="response">Response from API call to get leaderboard scores.</param>
     private void DisplayList(LeaderboardResponseDto response)
     {
-        foreach (var score in response.scores)
+        var scores = response.scores.OrderBy(s => s.score).Reverse().ToArray();
+        foreach (var score in scores)
         {
             var dataObject = Instantiate(prefabObj, parentObj);
-            dataObject.GetComponent<Image>().color = SuiWallet.GetActiveAddress() == score.wallet ? Color.green : Color.grey;
+            dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
             dataObject.transform.GetChild(0).GetComponent<Text>().text = score.wallet;
             dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
         }
@@ -62,13 +63,12 @@ public class GetLeaderboard : MonoBehaviour
         DisplayList(response);
     }
 
-    //TODO: (MED) do on error? 
     /// <summary>
     /// Executes when the API call to get leaderboard scores fails.
     /// </summary>
     /// <param name="error">Error message</param>
     private void OnGetLeaderboardError(string error) 
     {
-
+        //TODO: (MED) do on error? 
     }
 }
