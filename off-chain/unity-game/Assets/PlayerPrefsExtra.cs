@@ -14,6 +14,59 @@ using System.Collections.Generic;
 
 public static class PlayerPrefsExtra
 {
+	private static string GetQualifiedKey(string key) 
+	{
+		string activeAddress = SuiWallet.ActiveWalletAddress;
+		if (activeAddress == null || activeAddress.Trim().Length == 0) {
+			activeAddress = "Anon"; 
+		}
+		return activeAddress + ":" + key; 
+	}
+
+	#region Duplicates from PlayerPrefs
+
+	public static int GetInt(string key) 
+	{
+		return PlayerPrefs.GetInt(GetQualifiedKey(key));
+	}
+
+	public static int GetInt(string key, int defaultValue) 
+	{
+		return PlayerPrefs.GetInt(GetQualifiedKey(key), defaultValue);
+	}
+
+	public static void SetInt(string key, int value) 
+	{
+		PlayerPrefs.SetInt(GetQualifiedKey(key), value);
+	}
+
+	public static string GetString(string key) 
+	{
+		return PlayerPrefs.GetString(GetQualifiedKey(key));
+	}
+
+	public static void SetString(string key, string value) 
+	{
+		PlayerPrefs.SetString(GetQualifiedKey(key), value);
+	}
+
+	public static bool HasKey(string key)
+	{
+		return PlayerPrefs.HasKey(GetQualifiedKey(key));
+	}
+
+	public static void DeleteKey(string key) 
+	{
+		PlayerPrefs.DeleteKey(GetQualifiedKey(key));
+	}
+
+	public static void Save() 
+	{
+		PlayerPrefs.Save();
+	}
+
+	#endregion
+
 	#region Bool -----------------------------------------------------------------------------------------
 
 	public static bool GetBool (string key)
@@ -183,5 +236,4 @@ public static class PlayerPrefsExtra
 	{
 		PlayerPrefs.SetString (key, JsonUtility.ToJson (value));
 	}
-
 }

@@ -7,9 +7,7 @@ using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager>
 {
-    public PlayerData playerData = new PlayerData();
     public int score = 0;
-    public int bestScore = 0;
     public int star = 0;
     public GameObject gameStartText;
 
@@ -43,18 +41,11 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject quitScreen;
     [SerializeField] GameObject pauseButton;
 
-    public List<int> NFTOwned = new List<int>();
-
     protected override void Awake()
     {
         base.Awake();
 
         player = FindObjectOfType<Player>();
-        bestScore = PlayerPrefs.GetInt("bestScore", 0);
-        for(int i=0;i< PlayerPrefs.GetInt("NFTOwned_count");i++)
-        {
-            NFTOwned.Add(PlayerPrefs.GetInt("NFTOwned_" + i));
-        }
     }
 
     private void Start()
@@ -80,19 +71,14 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
 
-        //TODO: (HIGH) repeated code 
         //replace best score 
-        if (score > bestScore)
-        {
-            bestScore = score;
-            PlayerPrefs.SetInt("bestScore", score);
-        }
+        int bestScore = this.GetBestScore(score); 
         
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
         {
             NetworkManager.Instance.SendLeaderboardScore(
-                PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
+                UserData.WalletAddress,
                 score, 
                 null, 
                 null
@@ -101,11 +87,11 @@ public class GameManager : Singleton<GameManager>
 
         ShowLevelProgress();
         ScoreWin.text = score.ToString();
-        if (score > PlayerPrefs.GetInt(LevelGenerator.Instance.currentSong.name))
+        if (score > PlayerPrefsExtra.GetInt(LevelGenerator.Instance.currentSong.name))
         {
-            PlayerPrefs.SetInt(LevelGenerator.Instance.currentSong.name, score);
+            PlayerPrefsExtra.SetInt(LevelGenerator.Instance.currentSong.name, score);
         }
-        PlayerPrefs.Save();
+        PlayerPrefsExtra.Save();
         Debug.Log("win");
     }
 
@@ -116,8 +102,8 @@ public class GameManager : Singleton<GameManager>
         //    ServicesManager.instance.ShowInterstitialAdmob();
         //    ServicesManager.instance.ShowInterstitialUnityAds();
         //}
-        Debug.Log("SelectIndex...>" + PlayerData.SelectIndex);
-        var myPlayer = player.Selected_character[PlayerData.SelectIndex].gameObject;
+        Debug.Log("SelectIndex...>" + UserData.SelectedNftIndex);
+        var myPlayer = player.Selected_character[UserData.SelectedNftIndex].gameObject;
         Debug.Log("PlayerFailed...>" + myPlayer.name);
         gameState = GameState.Lost;
         SoundManager.Instance.StopTrack();
@@ -130,19 +116,14 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.currentSong.SaveData();
         }
         
-        //TODO: (HIGH) repeated code 
         //replace best score 
-        if (score > bestScore)
-        {
-            bestScore = score;
-            PlayerPrefs.SetInt("bestScore", score);
-        }
+        int bestScore = this.GetBestScore(score); 
 
         //send score to leaderboard
         if (SuiWallet.HasActiveAddress()) 
         {
             NetworkManager.Instance.SendLeaderboardScore(
-                PlayerPrefs.GetString(SuiWallet.WalletAddressKey),
+                UserData.WalletAddress,
                 score, 
                 null, 
                 null
@@ -150,33 +131,43 @@ public class GameManager : Singleton<GameManager>
         }
             
         ShowLevelProgress();
-        if (score > PlayerPrefs.GetInt(LevelGenerator.Instance.currentSong.name))
+        if (score > PlayerPrefsExtra.GetInt(LevelGenerator.Instance.currentSong.name))
         {
-            PlayerPrefs.SetInt(LevelGenerator.Instance.currentSong.name, score);
-        }        //Debug.Log(PlayerPrefs.GetInt(songName.name));
+            PlayerPrefsExtra.SetInt(LevelGenerator.Instance.currentSong.name, score);
+        }        //Debug.Log(PlayerPrefsExtra.GetInt(songName.name));
 
 
-        PlayerPrefs.Save();
+        PlayerPrefsExtra.Save();
         // Add score here
         scoreTextCompletion.text = score.ToString();
         bestScoreTxt.text = bestScore.ToString();
         scoreTokens.text = score.ToString()+" Tokens";
-        // PlayerData.TokenEanred += score;
-        //PlayerPrefs.SetInt("tokens", PlayerData.TokenEanred);
+        
         LevelGenerator.Instance.RemovePlatforms();
         if (score > 0)
         {
             RequestTokenDto requestTokenDto = new RequestTokenDto
             {
                 amount = score,
-                recipient = SuiWallet.GetActiveAddress()
+                recipient = SuiWallet.ActiveWalletAddress
             };
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }
         score = 0;
     }
 
-    //TODO: (HIGH) is this used? 
+    private int GetBestScore(int score) 
+    {
+        int bestScore = UserData.BestScore;
+        if (score > bestScore)
+        {
+            bestScore = score;
+            UserData.BestScore = bestScore;
+        }
+
+        return bestScore;
+    }
+
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
         Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);

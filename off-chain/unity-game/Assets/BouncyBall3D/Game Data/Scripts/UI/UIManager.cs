@@ -30,7 +30,6 @@ public class UIManager : Singleton<UIManager>
     }
     public void ShowPlayerSelection()
     {
-        Debug.Log("Me here");
         menuUI.SetActive(true);
         gameUI.SetActive(false);
         menuUI.GetComponent<UIController>().ShowPlayerSelectionScreen();

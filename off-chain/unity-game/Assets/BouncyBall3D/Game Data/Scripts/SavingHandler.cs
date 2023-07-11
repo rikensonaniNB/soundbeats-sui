@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 
 public class SavingHandler : Singleton<SavingHandler>
 {
@@ -12,11 +12,12 @@ public class SavingHandler : Singleton<SavingHandler>
 
     public void LoadData()
     {
-        bestScore = PlayerPrefs.GetInt("bestScore", 0);
+        bestScore = UserData.BestScore;
     }
 
     public void SaveData()
     {
-        PlayerPrefs.GetInt("bestScore", bestScore);
+        UserData.BestScore = bestScore;
     }
 }
+*/
