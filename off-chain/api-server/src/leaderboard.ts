@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 export interface ILeaderboard {
     getLeaderboardScore(wallet: string): { wallet: string, score: number, network: string };
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[], network: string }
+    getLeaderboardScores(wallet: string, limit: number): { scores: { wallet: string, score: number }[], network: string }
     addLeaderboardScore(wallet: string, score: number): { score: number, network: string }
 }
 
@@ -28,7 +28,7 @@ class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    getLeaderboardScores(wallet: string): { scores: { wallet: string, score: number }[], network: string } {
+    getLeaderboardScores(wallet: string, limit: number = 100): { scores: { wallet: string, score: number }[], network: string } {
         let output = { scores: [], network: this.network };
 
         if (wallet && wallet.length > 0) {
@@ -38,6 +38,14 @@ class LeaderboardMemory implements ILeaderboard {
             this.leaderboardMap.forEach((value: number, key: string) => {
                 output.scores.push({ wallet: key, score: value });
             });
+
+            //sort 
+            output.scores.sort((a, b) => { return b.score - a.score });
+
+            //limit output 
+            if (output.scores.length > limit) {
+                output.scores = output.scores.slice(0, limit);
+            }
         }
 
         return output;
