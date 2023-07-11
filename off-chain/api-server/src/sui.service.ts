@@ -16,6 +16,8 @@ import { Injectable } from '@nestjs/common'
 import { NftClient } from '@originbyte/js-sdk'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 
+const LEADERBOARD_LIMIT: number = 100;
+
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
     return Array.from(utf8Encode.encode(str).values())
@@ -292,9 +294,7 @@ export class SuiService {
      * @returns GetLeaderboardResponseDto
      */
     getLeaderboardScores(wallet: string): { scores: { wallet: string; score: number }[]; network: string } {
-        //if (wallet && wallet.length)
-        //    this.leaderboard.addLeaderboardScore(wallet, 100);
-        return this.leaderboard.getLeaderboardScores(wallet);
+        return this.leaderboard.getLeaderboardScores(wallet, LEADERBOARD_LIMIT);
     }
 
     /**
