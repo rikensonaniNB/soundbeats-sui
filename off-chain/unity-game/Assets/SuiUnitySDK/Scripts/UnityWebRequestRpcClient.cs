@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+/*using Newtonsoft.Json;
 using Suinet.Rpc;
 using Suinet.Rpc.Http;
 using Suinet.Rpc.JsonRpc;
@@ -93,3 +93,4 @@ public class UnityWebRequestRpcClient : IRpcClient
         return result;
     }
 }
+*/

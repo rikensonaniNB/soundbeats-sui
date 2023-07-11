@@ -87,7 +87,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI MintNFTScreen_Text_Taral;
 
     public TMP_InputField MnemonicsInputField;
-    public GameObject ImportWalletScreen; //TODO: (LOW) can remove, maybe
+    //public GameObject ImportWalletScreen; (no longer used)
     public GameObject blockImage;
     public GameObject setup1Panel;
     public GameObject setup2Panel;
