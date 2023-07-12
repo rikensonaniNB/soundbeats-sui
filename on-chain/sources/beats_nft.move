@@ -13,7 +13,7 @@ module soundbeats::beats_nft {
     // ===== Init & Witness =====
     
     /// Core NFT struct
-    struct BeatsNftMetadata<phantom T> has key, store {
+    struct BeatsNft<phantom T> has key, store {
         id: UID,
         /// Name for the token
         name: string::String,
@@ -23,7 +23,7 @@ module soundbeats::beats_nft {
         url: Url
     }
     
-    struct BeatsNft<phantom T> has key, store {
+    struct BeatsOwnerCap<phantom T> has key, store {
         id: UID, 
         owner: address
     }
@@ -35,7 +35,7 @@ module soundbeats::beats_nft {
     fun init(witness: BEATS_NFT, ctx: &mut TxContext) {
         assert!(sui::types::is_one_time_witness(&witness), EBadWitness);
         
-        let coreData = BeatsNft<BEATS_NFT> {
+        let coreData = BeatsOwnerCap<BEATS_NFT> {
             id: object::new(ctx),
             owner: tx_context::sender(ctx)
         };
@@ -58,33 +58,33 @@ module soundbeats::beats_nft {
     // ===== Public view functions =====
 
     /// Get the NFT's `name`
-    public fun name(nft: &BeatsNftMetadata<BEATS_NFT>): &string::String {
+    public fun name(nft: &BeatsNft<BEATS_NFT>): &string::String {
         &nft.name
     }
 
     /// Get the NFT's `description`
-    public fun description(nft: &BeatsNftMetadata<BEATS_NFT>): &string::String {
+    public fun description(nft: &BeatsNft<BEATS_NFT>): &string::String {
         &nft.description
     }
 
     /// Get the NFT's `url`
-    public fun url(nft: &BeatsNftMetadata<BEATS_NFT>): &Url {
+    public fun url(nft: &BeatsNft<BEATS_NFT>): &Url {
         &nft.url
     }
     
     public fun internal_mint(
-        beats: &mut BeatsNft<BEATS_NFT>,
+        beats: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
         description: vector<u8>,
         url: vector<u8>,
         ctx: &mut TxContext
-    ): BeatsNftMetadata<BEATS_NFT> {
+    ): BeatsNft<BEATS_NFT> {
         
         //ensure owner is sender 
         let sender = tx_context::sender(ctx);
         assert!(beats.owner == sender, ENotOwner);
         
-        let nft = BeatsNftMetadata<BEATS_NFT> {
+        let nft = BeatsNft<BEATS_NFT> {
             id: object::new(ctx),
             name: string::utf8(name),
             description: string::utf8(description),
@@ -104,7 +104,7 @@ module soundbeats::beats_nft {
     
     /// Create a new soundbeats_nft
     public entry fun mint(
-        beats: &mut BeatsNft<BEATS_NFT>,
+        beats: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
         description: vector<u8>,
         url: vector<u8>,
@@ -149,9 +149,9 @@ module soundbeats::beats_nft {
             let name = b"za";
             let desc = b"az";
             let url = b"zz";
-            let beats = test_scenario::take_from_sender<BeatsNft<BEATS_NFT>>(&scenario);
+            let beats = test_scenario::take_from_sender<BeatsOwnerCap<BEATS_NFT>>(&scenario);
             mint(&mut beats, name, desc, url, recipient, 1, test_scenario::ctx(&mut scenario));
-            test_scenario::return_to_address<BeatsNft<BEATS_NFT>>(admin, beats);
+            test_scenario::return_to_address<BeatsOwnerCap<BEATS_NFT>>(admin, beats);
         };
         
         //admin can mint instance to self
@@ -160,22 +160,10 @@ module soundbeats::beats_nft {
             let name = b"za";
             let desc = b"az";
             let url = b"zz";
-            let beats = test_scenario::take_from_sender<BeatsNft<BEATS_NFT>>(&scenario);
+            let beats = test_scenario::take_from_sender<BeatsOwnerCap<BEATS_NFT>>(&scenario);
             mint(&mut beats, name, desc, url, admin, 1, test_scenario::ctx(&mut scenario));
-            test_scenario::return_to_address<BeatsNft<BEATS_NFT>>(admin, beats);
+            test_scenario::return_to_address<BeatsOwnerCap<BEATS_NFT>>(admin, beats);
         };
-        
-        //non-admin cannot mint 
-        /*test_scenario::next_tx(&mut scenario, recipient); 
-        {
-            let name = b"za";
-            let desc = b"az";
-            let url = b"zz";
-            let beats = test_scenario::take_from_sender<BeatsNft<BEATS_NFT>>(&scenario);
-            mint(&mut beats, name, desc, url, recipient, 1, test_scenario::ctx(&mut scenario));
-            test_scenario::return_to_address<BeatsNft<BEATS_NFT>>(recipient, beats);
-        };
-        */
         
         test_scenario::end(scenario);
     }
@@ -202,9 +190,9 @@ module soundbeats::beats_nft {
             let name = b"za";
             let desc = b"az";
             let url = b"zz";
-            let beats = test_scenario::take_from_sender<BeatsNft<BEATS_NFT>>(&scenario);
+            let beats = test_scenario::take_from_sender<BeatsOwnerCap<BEATS_NFT>>(&scenario);
             mint(&mut beats, name, desc, url, recipient, 1, test_scenario::ctx(&mut scenario));
-            test_scenario::return_to_address<BeatsNft<BEATS_NFT>>(recipient, beats);
+            test_scenario::return_to_address<BeatsOwnerCap<BEATS_NFT>>(recipient, beats);
         };
         
         test_scenario::end(scenario);
