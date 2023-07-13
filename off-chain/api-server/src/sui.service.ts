@@ -13,7 +13,6 @@ import {
     fromSerializedSignature
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
-import { NftClient } from '@originbyte/js-sdk'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 
 const LEADERBOARD_LIMIT: number = 100;
@@ -29,17 +28,14 @@ export const strToByteArray = (str: string): number[] => {
 export class SuiService {
     signer: RawSigner
     provider: JsonRpcProvider
-    client: NftClient //TODO: not used
     keypair: Keypair
     packageId: string
     treasuryCap: string
-    balanceMap: Map<string, number> //TODO: not using balanceMap for anything meaningful?
+    nftOwnerCap: string
     leaderboard: ILeaderboard
     network: string
 
     constructor() {
-        this.balanceMap = new Map();
-
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
@@ -49,25 +45,37 @@ export class SuiService {
 
         //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
-        this.client = new NftClient(this.provider as any);
 
         //leaderboard
         this.leaderboard = getLeaderboardInstance(this.network);
 
-        //TODO: these can be auto-detected with _detectTokenInfo
+        //get initial addresses from process.envs
         this.packageId = process.env.PACKAGE_ID;
         this.treasuryCap = process.env.TREASURY_CAP;
+        this.nftOwnerCap = process.env.NFT_OWNER_CAP;
 
+        console.log('packageId:', this.packageId);
+        console.log('treasuryCap:', this.treasuryCap);
+        console.log('nftOwnerCap:', this.nftOwnerCap);
+
+        //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         console.log('admin address:', suiAddress);
 
         //detect token info from blockchain 
-        this._detectTokenInfo(suiAddress).then((response) => {
+        console.log('detecting package data ...');
+        this._detectTokenInfo(suiAddress).then(async (response) => {
+            console.log('parsing package data ...');
             if (response && response.packageId && response.treasuryCap) {
                 this.packageId = response.packageId;
                 this.treasuryCap = response.treasuryCap;
+                this.nftOwnerCap = response.nftOwnerCap;
+
+                console.log('detected packageId:', this.packageId);
+                console.log('detected treasuryCap:', this.treasuryCap);
+                console.log('detected nftOwnerCap:', this.nftOwnerCap);
             }
-        });
+        })
     }
 
     /**
@@ -92,8 +100,9 @@ export class SuiService {
         //mint nft to recipient 
         const tx = new TransactionBlock();
         tx.moveCall({
-            target: `${this.packageId}::beats_nft::mint_to_recipient`,
+            target: `${this.packageId}::beats_nft::mint`,
             arguments: [
+                tx.pure(this.nftOwnerCap),
                 tx.pure(name),
                 tx.pure(description),
                 tx.pure(imageUrl),
@@ -133,8 +142,6 @@ export class SuiService {
      * @returns 
      */
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string; network: string }> {
-        const prevBalance = this.balanceMap.get(recipient) ?? 0
-        this.balanceMap.set(recipient, prevBalance + amount);
 
         //mint token to recipient
         const tx = new TransactionBlock();
@@ -293,7 +300,7 @@ export class SuiService {
      * @param wallet 
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string): { scores: { wallet: string; score: number }[]; network: string } {
+    getLeaderboardScores(wallet: string = null): { scores: { wallet: string; score: number }[]; network: string } {
         return this.leaderboard.getLeaderboardScores(wallet, LEADERBOARD_LIMIT);
     }
 
@@ -317,7 +324,7 @@ export class SuiService {
      * @param wallet 
      * @returns A package id and treasury cap id
      */
-    async _detectTokenInfo(wallet: string): Promise<{ packageId: string, treasuryCap: string } | null> {
+    async _detectTokenInfo(wallet: string): Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string } | null> {
         let output = null;
 
         //get owned objects
@@ -348,11 +355,24 @@ export class SuiService {
                     packageId = tCap[0].substring("TreasuryCap<".length);
                 }
 
+                //get nft owner object
+                const nftOwners = objects.data.filter(o => {
+                    return o.data.type.startsWith(packageId + "::beats_nft::BeatsOwnerCap<") &&
+                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>")
+                });
+
+                //get nft cap object 
+                let nftObj = null;
+                if (nftOwners && nftOwners.length) {
+                    nftObj = nftOwners[nftOwners.length - 1];
+                }
+
                 //get package ID & treasury cap
                 if (packageId.length) {
                     output = {
                         packageId: packageId,
-                        treasuryCap: beatsObj.data?.objectId
+                        treasuryCap: beatsObj.data?.objectId,
+                        nftOwnerCap: nftObj?.data?.objectId
                     };
                 }
             }
