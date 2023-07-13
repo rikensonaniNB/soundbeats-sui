@@ -24,7 +24,7 @@ public class ServerConfig
     public const string API_DOMAIN_DEVNET = "dev-api.soundbeats.io";
 
     //testnet urls 
-    public const string API_DOMAIN_TESTNET = "test-api.soundbeats.io";
+    public const string API_DOMAIN_TESTNET = "dev-api.soundbeats.io";
 
     //mainnet urls 
     public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
