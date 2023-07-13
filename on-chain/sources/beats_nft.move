@@ -23,6 +23,7 @@ module soundbeats::beats_nft {
         url: Url
     }
     
+    /// Denotes the owner of the NFT proper (not a specific instance)
     struct BeatsOwnerCap<phantom T> has key, store {
         id: UID, 
         owner: address
@@ -72,6 +73,7 @@ module soundbeats::beats_nft {
         &nft.url
     }
     
+    /// Mints a single NFT instance 
     public fun internal_mint(
         beats: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
@@ -102,7 +104,7 @@ module soundbeats::beats_nft {
 
     // ===== Entrypoints =====
     
-    /// Create a new soundbeats_nft
+    /// Mint multiple or single instances of NFT to recipient 
     public entry fun mint(
         beats: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
