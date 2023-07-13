@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 public class ServerConfig
 {
     // URL with place to put API method in it.
-    public const string SERVER_API_URL_FORMAT = "http://{0}/{1}";
+    public const string SERVER_API_URL_FORMAT = "https://{0}/{1}";
     public const string API_POST_CREATE_NFT = "api/v1/nfts";
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
