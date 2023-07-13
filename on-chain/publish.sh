@@ -1,1 +1,1 @@
-sui client publish --gas-budget 50000000
+sui client publish --gas-budget 47000000

@@ -126,6 +126,16 @@ module soundbeats::beats {
         coin::update_description<BEATS>(&treasury, &mut metadata, string::utf8(b"new_description"));
         coin::update_icon_url<BEATS>(&treasury, &mut metadata, ascii::string(b"new_icon_url"));
 
+        let symbol_bytes = ascii::as_bytes(&coin::get_symbol<BEATS>(&metadata));
+        let name_bytes = string::bytes(&coin::get_name<BEATS>(&metadata));
+        let description_bytes = string::bytes(&coin::get_description<BEATS>(&metadata));
+        let icon_url = ascii::as_bytes(&url::inner_url(option::borrow(&coin::get_icon_url<BEATS>(&metadata))));
+
+        assert!(*symbol_bytes == b"NEW_COIN_TESTS", 0);
+        assert!(*name_bytes == b"new_coin_name", 0);
+        assert!(*description_bytes == b"new_description", 0);
+        assert!(*icon_url == b"new_icon_url", 0);
+        
         transfer::public_freeze_object(metadata);
         transfer::public_transfer(treasury, tx_context::sender(ctx));
         test_scenario::end(scenario);
