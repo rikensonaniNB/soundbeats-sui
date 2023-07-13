@@ -20,7 +20,7 @@ public class GameData
     public static string NftImageUrlBase 
     {
         get {
-            return "http://game.soundbeats.io/nft-images/"; 
+            return "https://game.soundbeats.io/nft-images/"; 
         }
     }
 }
