@@ -208,19 +208,33 @@
                         window.messageToSign = data;
                         btn.click();
                         window.ethosConnectCallback = window.SuiConnectCallback;
+                        
+                        //google analytics
+                        gtag('event', 'login', {
+                            'event_category': 'user engagement',
+                            'event_label': 'Logging In',
+                            'value': 1
+                        });
                     };
                     
-                     window.SuiConnectCallback = async function () {
-                            window.ethosConnectCallback = null;
-                            let t = new TextEncoder().encode(window.messageToSign);
-                            sign = await window.ethos.currentWallet.signMessage({ message: t, account: window.ethos.accounts[0] });
+                    window.SuiConnectCallback = async function () {
+                        window.ethosConnectCallback = null;
+                        let t = new TextEncoder().encode(window.messageToSign);
+                        sign = await window.ethos.currentWallet.signMessage({ message: t, account: window.ethos.accounts[0] });
 
-                            let address = window.ethos.accounts[0].address;
-                            if (window.ethos.currentAccount)
-                                address = window.ethos.currentAccount.address;
-                            console.log(address);
-                            unityGameInstance.SendMessage("Menu", "SignMessageCallback", sign.signature + ':' + address);
-                        }
+                        let address = window.ethos.accounts[0].address;
+                        if (window.ethos.currentAccount)
+                            address = window.ethos.currentAccount.address;
+                        console.log(address);
+                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", sign.signature + ':' + address);
+                        
+                        //google analytics
+                        gtag('event', 'login', {
+                            'event_category': 'user engagement',
+                            'event_label': 'Logged In',
+                            'value': 1
+                        });
+                    }
     </script>
     
     <div id="__next">
