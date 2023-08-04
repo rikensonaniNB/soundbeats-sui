@@ -14,6 +14,7 @@ import {
 } from '@mysten/sui.js'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
+import { Config } from './config'
 
 const LEADERBOARD_LIMIT: number = 100;
 
@@ -37,10 +38,10 @@ export class SuiService {
 
     constructor() {
         //derive keypair
-        this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
+        this.keypair = Ed25519Keypair.deriveKeypair(Config.mnemonicPhrase);
 
         //create connect to the correct environment
-        this.network = process.env.SUI_NETWORK;
+        this.network = Config.suiNetwork;
         this.provider = this._createRpcProvider(this.network);
 
         //signer & client 
@@ -49,33 +50,35 @@ export class SuiService {
         //leaderboard
         this.leaderboard = getLeaderboardInstance(this.network);
 
-        //get initial addresses from process.envs
-        this.packageId = process.env.PACKAGE_ID;
-        this.treasuryCap = process.env.TREASURY_CAP;
-        this.nftOwnerCap = process.env.NFT_OWNER_CAP;
+        //get initial addresses from config setting 
+        this.packageId = Config.packageId;
+        this.treasuryCap = Config.treasuryCap;
+        this.nftOwnerCap = Config.nftOwnerCap;
 
         console.log('packageId:', this.packageId);
         console.log('treasuryCap:', this.treasuryCap);
         console.log('nftOwnerCap:', this.nftOwnerCap);
-
+        
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         console.log('admin address:', suiAddress);
-
+        
         //detect token info from blockchain 
-        console.log('detecting package data ...');
-        this._detectTokenInfo(suiAddress).then(async (response) => {
-            console.log('parsing package data ...');
-            if (response && response.packageId && response.treasuryCap) {
-                this.packageId = response.packageId;
-                this.treasuryCap = response.treasuryCap;
-                this.nftOwnerCap = response.nftOwnerCap;
+        if (Config.detectPackageInfo) {
+            console.log('detecting package data ...');
+            this._detectTokenInfo(suiAddress).then(async (response) => {
+                console.log('parsing package data ...');
+                if (response && response.packageId && response.treasuryCap) {
+                    this.packageId = response.packageId;
+                    this.treasuryCap = response.treasuryCap;
+                    this.nftOwnerCap = response.nftOwnerCap;
 
-                console.log('detected packageId:', this.packageId);
-                console.log('detected treasuryCap:', this.treasuryCap);
-                console.log('detected nftOwnerCap:', this.nftOwnerCap);
-            }
-        })
+                    console.log('detected packageId:', this.packageId);
+                    console.log('detected treasuryCap:', this.treasuryCap);
+                    console.log('detected nftOwnerCap:', this.nftOwnerCap);
+                }
+            });
+        }
     }
 
     /**
@@ -142,7 +145,7 @@ export class SuiService {
      * @returns 
      */
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string; network: string }> {
-
+        
         //mint token to recipient
         const tx = new TransactionBlock();
         tx.moveCall({
@@ -171,7 +174,7 @@ export class SuiService {
         }
 
         const signature = result.effects?.transactionDigest;
-        return { signature, network: this.network };
+        return { signature, network:this.network };
     }
 
     /**
@@ -354,15 +357,15 @@ export class SuiService {
                 if (tCap.length) {
                     packageId = tCap[0].substring("TreasuryCap<".length);
                 }
-
+                
                 //get nft owner object
                 const nftOwners = objects.data.filter(o => {
                     return o.data.type.startsWith(packageId + "::beats_nft::BeatsOwnerCap<") &&
                         o.data?.type?.endsWith("::beats_nft::BEATS_NFT>")
                 });
-
+                
                 //get nft cap object 
-                let nftObj = null;
+                let nftObj = null; 
                 if (nftOwners && nftOwners.length) {
                     nftObj = nftOwners[nftOwners.length - 1];
                 }
@@ -371,7 +374,7 @@ export class SuiService {
                 if (packageId.length) {
                     output = {
                         packageId: packageId,
-                        treasuryCap: beatsObj.data?.objectId,
+                        treasuryCap: beatsObj.data?.objectId, 
                         nftOwnerCap: nftObj?.data?.objectId
                     };
                 }
