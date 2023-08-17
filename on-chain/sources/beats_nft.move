@@ -99,6 +99,7 @@ module soundbeats::beats_nft {
             name: nft.name,
         });
         
+        //return nft 
         nft
     }
 
@@ -114,7 +115,6 @@ module soundbeats::beats_nft {
         quantity: u32,
         ctx: &mut TxContext
     ) {
-        
         //ensure owner is sender 
         let sender = tx_context::sender(ctx);
         assert!(beats.owner == sender, ENotOwner);
@@ -127,6 +127,22 @@ module soundbeats::beats_nft {
             i = i + 1;
         };
     }
+    
+    public entry fun transfer_owner(
+        beats: BeatsOwnerCap<BEATS_NFT>,
+        new_owner: address,
+        ctx: &mut TxContext
+    ) {
+        //ensure owner is sender 
+        let sender = tx_context::sender(ctx);
+        assert!(beats.owner == sender, ENotOwner);
+        
+        beats.owner = new_owner; 
+        
+        //transfer ownership to owner 
+        transfer::public_transfer(beats, new_owner)
+    }
+    
     // ===== Tests =====
     
     #[test]

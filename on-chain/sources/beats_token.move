@@ -1,7 +1,9 @@
 module soundbeats::beats {
     use std::option;
+    use std::string;
+    use std::ascii;
     use sui::url;
-    use sui::coin::{Self, Coin, TreasuryCap};
+    use sui::coin::{Self, Coin, CoinMetadata, TreasuryCap};
     use sui::transfer;
     use sui::tx_context::{Self, TxContext};
 
@@ -45,6 +47,44 @@ module soundbeats::beats {
     /// Only manager can burn coins
     public entry fun burn(treasury_cap: &mut TreasuryCap<BEATS>, coin: Coin<BEATS>) {
         coin::burn(treasury_cap, coin);
+    }
+    
+    public entry fun transfer_treasury_owner(
+        treasury_cap: TreasuryCap<BEATS>, new_owner: address, _ctx: &mut TxContext
+    ) {
+        //transfer ownership to new owner 
+        transfer::public_transfer(treasury_cap, new_owner)
+    }
+    
+    public entry fun transfer_coin_owner(
+        coin: CoinMetadata<BEATS>, new_owner: address, _ctx: &mut TxContext
+    ) {
+        //transfer ownership to new owner 
+        transfer::public_transfer(coin, new_owner)
+    }
+    
+    public entry fun update_name(
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_name: string::String, _ctx: &mut TxContext
+    ) {
+        coin::update_name<BEATS>(treasury_cap, metadata, new_name); 
+    }
+    
+    public entry fun update_description(
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_description: string::String, _ctx: &mut TxContext
+    ) {
+        coin::update_description<BEATS>(treasury_cap, metadata, new_description); 
+    }
+    
+    public entry fun update_symbol(
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_symbol: ascii::String, _ctx: &mut TxContext
+    ) {
+        coin::update_symbol<BEATS>(treasury_cap, metadata, new_symbol); 
+    }
+    
+    public entry fun update_icon_url(
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_url: ascii::String, _ctx: &mut TxContext
+    ) {
+        coin::update_icon_url<BEATS>(treasury_cap, metadata, new_url); 
     }
 
     // ===== Tests =====
