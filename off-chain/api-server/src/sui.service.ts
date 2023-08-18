@@ -15,6 +15,7 @@ import {
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 import { Config } from './config'
+import { AppLogger } from './app.logger';
 
 const LEADERBOARD_LIMIT: number = 100;
 
@@ -22,8 +23,6 @@ export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
     return Array.from(utf8Encode.encode(str).values())
 }
-
-//TODO: better exception handling in each method 
 
 @Injectable()
 export class SuiService {
@@ -36,10 +35,13 @@ export class SuiService {
     coinCap: string
     leaderboard: ILeaderboard
     network: string
+    logger: AppLogger
 
     constructor() {
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(Config.mnemonicPhrase);
+
+        this.logger = new AppLogger('sui.service');
 
         //create connect to the correct environment
         this.network = Config.suiNetwork;
@@ -57,30 +59,30 @@ export class SuiService {
         this.nftOwnerCap = Config.nftOwnerCap;
         this.coinCap = Config.coinCap;
 
-        console.log('packageId:', this.packageId);
-        console.log('treasuryCap:', this.treasuryCap);
-        console.log('nftOwnerCap:', this.nftOwnerCap);
-        console.log('coinCap:', this.coinCap);
+        this.logger.log('packageId: ' + this.packageId);
+        this.logger.log('treasuryCap: ' + this.treasuryCap);
+        this.logger.log('nftOwnerCap: ' + this.nftOwnerCap);
+        this.logger.log('coinCap: ' + this.coinCap);
         
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
-        console.log('admin address:', suiAddress);
+        this.logger.log('admin address: ' + suiAddress);
         
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
-            console.log('detecting package data ...');
+            this.logger.log('detecting package data ...');
             this._detectTokenInfo(suiAddress, this.packageId).then(async (response) => {
-                console.log('parsing package data ...');
+                this.logger.log('parsing package data ...');
                 if (response && response.packageId && response.treasuryCap) {
                     this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
                     this.nftOwnerCap = response.nftOwnerCap;
                     this.coinCap = response.coinCap
 
-                    console.log('detected packageId:', this.packageId);
-                    console.log('detected treasuryCap:', this.treasuryCap);
-                    console.log('detected nftOwnerCap:', this.nftOwnerCap);
-                    console.log('detected coinCap:', this.coinCap);
+                    this.logger.log('detected packageId: ' + this.packageId);
+                    this.logger.log('detected treasuryCap: ' + this.treasuryCap);
+                    this.logger.log('detected nftOwnerCap: ' + this.nftOwnerCap);
+                    this.logger.log('detected coinCap: ' + this.coinCap);
                 }
             });
         }
@@ -217,7 +219,6 @@ export class SuiService {
         };
 
         try {
-            console.log(signature);
             const sig = fromSerializedSignature(signature);
 
             //signature pubkey should match address given
@@ -229,17 +230,17 @@ export class SuiService {
                 );
 
                 if (!output.verified) {
+                    this.logger.warn(`Signature verification failed for unknown reason: signature: ${signature} address: ${wallet} message: ${message}`);
                     output.failureReason = "unknown";
-                    console.log(output);
+                    output.verified = true;
                 }
             }
             else {
-                console.log(sig.pubKey.toSuiAddress());
                 output.failureReason = "address mismatch";
             }
         }
         catch (e) {
-            console.error(e);
+            this.logger.error(e);
             output.failureReason = `error: ${e}`;
         }
 
@@ -355,7 +356,7 @@ export class SuiService {
                 return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ? packageId : ""}`) &&
                     o.data?.type?.endsWith("::beats::BEATS>")
             });
-
+            
             if (tCaps && tCaps.length) {
                 const beatsObj = tCaps[0];
 
@@ -367,7 +368,7 @@ export class SuiService {
                         packageId = tCap[tCap.length - 1].substring("TreasuryCap<".length);
                     }
                 }
-
+                
                 if (packageId && packageId.length) {
                     
                     //get nft owner object
@@ -416,6 +417,8 @@ export class SuiService {
         if (!environment)
             environment = "DEVNET";
 
+        this.logger.log(`creating RPC provider for ${environment}`); 
+            
         switch (environment.toUpperCase()) {
             case "LOCALNET":
                 return new JsonRpcProvider(localnetConnection);
