@@ -33,6 +33,7 @@ export class SuiService {
     packageId: string
     treasuryCap: string
     nftOwnerCap: string
+    coinCap: string
     leaderboard: ILeaderboard
     network: string
 
@@ -54,10 +55,12 @@ export class SuiService {
         this.packageId = Config.packageId;
         this.treasuryCap = Config.treasuryCap;
         this.nftOwnerCap = Config.nftOwnerCap;
+        this.coinCap = Config.coinCap;
 
         console.log('packageId:', this.packageId);
         console.log('treasuryCap:', this.treasuryCap);
         console.log('nftOwnerCap:', this.nftOwnerCap);
+        console.log('coinCap:', this.coinCap);
         
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
@@ -66,16 +69,18 @@ export class SuiService {
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
             console.log('detecting package data ...');
-            this._detectTokenInfo(suiAddress).then(async (response) => {
+            this._detectTokenInfo(suiAddress, this.packageId).then(async (response) => {
                 console.log('parsing package data ...');
                 if (response && response.packageId && response.treasuryCap) {
                     this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
                     this.nftOwnerCap = response.nftOwnerCap;
+                    this.coinCap = response.coinCap
 
                     console.log('detected packageId:', this.packageId);
                     console.log('detected treasuryCap:', this.treasuryCap);
                     console.log('detected nftOwnerCap:', this.nftOwnerCap);
+                    console.log('detected coinCap:', this.coinCap);
                 }
             });
         }
@@ -212,6 +217,7 @@ export class SuiService {
         };
 
         try {
+            console.log(signature);
             const sig = fromSerializedSignature(signature);
 
             //signature pubkey should match address given
@@ -224,9 +230,11 @@ export class SuiService {
 
                 if (!output.verified) {
                     output.failureReason = "unknown";
+                    console.log(output);
                 }
             }
             else {
+                console.log(sig.pubKey.toSuiAddress());
                 output.failureReason = "address mismatch";
             }
         }
@@ -262,7 +270,7 @@ export class SuiService {
             //get objects which are BEATS NFTs
             const beatsNfts = response.data.filter(o => {
                 return o.data.type.startsWith(this.packageId) &&
-                    o.data?.type?.endsWith("::beats_nft::BeatsNft");
+                    o.data?.type?.endsWith("::beats_nft::BEATS_NFT>");
             });
 
             //get list of unique names for all BEATS NFTs owned
@@ -327,7 +335,8 @@ export class SuiService {
      * @param wallet 
      * @returns A package id and treasury cap id
      */
-    async _detectTokenInfo(wallet: string): Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string } | null> {
+    async _detectTokenInfo(wallet: string, packageId: string = null)
+        : Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string, coinCap: string } | null> {
         let output = null;
 
         //get owned objects
@@ -343,40 +352,51 @@ export class SuiService {
         //parse the objects
         if (objects && objects.data && objects.data.length) {
             const tCaps = objects.data.filter(o => {
-                return o.data.type.startsWith("0x2::coin::TreasuryCap<") &&
+                return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ? packageId : ""}`) &&
                     o.data?.type?.endsWith("::beats::BEATS>")
             });
 
             if (tCaps && tCaps.length) {
-                const beatsObj = tCaps[tCaps.length - 1];
+                const beatsObj = tCaps[0];
 
                 //parse out the type to get the package id
-                let packageId = "";
-                let parts = beatsObj.data.type.split('::');
-                let tCap = parts.filter(p => p.startsWith("TreasuryCap<"));
-                if (tCap.length) {
-                    packageId = tCap[0].substring("TreasuryCap<".length);
-                }
-                
-                //get nft owner object
-                const nftOwners = objects.data.filter(o => {
-                    return o.data.type.startsWith(packageId + "::beats_nft::BeatsOwnerCap<") &&
-                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>")
-                });
-                
-                //get nft cap object 
-                let nftObj = null; 
-                if (nftOwners && nftOwners.length) {
-                    nftObj = nftOwners[nftOwners.length - 1];
+                if (!packageId) {
+                    let parts = beatsObj.data.type.split('::');
+                    let tCap = parts.filter(p => p.startsWith("TreasuryCap<"));
+                    if (tCap.length) {
+                        packageId = tCap[tCap.length - 1].substring("TreasuryCap<".length);
+                    }
                 }
 
-                //get package ID & treasury cap
-                if (packageId.length) {
-                    output = {
-                        packageId: packageId,
-                        treasuryCap: beatsObj.data?.objectId, 
-                        nftOwnerCap: nftObj?.data?.objectId
-                    };
+                if (packageId && packageId.length) {
+                    
+                    //get nft owner object
+                    let nftObj = null; 
+                    const nftOwners = objects.data.filter(o => {
+                        return o.data.type == `${packageId}::beats_nft::BeatsOwnerCap<${packageId}::beats_nft::BEATS_NFT>`;
+                    });
+                    if (nftOwners && nftOwners.length) {
+                        nftObj = nftOwners[nftOwners.length - 1];
+                    }
+
+                    //get coin cap object 
+                    let coinObj = null;
+                    const coinCaps = objects.data.filter(o => {
+                        return o.data.type == `0x2::coin::CoinMetadata<${packageId}::beats::BEATS>`
+                    });
+                    if (coinCaps && coinCaps.length) {
+                        coinObj = coinCaps[coinCaps.length - 1];
+                    }
+
+                    //get package ID & treasury cap
+                    if (packageId && packageId.length) {
+                        output = {
+                            packageId: packageId,
+                            treasuryCap: beatsObj.data?.objectId, 
+                            nftOwnerCap: nftObj?.data?.objectId, 
+                            coinCap: coinObj?.data?.objectId
+                        };
+                    }
                 }
             }
         }
