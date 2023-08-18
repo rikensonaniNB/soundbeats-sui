@@ -12,12 +12,15 @@ module soundbeats::beats {
     /// The OTW (one-time witness)
     struct BEATS has drop { }
 
-    /// One-time init with witness, creates the Coin object and CoinMetadata. 
-    /// Note that the CoinMetadata is shared, but functions to modify it are restriced
-    /// to owner.
+    /*** 
+     * Initializes the contract with a one-time witness, creating Coin and CoinMetadata.
+     * The caller becomes automatic owner of TreasuryCap and CoinCap. 
+     * 
+     * @param witness: The one-time witness object. 
+     * @param ctx: Context
+     */
     fun init(witness: BEATS, ctx: &mut TxContext) {
         // Get a treasury cap for the coin and give it to the transaction sender
-        //let foo = option::Option<sui::url> { vec: b"" };
         let (treasury_cap, metadata) = coin::create_currency<BEATS>(
             witness, 
             2, 
@@ -28,7 +31,7 @@ module soundbeats::beats {
             ctx
         );
         
-        //TODO: change this to public share 
+        //transfer ownership of metadata 
         transfer::public_transfer(metadata, tx_context::sender(ctx));
         
         //transfer ownership to owner 
@@ -37,52 +40,123 @@ module soundbeats::beats {
 
     // ===== Entrypoints =====
     
-    /// Only manager can mint new coins
+    /*** 
+     * Mints new tokens to a recipient. 
+     * Restricted to TreasuryCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param amount: Quantity to mint
+     * @param recipient: The recipient of the new minted coins
+     * @param ctx: Context
+     */
     public entry fun mint(
         treasury_cap: &mut TreasuryCap<BEATS>, amount: u64, recipient: address, ctx: &mut TxContext
     ) {
         coin::mint_and_transfer(treasury_cap, amount, recipient, ctx);
     }
 
-    /// Only manager can burn coins
+    /*** 
+     * Burns a quantity of coins. 
+     * Restricted to TreasuryCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param coin: CoinCap object owned by caller 
+     */
     public entry fun burn(treasury_cap: &mut TreasuryCap<BEATS>, coin: Coin<BEATS>) {
         coin::burn(treasury_cap, coin);
     }
     
-    public entry fun transfer_treasury_owner(
-        treasury_cap: TreasuryCap<BEATS>, new_owner: address, _ctx: &mut TxContext
+    /*** 
+     * Transfers ownership of both TreasuryCap and CoinMetadata to another address. 
+     * Restricted to TreasuryCap and CoinCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param coin: CoinMetadata object owned by caller 
+     * @param new_owner: address to which to transfer ownership
+     */
+    public entry fun transfer_ownership(
+        treasury_cap: TreasuryCap<BEATS>, 
+        coin: CoinMetadata<BEATS>,
+        new_owner: address
     ) {
-        //transfer ownership to new owner 
+        transfer::public_transfer(treasury_cap, new_owner);
+        transfer::public_transfer(coin, new_owner);
+    }
+    
+    /*** 
+     * Transfers ownership of TreasuryCap to another address. 
+     * Restricted to TreasuryCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param new_owner: address to which to transfer ownership
+     */
+    public entry fun transfer_treasury_owner(
+        treasury_cap: TreasuryCap<BEATS>, new_owner: address
+    ) {
         transfer::public_transfer(treasury_cap, new_owner)
     }
     
+    /*** 
+     * Transfers ownership of CoinMetadata to another address. 
+     * Restricted to CoinCap owner. 
+     * 
+     * @param coin: CoinMetadata object owned by caller 
+     * @param new_owner: address to which to transfer ownership
+     */
     public entry fun transfer_coin_owner(
-        coin: CoinMetadata<BEATS>, new_owner: address, _ctx: &mut TxContext
+        coin: CoinMetadata<BEATS>, new_owner: address
     ) {
-        //transfer ownership to new owner 
         transfer::public_transfer(coin, new_owner)
     }
     
+    /*** 
+     * Modifies coin name in CoinMetadata. 
+     * Restricted to TreasuryCap and CoinCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param metadata: CoinMetadata object owned by caller 
+     */
     public entry fun update_name(
-        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_name: string::String, _ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_name: string::String
     ) {
         coin::update_name<BEATS>(treasury_cap, metadata, new_name); 
     }
     
+    /*** 
+     * Modifies coin description in CoinMetadata. 
+     * Restricted to TreasuryCap and CoinCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param metadata: CoinMetadata object owned by caller 
+     */
     public entry fun update_description(
-        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_description: string::String, _ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_description: string::String
     ) {
         coin::update_description<BEATS>(treasury_cap, metadata, new_description); 
     }
     
+    /*** 
+     * Modifies coin symbol in CoinMetadata. 
+     * Restricted to TreasuryCap and CoinCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param metadata: CoinMetadata object owned by caller 
+     */
     public entry fun update_symbol(
-        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_symbol: ascii::String, _ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_symbol: ascii::String
     ) {
         coin::update_symbol<BEATS>(treasury_cap, metadata, new_symbol); 
     }
     
+    /*** 
+     * Modifies coin icon_url in CoinMetadata. 
+     * Restricted to TreasuryCap and CoinCap owner. 
+     * 
+     * @param treasury_cap: TreasuryCap object owned by caller
+     * @param metadata: CoinMetadata object owned by caller 
+     */
     public entry fun update_icon_url(
-        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_url: ascii::String, _ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<BEATS>, metadata: &mut CoinMetadata<BEATS>, new_url: ascii::String
     ) {
         coin::update_icon_url<BEATS>(treasury_cap, metadata, new_url); 
     }

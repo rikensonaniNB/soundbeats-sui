@@ -105,9 +105,20 @@ module soundbeats::beats_nft {
 
     // ===== Entrypoints =====
     
-    /// Mint multiple or single instances of NFT to recipient 
+    /**
+     * Mints multiple or single instances of NFT to recipient. 
+     * Restricted to NFT owner. 
+     *
+     * @param ownerCap: BeatsOwnerCap object owned by caller
+     * @param name: NFT name string 
+     * @param description: NFT description string 
+     * @param url: NFT image url
+     * @param recipient: Intended recipient address of new minted NFT
+     * @param quantity: Quantity to mint 
+     * @param ctx: Context
+     */
     public entry fun mint(
-        beats: &mut BeatsOwnerCap<BEATS_NFT>,
+        ownerCap: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
         description: vector<u8>,
         url: vector<u8>,
@@ -117,30 +128,38 @@ module soundbeats::beats_nft {
     ) {
         //ensure owner is sender 
         let sender = tx_context::sender(ctx);
-        assert!(beats.owner == sender, ENotOwner);
+        assert!(ownerCap.owner == sender, ENotOwner);
         
         let i = 0;
         while (i < quantity) {
-            let nft = internal_mint(beats, name, description, url, ctx); 
+            let nft = internal_mint(ownerCap, name, description, url, ctx); 
 
             transfer::public_transfer(nft, recipient);
             i = i + 1;
         };
     }
     
+    /**
+     * Transfers ownership to another address. 
+     * Restricted to current NFT owner. 
+     *
+     * @param ownerCap: BeatsOwnerCap object owned by caller
+     * @param new_owner: Address to which to transfer ownership
+     * @param ctx: Context
+     */
     public entry fun transfer_owner(
-        beats: BeatsOwnerCap<BEATS_NFT>,
+        ownerCap: BeatsOwnerCap<BEATS_NFT>,
         new_owner: address,
         ctx: &mut TxContext
     ) {
         //ensure owner is sender 
         let sender = tx_context::sender(ctx);
-        assert!(beats.owner == sender, ENotOwner);
+        assert!(ownerCap.owner == sender, ENotOwner);
         
-        beats.owner = new_owner; 
+        ownerCap.owner = new_owner; 
         
         //transfer ownership to owner 
-        transfer::public_transfer(beats, new_owner)
+        transfer::public_transfer(ownerCap, new_owner)
     }
     
     // ===== Tests =====
