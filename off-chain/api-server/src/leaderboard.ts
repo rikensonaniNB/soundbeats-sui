@@ -38,11 +38,10 @@ class LeaderboardMemory implements ILeaderboard {
             this.leaderboardMap.forEach((value: number, key: string) => {
                 output.scores.push({ wallet: key, score: value });
             });
-
+            
             //sort 
-            output.scores.sort((a, b) => { return b.score - a.score });
-
-            //limit output 
+            output.scores.sort((a, b) => { return b.score - a.score }); 
+            
             if (output.scores.length > limit) {
                 output.scores = output.scores.slice(0, limit);
             }
