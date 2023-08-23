@@ -223,10 +223,17 @@
                         sign = await window.ethos.currentWallet.signMessage({ message: t, account: window.ethos.accounts[0] });
 
                         let address = window.ethos.accounts[0].address;
-                        if (window.ethos.currentAccount)
+                        let pubKey = window.ethos.accounts[0].publicKey;
+                        if (window.ethos.currentAccount) {
                             address = window.ethos.currentAccount.address;
-                        console.log(address);
-                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", sign.signature + ':' + address);
+                            pubKey = window.ethos.currentAccount.publicKey;
+						}
+						
+						pubKeyBase64 = btoa(String.fromCharCode.apply(null, pubKey));
+						console.log('address:', address);
+						console.log('public key:', pubKeyBase64); 
+						
+                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", sign.signature + ':' + pubKeyBase64);
                         
                         //google analytics
                         gtag('event', 'login', {
