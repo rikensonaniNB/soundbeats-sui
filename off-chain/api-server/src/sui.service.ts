@@ -1,17 +1,10 @@
 import {
-    Ed25519Keypair,
-    JsonRpcProvider,
-    Keypair,
-    RawSigner,
-    TransactionBlock,
-    localnetConnection,
-    devnetConnection,
-    testnetConnection,
-    mainnetConnection,
-    verifyMessage,
-    IntentScope,
-    fromSerializedSignature
+    RawSigner, // use keypair
 } from '@mysten/sui.js'
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client'
+import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519'
+import { TransactionBlock } from '@mysten/sui.js/transactions'
+import { Keypair } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 import { Config } from './config'
@@ -27,7 +20,7 @@ export const strToByteArray = (str: string): number[] => {
 @Injectable()
 export class SuiService {
     signer: RawSigner
-    provider: JsonRpcProvider
+    provider: SuiClient
     keypair: Keypair
     packageId: string
     treasuryCap: string
@@ -46,8 +39,6 @@ export class SuiService {
         //create connect to the correct environment
         this.network = Config.suiNetwork;
         this.provider = this._createRpcProvider(this.network);
-
-        //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
 
         //leaderboard
@@ -63,11 +54,11 @@ export class SuiService {
         this.logger.log('treasuryCap: ' + this.treasuryCap);
         this.logger.log('nftOwnerCap: ' + this.nftOwnerCap);
         this.logger.log('coinCap: ' + this.coinCap);
-        
+
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         this.logger.log('admin address: ' + suiAddress);
-        
+
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
             this.logger.log('detecting package data ...');
@@ -152,7 +143,7 @@ export class SuiService {
      * @returns 
      */
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string; network: string }> {
-        
+
         //mint token to recipient
         const tx = new TransactionBlock();
         tx.moveCall({
@@ -181,7 +172,7 @@ export class SuiService {
         }
 
         const signature = result.effects?.transactionDigest;
-        return { signature, network:this.network };
+        return { signature, network: this.network };
     }
 
     /**
@@ -203,45 +194,35 @@ export class SuiService {
     }
 
     /**
-     * Verifies that the signature of the given message originated from the given wallet address. 
+     * Verifies that the signature of the given message originated from the given wallet. 
      * 
-     * @param wallet 
-     * @param signature 
-     * @param message 
+     * @param walletPubKey The wallet public key as a base64 string
+     * @param signature The signed message as a base64 string
+     * @param message The original message, as a plain string 
      * @returns VerifySignatureResponseDto
      */
-    async verifySignature(wallet: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string; network: string }> {
+    async verifySignature(walletPubKey: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string; network: string }> {
         const output = {
             verified: false,
-            address: wallet,
+            address: "",
             failureReason: "",
             network: this.network
         };
 
         try {
-            const sig = fromSerializedSignature(signature);
+            const publicKey = new Ed25519PublicKey(walletPubKey)
+            const msgBytes = new TextEncoder().encode(message);
 
-            //signature pubkey should match address given
-            if (sig.pubKey.toSuiAddress() == wallet) {
-                output.verified = await verifyMessage(
-                    new TextEncoder().encode(message),
-                    signature,
-                    IntentScope.PersonalMessage
-                );
+            output.address = publicKey.toSuiAddress();
+            output.verified = await publicKey.verifyPersonalMessage(msgBytes, signature);
 
-                if (!output.verified) {
-                    this.logger.warn(`Signature verification failed for unknown reason: signature: ${signature} address: ${wallet} message: ${message}`);
-                    output.failureReason = "unknown";
-                    output.verified = true;
-                }
-            }
-            else {
-                output.failureReason = "address mismatch";
+            if (!output.verified) {
+                output.failureReason = "unknown";
             }
         }
         catch (e) {
             this.logger.error(e);
-            output.failureReason = `error: ${e}`;
+            output.failureReason = `${e}`;
         }
 
         return output;
@@ -262,8 +243,9 @@ export class SuiService {
             owner: wallet,
             options: {
                 showType: true,
-                showContent: true
-            }
+                showContent: true,
+            },
+            limit: 90 //TODO: this limit might cause an issue
         });
 
         if (response && response.data && response.data.length) {
@@ -356,7 +338,7 @@ export class SuiService {
                 return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ? packageId : ""}`) &&
                     o.data?.type?.endsWith("::beats::BEATS>")
             });
-            
+
             if (tCaps && tCaps.length) {
                 const beatsObj = tCaps[0];
 
@@ -368,11 +350,11 @@ export class SuiService {
                         packageId = tCap[tCap.length - 1].substring("TreasuryCap<".length);
                     }
                 }
-                
+
                 if (packageId && packageId.length) {
-                    
+
                     //get nft owner object
-                    let nftObj = null; 
+                    let nftObj = null;
                     const nftOwners = objects.data.filter(o => {
                         return o.data.type == `${packageId}::beats_nft::BeatsOwnerCap<${packageId}::beats_nft::BEATS_NFT>`;
                     });
@@ -393,8 +375,8 @@ export class SuiService {
                     if (packageId && packageId.length) {
                         output = {
                             packageId: packageId,
-                            treasuryCap: beatsObj.data?.objectId, 
-                            nftOwnerCap: nftObj?.data?.objectId, 
+                            treasuryCap: beatsObj.data?.objectId,
+                            nftOwnerCap: nftObj?.data?.objectId,
                             coinCap: coinObj?.data?.objectId
                         };
                     }
@@ -409,27 +391,36 @@ export class SuiService {
      * Creates a Json RPC provider for the given environment (default devnet)
      * 
      * NOTE: it's not about what you wear; it's all about where you are
-     * 
      * @param environment 
      * @returns JsonRpcProvider
      */
-    _createRpcProvider(environment: String): JsonRpcProvider {
+    _createRpcProvider(environment: string): SuiClient {
         if (!environment)
             environment = "DEVNET";
 
-        this.logger.log(`creating RPC provider for ${environment}`); 
-            
+        this.logger.log(`creating RPC provider for ${environment}`);
+
         switch (environment.toUpperCase()) {
             case "LOCALNET":
-                return new JsonRpcProvider(localnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("localnet")
+                });
             case "DEVNET":
-                return new JsonRpcProvider(devnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("devnet")
+                });
             case "TESTNET":
-                return new JsonRpcProvider(testnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("testnet")
+                });
             case "MAINNET":
-                return new JsonRpcProvider(mainnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("mainnet")
+                });
         }
 
-        return new JsonRpcProvider(devnetConnection);
+        return new SuiClient({
+            url: getFullnodeUrl("devnet")
+        });
     }
 }
