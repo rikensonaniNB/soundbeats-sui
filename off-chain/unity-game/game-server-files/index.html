@@ -229,11 +229,11 @@
                             pubKey = window.ethos.currentAccount.publicKey;
 						}
 						
-						pubKeyBase64 = btoa(String.fromCharCode.apply(null, pubKey));
+						let pubKeyBase64 = btoa(String.fromCharCode.apply(null, pubKey));
 						console.log('address:', address);
 						console.log('public key:', pubKeyBase64); 
 						
-                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", sign.signature + ':' + pubKeyBase64);
+                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
                         
                         //google analytics
                         gtag('event', 'login', {
