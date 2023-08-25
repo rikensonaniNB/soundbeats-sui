@@ -86,6 +86,8 @@ export class VerifySignatureResponseDto extends ResponseDtoBase {
 export class GetLeaderboardDto {
     @ApiProperty({ description: 'The address of the wallet of the user' })
     wallet: string
+    @ApiProperty({ description: 'The max number of records to include in the response' })
+    limit: number
 }
 
 export class LeaderboardDto {
