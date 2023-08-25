@@ -10,7 +10,7 @@ import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
 
-const LEADERBOARD_LIMIT: number = 100;
+const LEADERBOARD_DEFAULT_LIMIT: number = 100;
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -292,10 +292,11 @@ export class SuiService {
      * if the wallet parameter is provided (i.e., if 'wallet' is null or undefined, returns ALL scores)
      * 
      * @param wallet 
+     * @param limit 0 means 'unlimited'
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string = null): { scores: { wallet: string; score: number }[]; network: string } {
-        return this.leaderboard.getLeaderboardScores(wallet, LEADERBOARD_LIMIT);
+    getLeaderboardScores(wallet: string = null, limit: number = 0): { scores: { wallet: string; score: number }[]; network: string } {
+        return this.leaderboard.getLeaderboardScores(wallet, limit);
     }
 
     /**
