@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GoogleAnalytics :  Singleton<GoogleAnalytics>
+public class GoogleAnalytics : Singleton<GoogleAnalytics>
 {
-    private const string TrackingID = "G-ZC******W"; 
+    private const string TrackingID = "G-ZC639JTDEW";
 
     public void SendGameStart()
     {
@@ -21,18 +22,28 @@ public class GoogleAnalytics :  Singleton<GoogleAnalytics>
         SendEvent("user_engagement", "player_lose", "Player Failed", 1);
     }
 
+    public void selectedPlayerCharacter(string charName)
+    {
+        SendEvent("user_engagement", "selected_character", charName, 1);
+    }
+
+    public void selectedSong(string songName)
+    {
+        SendEvent("user_engagement", "selected_song", songName, 1);
+    }
+
     public void SendEvent(string category, string action, string label, int value = 0)
     {
         string url = "https://www.google-analytics.com/collect";
-        
+
         // Construct the Measurement Protocol parameters
         string payload = $"v=1&t=event&tid={TrackingID}&cid={SystemInfo.deviceUniqueIdentifier}&ec={category}&ea={action}&el={label}&ev={value}";
 
-        WWW www = new WWW(url, System.Text.Encoding.UTF8.GetBytes(payload));
+        UnityWebRequest www = UnityWebRequest.Post(url, payload);
         StartCoroutine(SendRequest(www));
     }
 
-    private IEnumerator SendRequest(WWW www)
+    private IEnumerator SendRequest(UnityWebRequest www)
     {
         yield return www;
 
@@ -46,4 +57,3 @@ public class GoogleAnalytics :  Singleton<GoogleAnalytics>
         }
     }
 }
-
