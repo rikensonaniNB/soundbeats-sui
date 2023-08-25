@@ -7,29 +7,29 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
 {
     private const string TrackingID = "G-ZC639JTDEW";
 
-    public void SendGameStart()
+    public void SendGameStart(string songName)
     {
-        SendEvent("user_engagement", "game_start", "Game Started", 1);
+        SendEvent("gameplay", "gameStart", songName);
     }
 
-    public void SendPlayerWin()
+    public void SendPlayerWin(int score)
     {
-        SendEvent("user_engagement", "player_win", "Player Won", 1);
+        SendEvent("gameplay", "gameResult", "Win", score);
     }
 
-    public void SendPlayerFailed()
+    public void SendPlayerLost(int score)
     {
-        SendEvent("user_engagement", "player_lose", "Player Failed", 1);
+        SendEvent("gameplay", "gameResult", "Loss", score);
     }
 
-    public void selectedPlayerCharacter(string charName)
+    public void SendSelectedCharacter(string charName)
     {
-        SendEvent("user_engagement", "selected_character", charName, 1);
+        SendEvent("gameplay", "selectedCharacter", charName);
     }
 
-    public void selectedSong(string songName)
+    public void SendSelectedSong(string songName)
     {
-        SendEvent("user_engagement", "selected_song", songName, 1);
+        SendEvent("gameplay", "selectedSong", songName);
     }
 
     public void SendEvent(string category, string action, string label, int value = 0)
@@ -40,20 +40,19 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
         string payload = $"v=1&t=event&tid={TrackingID}&cid={SystemInfo.deviceUniqueIdentifier}&ec={category}&ea={action}&el={label}&ev={value}";
 
         UnityWebRequest www = UnityWebRequest.Post(url, payload);
-        StartCoroutine(SendRequest(www));
+        StartCoroutine(SendRequest(www, payload));
     }
 
-    private IEnumerator SendRequest(UnityWebRequest www)
+    private IEnumerator SendRequest(UnityWebRequest www, string payload)
     {
         yield return www;
 
         if (www.error != null)
         {
-            Debug.LogError("Error sending analytics event: " + www.error);
+            Debug.LogError($"Error sending analytics event{payload}: {www.error}");
         }
-        else
-        {
-            Debug.Log("Analytics event sent successfully!");
+        else {
+            Debug.Log(payload);
         }
     }
 }

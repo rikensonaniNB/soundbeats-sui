@@ -71,6 +71,16 @@ public class UserData
         }
     }
 
+    public static string SelectedNftName
+    {
+        get {
+            if (SelectedNftIndex >= 0) {
+                return _nftNames[SelectedNftIndex];
+            }
+            return System.String.Empty;
+        }
+    }
+
     public static bool HasSelectedNft 
     {
         get { 

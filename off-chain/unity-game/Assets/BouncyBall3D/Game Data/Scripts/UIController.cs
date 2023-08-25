@@ -590,8 +590,10 @@ public class UIController : MonoBehaviour
     /// <param name="index">The index of the selected NFT.</param>
     private void SetSelectedNft(int index)
     {
-        if (UserData.OwnsNft(index))
+        if (UserData.OwnsNft(index)) {
             UserData.SelectedNftIndex = index;
+            GoogleAnalytics.Instance.SendSelectedCharacter(UserData.SelectedNftName);
+        }
         this.SetSelectedNfts();
     }
 
