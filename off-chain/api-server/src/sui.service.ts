@@ -239,36 +239,46 @@ export class SuiService {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
-        const response = await this.provider.getOwnedObjects({
-            owner: wallet,
-            options: {
-                showType: true,
-                showContent: true,
-            },
-            limit: 90 //TODO: this limit might cause an issue
-        });
+        let response: any = {
+            hasNextPage: true,
+            data: [],
+            nextCursor: null
+        };
 
-        if (response && response.data && response.data.length) {
-
-            //get objects which are BEATS NFTs
-            const beatsNfts = response.data.filter(o => {
-                return o.data.type.startsWith(this.packageId) &&
-                    o.data?.type?.endsWith("::beats_nft::BEATS_NFT>");
+        while (response.hasNextPage) {
+            //get objects owned by user
+            response = await this.provider.getOwnedObjects({
+                owner: wallet,
+                options: {
+                    showType: true,
+                    showContent: true,
+                },
+                limit: 50,
+                cursor: response.nextCursor
             });
 
-            //get list of unique names for all BEATS NFTs owned
-            for (let i = 0; i < beatsNfts.length; i++) {
-                const nft = beatsNfts[i];
-                if (nft.data.content['fields'] &&
-                    nft.data.content['fields']['name'] &&
-                    nft.data.content['fields']['url']
-                ) {
-                    const nftName = nft.data.content['fields']['name'];
-                    const nftUrl = nft.data.content['fields']['url'];
+            if (response && response.data && response.data.length) {
 
-                    //only add if name is unique
-                    if (!output.nfts.some(nft => nft.name == nftName)) {
-                        output.nfts.push({ name: nftName, url: nftUrl });
+                //get objects which are BEATS NFTs
+                const beatsNfts = response.data.filter(o => {
+                    return o.data.type.startsWith(this.packageId) &&
+                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>");
+                });
+
+                //get list of unique names for all BEATS NFTs owned
+                for (let i = 0; i < beatsNfts.length; i++) {
+                    const nft = beatsNfts[i];
+                    if (nft.data.content['fields'] &&
+                        nft.data.content['fields']['name'] &&
+                        nft.data.content['fields']['url']
+                    ) {
+                        const nftName = nft.data.content['fields']['name'];
+                        const nftUrl = nft.data.content['fields']['url'];
+
+                        //only add if name is unique
+                        if (!output.nfts.some(nft => nft.name == nftName)) {
+                            output.nfts.push({ name: nftName, url: nftUrl });
+                        }
                     }
                 }
             }
