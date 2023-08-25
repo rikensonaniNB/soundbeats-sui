@@ -1,50 +1,44 @@
 import {
-    Ed25519Keypair,
-    JsonRpcProvider,
-    Keypair,
-    RawSigner,
-    TransactionBlock,
-    localnetConnection,
-    devnetConnection,
-    testnetConnection,
-    mainnetConnection,
-    verifyMessage,
-    IntentScope,
-    fromSerializedSignature
+    RawSigner, // use keypair
 } from '@mysten/sui.js'
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client'
+import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519'
+import { TransactionBlock } from '@mysten/sui.js/transactions'
+import { Keypair } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
 import { Config } from './config'
+import { AppLogger } from './app.logger';
 
-const LEADERBOARD_LIMIT: number = 100;
+const LEADERBOARD_DEFAULT_LIMIT: number = 100;
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
     return Array.from(utf8Encode.encode(str).values())
 }
 
-//TODO: better exception handling in each method 
-
 @Injectable()
 export class SuiService {
     signer: RawSigner
-    provider: JsonRpcProvider
+    provider: SuiClient
     keypair: Keypair
     packageId: string
     treasuryCap: string
     nftOwnerCap: string
+    coinCap: string
     leaderboard: ILeaderboard
     network: string
+    logger: AppLogger
 
     constructor() {
         //derive keypair
         this.keypair = Ed25519Keypair.deriveKeypair(Config.mnemonicPhrase);
 
+        this.logger = new AppLogger('sui.service');
+
         //create connect to the correct environment
         this.network = Config.suiNetwork;
         this.provider = this._createRpcProvider(this.network);
-
-        //signer & client 
         this.signer = new RawSigner(this.keypair, this.provider);
 
         //leaderboard
@@ -54,28 +48,32 @@ export class SuiService {
         this.packageId = Config.packageId;
         this.treasuryCap = Config.treasuryCap;
         this.nftOwnerCap = Config.nftOwnerCap;
+        this.coinCap = Config.coinCap;
 
-        console.log('packageId:', this.packageId);
-        console.log('treasuryCap:', this.treasuryCap);
-        console.log('nftOwnerCap:', this.nftOwnerCap);
-        
+        this.logger.log('packageId: ' + this.packageId);
+        this.logger.log('treasuryCap: ' + this.treasuryCap);
+        this.logger.log('nftOwnerCap: ' + this.nftOwnerCap);
+        this.logger.log('coinCap: ' + this.coinCap);
+
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
-        console.log('admin address:', suiAddress);
-        
+        this.logger.log('admin address: ' + suiAddress);
+
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
-            console.log('detecting package data ...');
-            this._detectTokenInfo(suiAddress).then(async (response) => {
-                console.log('parsing package data ...');
+            this.logger.log('detecting package data ...');
+            this._detectTokenInfo(suiAddress, this.packageId).then(async (response) => {
+                this.logger.log('parsing package data ...');
                 if (response && response.packageId && response.treasuryCap) {
                     this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
                     this.nftOwnerCap = response.nftOwnerCap;
+                    this.coinCap = response.coinCap
 
-                    console.log('detected packageId:', this.packageId);
-                    console.log('detected treasuryCap:', this.treasuryCap);
-                    console.log('detected nftOwnerCap:', this.nftOwnerCap);
+                    this.logger.log('detected packageId: ' + this.packageId);
+                    this.logger.log('detected treasuryCap: ' + this.treasuryCap);
+                    this.logger.log('detected nftOwnerCap: ' + this.nftOwnerCap);
+                    this.logger.log('detected coinCap: ' + this.coinCap);
                 }
             });
         }
@@ -145,7 +143,7 @@ export class SuiService {
      * @returns 
      */
     async mintTokens(recipient: string, amount: number): Promise<{ signature: string; network: string }> {
-        
+
         //mint token to recipient
         const tx = new TransactionBlock();
         tx.moveCall({
@@ -174,7 +172,7 @@ export class SuiService {
         }
 
         const signature = result.effects?.transactionDigest;
-        return { signature, network:this.network };
+        return { signature, network: this.network };
     }
 
     /**
@@ -196,43 +194,35 @@ export class SuiService {
     }
 
     /**
-     * Verifies that the signature of the given message originated from the given wallet address. 
+     * Verifies that the signature of the given message originated from the given wallet. 
      * 
-     * @param wallet 
-     * @param signature 
-     * @param message 
+     * @param walletPubKey The wallet public key as a base64 string
+     * @param signature The signed message as a base64 string
+     * @param message The original message, as a plain string 
      * @returns VerifySignatureResponseDto
      */
-    async verifySignature(wallet: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string; network: string }> {
+    async verifySignature(walletPubKey: string, signature: string, message: string): Promise<{ verified: boolean, failureReason: string, address: string; network: string }> {
         const output = {
             verified: false,
-            address: wallet,
+            address: "",
             failureReason: "",
             network: this.network
         };
 
         try {
-            const sig = fromSerializedSignature(signature);
+            const publicKey = new Ed25519PublicKey(walletPubKey)
+            const msgBytes = new TextEncoder().encode(message);
 
-            //signature pubkey should match address given
-            if (sig.pubKey.toSuiAddress() == wallet) {
-                output.verified = await verifyMessage(
-                    new TextEncoder().encode(message),
-                    signature,
-                    IntentScope.PersonalMessage
-                );
+            output.address = publicKey.toSuiAddress();
+            output.verified = await publicKey.verifyPersonalMessage(msgBytes, signature);
 
-                if (!output.verified) {
-                    output.failureReason = "unknown";
-                }
-            }
-            else {
-                output.failureReason = "address mismatch";
+            if (!output.verified) {
+                output.failureReason = "unknown";
             }
         }
         catch (e) {
-            console.error(e);
-            output.failureReason = `error: ${e}`;
+            this.logger.error(e);
+            output.failureReason = `${e}`;
         }
 
         return output;
@@ -249,35 +239,46 @@ export class SuiService {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
-        const response = await this.provider.getOwnedObjects({
-            owner: wallet,
-            options: {
-                showType: true,
-                showContent: true
-            }
-        });
+        let response: any = {
+            hasNextPage: true,
+            data: [],
+            nextCursor: null
+        };
 
-        if (response && response.data && response.data.length) {
-
-            //get objects which are BEATS NFTs
-            const beatsNfts = response.data.filter(o => {
-                return o.data.type.startsWith(this.packageId) &&
-                    o.data?.type?.endsWith("::beats_nft::BeatsNft");
+        while (response.hasNextPage) {
+            //get objects owned by user
+            response = await this.provider.getOwnedObjects({
+                owner: wallet,
+                options: {
+                    showType: true,
+                    showContent: true,
+                },
+                limit: 50,
+                cursor: response.nextCursor
             });
 
-            //get list of unique names for all BEATS NFTs owned
-            for (let i = 0; i < beatsNfts.length; i++) {
-                const nft = beatsNfts[i];
-                if (nft.data.content['fields'] &&
-                    nft.data.content['fields']['name'] &&
-                    nft.data.content['fields']['url']
-                ) {
-                    const nftName = nft.data.content['fields']['name'];
-                    const nftUrl = nft.data.content['fields']['url'];
+            if (response && response.data && response.data.length) {
 
-                    //only add if name is unique
-                    if (!output.nfts.some(nft => nft.name == nftName)) {
-                        output.nfts.push({ name: nftName, url: nftUrl });
+                //get objects which are BEATS NFTs
+                const beatsNfts = response.data.filter(o => {
+                    return o.data.type.startsWith(this.packageId) &&
+                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>");
+                });
+
+                //get list of unique names for all BEATS NFTs owned
+                for (let i = 0; i < beatsNfts.length; i++) {
+                    const nft = beatsNfts[i];
+                    if (nft.data.content['fields'] &&
+                        nft.data.content['fields']['name'] &&
+                        nft.data.content['fields']['url']
+                    ) {
+                        const nftName = nft.data.content['fields']['name'];
+                        const nftUrl = nft.data.content['fields']['url'];
+
+                        //only add if name is unique
+                        if (!output.nfts.some(nft => nft.name == nftName)) {
+                            output.nfts.push({ name: nftName, url: nftUrl });
+                        }
                     }
                 }
             }
@@ -301,10 +302,11 @@ export class SuiService {
      * if the wallet parameter is provided (i.e., if 'wallet' is null or undefined, returns ALL scores)
      * 
      * @param wallet 
+     * @param limit 0 means 'unlimited'
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string = null): { scores: { wallet: string; score: number }[]; network: string } {
-        return this.leaderboard.getLeaderboardScores(wallet, LEADERBOARD_LIMIT);
+    getLeaderboardScores(wallet: string = null, limit: number = 0): { scores: { wallet: string; score: number }[]; network: string } {
+        return this.leaderboard.getLeaderboardScores(wallet, limit);
     }
 
     /**
@@ -327,7 +329,8 @@ export class SuiService {
      * @param wallet 
      * @returns A package id and treasury cap id
      */
-    async _detectTokenInfo(wallet: string): Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string } | null> {
+    async _detectTokenInfo(wallet: string, packageId: string = null)
+        : Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string, coinCap: string } | null> {
         let output = null;
 
         //get owned objects
@@ -343,40 +346,51 @@ export class SuiService {
         //parse the objects
         if (objects && objects.data && objects.data.length) {
             const tCaps = objects.data.filter(o => {
-                return o.data.type.startsWith("0x2::coin::TreasuryCap<") &&
+                return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ? packageId : ""}`) &&
                     o.data?.type?.endsWith("::beats::BEATS>")
             });
 
             if (tCaps && tCaps.length) {
-                const beatsObj = tCaps[tCaps.length - 1];
+                const beatsObj = tCaps[0];
 
                 //parse out the type to get the package id
-                let packageId = "";
-                let parts = beatsObj.data.type.split('::');
-                let tCap = parts.filter(p => p.startsWith("TreasuryCap<"));
-                if (tCap.length) {
-                    packageId = tCap[0].substring("TreasuryCap<".length);
-                }
-                
-                //get nft owner object
-                const nftOwners = objects.data.filter(o => {
-                    return o.data.type.startsWith(packageId + "::beats_nft::BeatsOwnerCap<") &&
-                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>")
-                });
-                
-                //get nft cap object 
-                let nftObj = null; 
-                if (nftOwners && nftOwners.length) {
-                    nftObj = nftOwners[nftOwners.length - 1];
+                if (!packageId) {
+                    let parts = beatsObj.data.type.split('::');
+                    let tCap = parts.filter(p => p.startsWith("TreasuryCap<"));
+                    if (tCap.length) {
+                        packageId = tCap[tCap.length - 1].substring("TreasuryCap<".length);
+                    }
                 }
 
-                //get package ID & treasury cap
-                if (packageId.length) {
-                    output = {
-                        packageId: packageId,
-                        treasuryCap: beatsObj.data?.objectId, 
-                        nftOwnerCap: nftObj?.data?.objectId
-                    };
+                if (packageId && packageId.length) {
+
+                    //get nft owner object
+                    let nftObj = null;
+                    const nftOwners = objects.data.filter(o => {
+                        return o.data.type == `${packageId}::beats_nft::BeatsOwnerCap<${packageId}::beats_nft::BEATS_NFT>`;
+                    });
+                    if (nftOwners && nftOwners.length) {
+                        nftObj = nftOwners[nftOwners.length - 1];
+                    }
+
+                    //get coin cap object 
+                    let coinObj = null;
+                    const coinCaps = objects.data.filter(o => {
+                        return o.data.type == `0x2::coin::CoinMetadata<${packageId}::beats::BEATS>`
+                    });
+                    if (coinCaps && coinCaps.length) {
+                        coinObj = coinCaps[coinCaps.length - 1];
+                    }
+
+                    //get package ID & treasury cap
+                    if (packageId && packageId.length) {
+                        output = {
+                            packageId: packageId,
+                            treasuryCap: beatsObj.data?.objectId,
+                            nftOwnerCap: nftObj?.data?.objectId,
+                            coinCap: coinObj?.data?.objectId
+                        };
+                    }
                 }
             }
         }
@@ -388,25 +402,36 @@ export class SuiService {
      * Creates a Json RPC provider for the given environment (default devnet)
      * 
      * NOTE: it's not about what you wear; it's all about where you are
-     * 
      * @param environment 
      * @returns JsonRpcProvider
      */
-    _createRpcProvider(environment: String): JsonRpcProvider {
+    _createRpcProvider(environment: string): SuiClient {
         if (!environment)
             environment = "DEVNET";
 
+        this.logger.log(`creating RPC provider for ${environment}`);
+
         switch (environment.toUpperCase()) {
             case "LOCALNET":
-                return new JsonRpcProvider(localnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("localnet")
+                });
             case "DEVNET":
-                return new JsonRpcProvider(devnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("devnet")
+                });
             case "TESTNET":
-                return new JsonRpcProvider(testnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("testnet")
+                });
             case "MAINNET":
-                return new JsonRpcProvider(mainnetConnection);
+                return new SuiClient({
+                    url: getFullnodeUrl("mainnet")
+                });
         }
 
-        return new JsonRpcProvider(devnetConnection);
+        return new SuiClient({
+            url: getFullnodeUrl("devnet")
+        });
     }
 }

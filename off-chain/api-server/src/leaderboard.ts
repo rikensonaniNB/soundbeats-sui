@@ -42,8 +42,7 @@ class LeaderboardMemory implements ILeaderboard {
             //sort 
             output.scores.sort((a, b) => { return b.score - a.score });
 
-            //limit output 
-            if (output.scores.length > limit) {
+            if (limit > 0 && output.scores.length > limit) {
                 output.scores = output.scores.slice(0, limit);
             }
         }

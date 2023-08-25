@@ -8,7 +8,6 @@ module soundbeats::beats_nft {
     
     /// Error types 
     const EBadWitness: u64 = 0;
-    const ENotOwner: u64 = 3;
 
     // ===== Init & Witness =====
     
@@ -25,8 +24,7 @@ module soundbeats::beats_nft {
     
     /// Denotes the owner of the NFT proper (not a specific instance)
     struct BeatsOwnerCap<phantom T> has key, store {
-        id: UID, 
-        owner: address
+        id: UID
     }
     
     /// The OTW (one-time witness)
@@ -37,8 +35,7 @@ module soundbeats::beats_nft {
         assert!(sui::types::is_one_time_witness(&witness), EBadWitness);
         
         let coreData = BeatsOwnerCap<BEATS_NFT> {
-            id: object::new(ctx),
-            owner: tx_context::sender(ctx)
+            id: object::new(ctx)
         };
         
         //transfer ownership to owner 
@@ -75,7 +72,7 @@ module soundbeats::beats_nft {
     
     /// Mints a single NFT instance 
     public fun internal_mint(
-        beats: &mut BeatsOwnerCap<BEATS_NFT>,
+        _ownerCap: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
         description: vector<u8>,
         url: vector<u8>,
@@ -84,7 +81,6 @@ module soundbeats::beats_nft {
         
         //ensure owner is sender 
         let sender = tx_context::sender(ctx);
-        assert!(beats.owner == sender, ENotOwner);
         
         let nft = BeatsNft<BEATS_NFT> {
             id: object::new(ctx),
@@ -99,14 +95,26 @@ module soundbeats::beats_nft {
             name: nft.name,
         });
         
+        //return nft 
         nft
     }
 
     // ===== Entrypoints =====
     
-    /// Mint multiple or single instances of NFT to recipient 
+    /**
+     * Mints multiple or single instances of NFT to recipient. 
+     * Restricted to NFT owner. 
+     *
+     * @param ownerCap: BeatsOwnerCap object owned by caller
+     * @param name: NFT name string 
+     * @param description: NFT description string 
+     * @param url: NFT image url
+     * @param recipient: Intended recipient address of new minted NFT
+     * @param quantity: Quantity to mint 
+     * @param ctx: Context
+     */
     public entry fun mint(
-        beats: &mut BeatsOwnerCap<BEATS_NFT>,
+        ownerCap: &mut BeatsOwnerCap<BEATS_NFT>,
         name: vector<u8>,
         description: vector<u8>,
         url: vector<u8>,
@@ -114,19 +122,31 @@ module soundbeats::beats_nft {
         quantity: u32,
         ctx: &mut TxContext
     ) {
-        
-        //ensure owner is sender 
-        let sender = tx_context::sender(ctx);
-        assert!(beats.owner == sender, ENotOwner);
-        
         let i = 0;
         while (i < quantity) {
-            let nft = internal_mint(beats, name, description, url, ctx); 
+            let nft = internal_mint(ownerCap, name, description, url, ctx); 
 
             transfer::public_transfer(nft, recipient);
             i = i + 1;
         };
     }
+    
+    /**
+     * Transfers ownership to another address. 
+     * Restricted to current NFT owner. 
+     *
+     * @param ownerCap: BeatsOwnerCap object owned by caller
+     * @param new_owner: Address to which to transfer ownership
+     * @param ctx: Context
+     */
+    public entry fun transfer_owner(
+        ownerCap: BeatsOwnerCap<BEATS_NFT>,
+        new_owner: address
+    ) {
+        //transfer ownership to owner 
+        transfer::public_transfer(ownerCap, new_owner)
+    }
+    
     // ===== Tests =====
     
     #[test]

@@ -20,6 +20,9 @@ export class Config {
     static get nftOwnerCap(): string {
         return process.env.NFT_OWNER_CAP;
     }
+    static get coinCap(): string {
+        return process.env.COIN_CAP;
+    }
     static get allowedCorsOrigin(): string {
         return `${Config.useTls ? "https" : "http"}://${process.env.GAME_SERVER_DOMAIN}`;
     }
