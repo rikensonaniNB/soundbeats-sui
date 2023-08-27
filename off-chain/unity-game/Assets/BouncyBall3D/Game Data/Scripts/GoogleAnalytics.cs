@@ -5,6 +5,10 @@ using UnityEngine.Networking;
 
 public class GoogleAnalytics : Singleton<GoogleAnalytics>
 {
+    //call to request the front end Javascript code to send a GA tag (google analytics)
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void CallSendGTag(string category, string action, string label, int value);
+
     private const string TrackingID = "G-ZC639JTDEW";
 
     public void SendGameStart(string songName)
@@ -32,6 +36,12 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
         SendEvent("gameplay", "selectedSong", songName);
     }
 
+    public void SendEvent(string category, string action, string label, int value = 0) 
+    {
+        CallSendGTag(category, action, label, value);
+    }
+
+    /*
     public void SendEvent(string category, string action, string label, int value = 0)
     {
         string url = "https://www.google-analytics.com/collect";
@@ -55,4 +65,5 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
             Debug.Log(payload);
         }
     }
+    */
 }

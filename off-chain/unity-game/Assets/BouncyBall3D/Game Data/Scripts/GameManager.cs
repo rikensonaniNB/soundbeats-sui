@@ -65,7 +65,7 @@ public class GameManager : Singleton<GameManager>
         Winpanel.SetActive(true);
         UIManager.Instance.ShowHUD(false);
 
-         if (LevelGenerator.Instance.currentSong.stars < star)
+        if (LevelGenerator.Instance.currentSong.stars < star)
         {
             LevelGenerator.Instance.currentSong.stars = star;
             LevelGenerator.Instance.currentSong.SaveData();
@@ -93,6 +93,8 @@ public class GameManager : Singleton<GameManager>
         }
         PlayerPrefsExtra.Save();
         Debug.Log("win");
+
+        GoogleAnalytics.Instance.SendPlayerWin(score); 
     }
 
     public void PlayerFailed()
@@ -153,6 +155,8 @@ public class GameManager : Singleton<GameManager>
             };
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }
+
+        GoogleAnalytics.Instance.SendPlayerWin(score); 
         score = 0;
     }
 
@@ -247,6 +251,7 @@ public class GameManager : Singleton<GameManager>
             SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
         }
         UIManager.Instance.ShowHUD(true);
+        GoogleAnalytics.Instance.SendGameStart(LevelGenerator.Instance.currentSong.name); 
     }
 
     public void IncreaseGameSpeed()

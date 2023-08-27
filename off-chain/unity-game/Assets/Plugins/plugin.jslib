@@ -4,6 +4,12 @@ var plugin = {
     CallSuiSignMessage: function(msg)
     {
         window.SuiSignMessage(UTF8ToString(msg));
+    }, 
+    
+    //calls the client-side script to send Google Analytics tags
+    CallSendGTag: function(category, action, label, value)
+    {
+        window.SendGTag(category, action, label, value);
     }
 };
 
