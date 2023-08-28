@@ -9,7 +9,7 @@ var plugin = {
     //calls the client-side script to send Google Analytics tags
     CallSendGTag: function(category, action, label, value)
     {
-        window.SendGTag(category, action, label, value);
+        window.SendGTag(UTF8ToString(category), UTF8ToString(action), UTF8ToString(label), value);
     }
 };
 
