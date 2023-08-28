@@ -622,6 +622,7 @@ public class UIController : MonoBehaviour
     private void OnErrorCreateNFT(string error)
     {
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "createNFT");
     }
 
     private void OnSuccessfulRequestToken(RequestTokenResponseDto requestTokenResponseDto)
@@ -642,6 +643,7 @@ public class UIController : MonoBehaviour
     private void OnErrorRequestToken(string error)
     {
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "requestToken");
     }
 
     private void OnSuccessfulGetTokenBalance(GetTokenBalanceResponseDto getTokenBalanceResponseDto)
@@ -657,6 +659,7 @@ public class UIController : MonoBehaviour
     private void OnErrorGetTokenBalance(string error)
     {
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "getTokenBalance");
     }
 
     private void OnSuccessfulGetBeatsNfts(GetBeatsNftsResponseDto getNftsResponseDto)
@@ -671,6 +674,7 @@ public class UIController : MonoBehaviour
     {
         ShowHomeScreen();
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "getBeatsNfts");
     }
 
     private void OnSuccessfulVerifySignature(VerifySignatureResponseDto verifySignatureResponseDto)
@@ -697,6 +701,7 @@ public class UIController : MonoBehaviour
     private void OnErrorVerifySignature(string error)
     {
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "verifySignature");
     }
 
     private void OnSuccessfulCreateNFT_Modify(CreateNFTResponseDto createNFTResponseDto)
@@ -720,6 +725,7 @@ public class UIController : MonoBehaviour
     private void OnErrorCreateNFT_Modify(string error)
     {
         this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "createNFT_mod");
     }
 
     private void ShowError(string error) 

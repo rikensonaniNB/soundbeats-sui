@@ -14,6 +14,7 @@ public class GameManager : Singleton<GameManager>
     private int gameSpeed = 1;
     public float GameSpeed => ((gameSpeed - 1) * 0.2f) + 1;
     public GameState CurrentGameState => gameState;
+    private System.DateTime gameStartTime; 
 
     public GameState gameState;
     public Player player;
@@ -57,6 +58,11 @@ public class GameManager : Singleton<GameManager>
     }
     public Text ScoreWin;
 
+    public int GetGameDuration() 
+    {
+        return (int)System.DateTime.Now.Subtract(this.gameStartTime).TotalSeconds;
+    }
+
     public void PlayerWin()
     {
         gameState = GameState.Win;
@@ -94,7 +100,7 @@ public class GameManager : Singleton<GameManager>
         PlayerPrefsExtra.Save();
         Debug.Log("win");
 
-        GoogleAnalytics.Instance.SendPlayerWin(score); 
+        GoogleAnalytics.Instance.SendPlayerWin(score, this.GetGameDuration()); 
     }
 
     public void PlayerFailed()
@@ -156,7 +162,7 @@ public class GameManager : Singleton<GameManager>
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }
 
-        GoogleAnalytics.Instance.SendPlayerWin(score); 
+        GoogleAnalytics.Instance.SendPlayerLost(score, this.GetGameDuration()); 
         score = 0;
     }
 
@@ -236,6 +242,7 @@ public class GameManager : Singleton<GameManager>
     }
     public void StartGame()
     {
+        this.gameStartTime = System.DateTime.Now;
         Debug.Log("StartGame" + CurrentGameState);
         if (CurrentGameState == GameState.Menu)
         {

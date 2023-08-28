@@ -11,19 +11,24 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
 
     private const string TrackingID = "G-ZC639JTDEW";
 
+    public void SendError(string errorMessage, string action = "") 
+    {
+        SendEvent("error", action, errorMessage);
+    }
+
     public void SendGameStart(string songName)
     {
         SendEvent("gameplay", "gameStart", songName);
     }
 
-    public void SendPlayerWin(int score)
+    public void SendPlayerWin(int score, int duration)
     {
-        SendEvent("gameplay", "gameResult", "Win", score);
+        SendEvent("gameplay", "gameResult", "W " + duration.ToString(), score);
     }
 
-    public void SendPlayerLost(int score)
+    public void SendPlayerLost(int score, int duration)
     {
-        SendEvent("gameplay", "gameResult", "Loss", score);
+        SendEvent("gameplay", "gameResult", "L " + duration.ToString(), score);
     }
 
     public void SendSelectedCharacter(string charName)
@@ -40,30 +45,4 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
     {
         CallSendGTag(category, action, label, value);
     }
-
-    /*
-    public void SendEvent(string category, string action, string label, int value = 0)
-    {
-        string url = "https://www.google-analytics.com/collect";
-
-        // Construct the Measurement Protocol parameters
-        string payload = $"v=1&t=event&tid={TrackingID}&cid={SystemInfo.deviceUniqueIdentifier}&ec={category}&ea={action}&el={label}&ev={value}";
-
-        UnityWebRequest www = UnityWebRequest.Post(url, payload);
-        StartCoroutine(SendRequest(www, payload));
-    }
-
-    private IEnumerator SendRequest(UnityWebRequest www, string payload)
-    {
-        yield return www;
-
-        if (www.error != null)
-        {
-            Debug.LogError($"Error sending analytics event{payload}: {www.error}");
-        }
-        else {
-            Debug.Log(payload);
-        }
-    }
-    */
 }
