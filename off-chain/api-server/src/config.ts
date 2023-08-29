@@ -24,7 +24,7 @@ export class Config {
         return process.env.COIN_CAP;
     }
     static get allowedCorsOrigin(): string {
-        return `${Config.useTls ? "https" : "http"}://${process.env.GAME_SERVER_DOMAIN}`;
+        return `${process.env.GAME_SERVER_DOMAIN}`;
     }
     static get listenPort(): number {
         return Config.useTls ? Config.httpsPort : Config.httpPort;
