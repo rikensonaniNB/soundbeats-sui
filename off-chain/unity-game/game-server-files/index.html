@@ -228,29 +228,36 @@
                     };
                     
                     window.SuiConnectCallback = async function () {
-                        window.ethosConnectCallback = null;
-                        let t = new TextEncoder().encode(window.messageToSign);
-                        sign = await window.ethos.currentWallet.signMessage({ message: t, account: window.ethos.accounts[0] });
+                        try {
+                            window.ethosConnectCallback = null;
+                            let t = new TextEncoder().encode(window.messageToSign);
+                            sign = await window.ethos.currentWallet.signMessage({ message: t, account: window.ethos.accounts[0] });
 
-                        let address = window.ethos.accounts[0].address;
-                        let pubKey = window.ethos.accounts[0].publicKey;
-                        if (window.ethos.currentAccount) {
-                            address = window.ethos.currentAccount.address;
-                            pubKey = window.ethos.currentAccount.publicKey;
+                            let address = window.ethos.accounts[0].address;
+                            let pubKey = window.ethos.accounts[0].publicKey;
+                            if (window.ethos.currentAccount) {
+                                address = window.ethos.currentAccount.address;
+                                pubKey = window.ethos.currentAccount.publicKey;
+                            }
+
+                            let pubKeyBase64 = btoa(String.fromCharCode.apply(null, pubKey));
+                            console.log('address:', address);
+                            console.log('public key:', pubKeyBase64);
+
+                            unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
+
+                            //google analytics
+                            gtag('event', 'loginComplete', {
+                                'event_category': 'login',
+                                'event_label': address.toString(64) + ' .',
+                                'value': 1
+                            });
                         }
-
-                        let pubKeyBase64 = btoa(String.fromCharCode.apply(null, pubKey));
-                        console.log('address:', address);
-                        console.log('public key:', pubKeyBase64);
- 
-                        unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
-                        
-                        //google analytics
-                        gtag('event', 'loginComplete', {
-                            'event_category': 'login',
-                            'event_label': address.toString(64) + ' .',
-                            'value': 1
-                        });
+                        catch (e) {
+                            if (e.toString().startsWith("Error: Operation not allowed")) {
+                                await window.SuiSignMessage(window.messageToSign);
+                            }
+                        }
                     }
     </script>
     
