@@ -41,8 +41,24 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
         SendEvent("gameplay", "selectedSong", songName);
     }
 
+    public void SendMintedTokens(string walletAddress, int quantity) 
+    {
+        SendEvent("minting", "mintTokens", walletAddress + ":" + quantity.ToString());
+    }
+
+    public void SendMintedNFT(string walletAddress, string nftAddress) 
+    {
+        SendEvent("minting", "mintNft", walletAddress + ":" + nftAddress);
+    }
+
     public void SendEvent(string category, string action, string label, int value = 0) 
     {
-        CallSendGTag(category, action, label, value);
+        try {
+            CallSendGTag(category, action, label, value);
+        }
+        catch(Exception e) 
+        {
+            Debug.Log(e.Message);
+        }
     }
 }

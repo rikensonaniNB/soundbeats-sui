@@ -368,7 +368,7 @@ public class UIController : MonoBehaviour
         createNFTRequest.quantity = 1;
         createNFTRequest.recipient = SuiWallet.ActiveWalletAddress;
 
-        NetworkManager.Instance.CreateNFT(createNFTRequest, OnSuccessfulCreateNFT_Modify, OnErrorCreateNFT_Modify);
+        NetworkManager.Instance.CreateNFT(createNFTRequest, OnSuccessfulCreateNFT, OnErrorCreateNFT);
     }
 
     #region Login Methods 
@@ -619,14 +619,13 @@ public class UIController : MonoBehaviour
 
     #region API Callbacks 
 
-    private void OnErrorCreateNFT(string error)
-    {
-        this.ShowError(error);
-        GoogleAnalytics.Instance.SendError(error, "createNFT");
-    }
-
     private void OnSuccessfulRequestToken(RequestTokenResponseDto requestTokenResponseDto)
     {
+        //TODO: we really should have the amount be part of the response DTO 
+        int tokenAmount = 100; 
+
+        GoogleAnalytics.Instance.SendMintedTokens(SuiWallet.ActiveWalletAddress, tokenAmount); 
+
         string transactionLink = SuiExplorer.FormatTransactionUri(requestTokenResponseDto.signature);
         PlayerPrefsExtra.SetString("nftSignature_claim", transactionLink);
        
@@ -635,8 +634,8 @@ public class UIController : MonoBehaviour
         ClaimTokensScreen.SetActive(true);
        
         //TODO: (LOW) this should be gotten from the response; should not be counted manually
-        UserData.TokenBalance += 100;
-        txtScore_ClaimScreen.text = "100";
+        UserData.TokenBalance += tokenAmount;
+        txtScore_ClaimScreen.text = tokenAmount.ToString();
         Debug.Log("signature...>" + requestTokenResponseDto.signature + UserData.TokenBalance);
     }
 
@@ -689,7 +688,7 @@ public class UIController : MonoBehaviour
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address; 
 
             //get user owned NFTs
-            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.address, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts); 
+            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.address, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
         }
         else 
         {
@@ -704,8 +703,10 @@ public class UIController : MonoBehaviour
         GoogleAnalytics.Instance.SendError(error, "verifySignature");
     }
 
-    private void OnSuccessfulCreateNFT_Modify(CreateNFTResponseDto createNFTResponseDto)
+    private void OnSuccessfulCreateNFT(CreateNFTResponseDto createNFTResponseDto)
     {
+        GoogleAnalytics.Instance.SendMintedNFT(SuiWallet.ActiveWalletAddress, createNFTResponseDto.addresses.Length > 0 ? createNFTResponseDto.addresses[0] : ""); 
+
         //add the new NFT to user data 
         var newNft = this.NftUiList[this.NftMintCandidateIndex]; 
         UserData.AddNft(newNft.Name);
@@ -722,10 +723,10 @@ public class UIController : MonoBehaviour
         Mint_SuccessfulScreen.SetActive(true);
     }
 
-    private void OnErrorCreateNFT_Modify(string error)
+    private void OnErrorCreateNFT(string error)
     {
         this.ShowError(error);
-        GoogleAnalytics.Instance.SendError(error, "createNFT_mod");
+        GoogleAnalytics.Instance.SendError(error, "createNFT");
     }
 
     private void ShowError(string error) 

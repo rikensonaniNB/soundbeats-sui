@@ -19,6 +19,7 @@ public class GameManager : Singleton<GameManager>
     public GameState gameState;
     public Player player;
     float songProgress = 0;
+    int tempTokenAmount = 0;
 
     [Header("UI")]
     public Image levelProgress;
@@ -159,6 +160,8 @@ public class GameManager : Singleton<GameManager>
                 amount = score,
                 recipient = SuiWallet.ActiveWalletAddress
             };
+            this.tempTokenAmount = requestTokenDto.amount; //TODO: we really should have the amount be part of the response DTO
+
             NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
         }
 
@@ -180,7 +183,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnSuccessfulRequestPrivateToken(RequestTokenResponseDto requestTokenResponseDto)
     {
-        Debug.Log("RequestPrivateToken successfully updated " + requestTokenResponseDto.signature);
+        GoogleAnalytics.Instance.SendMintedTokens(SuiWallet.ActiveWalletAddress, this.tempTokenAmount); 
     }
 
     private void OnErrorRequestPrivateToken(string Error)
