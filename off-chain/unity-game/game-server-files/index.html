@@ -220,7 +220,7 @@
                         window.ethosConnectCallback = window.SuiConnectCallback;
                         
                         //google analytics
-                        gtag('event', 'login', {
+                        gtag('event', 'loginStart', {
                             'event_category': 'login',
                             'event_label': 'LoggingIn',
                             'value': 1
@@ -246,7 +246,7 @@
                         unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
                         
                         //google analytics
-                        gtag('event', 'login', {
+                        gtag('event', 'loginComplete', {
                             'event_category': 'login',
                             'event_label': 'LoggedIn',
                             'value': 1
