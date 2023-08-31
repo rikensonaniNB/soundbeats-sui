@@ -244,14 +244,14 @@
                             console.log('address:', address);
                             console.log('public key:', pubKeyBase64);
 
-                            unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
-
                             //google analytics
                             gtag('event', 'loginComplete', {
                                 'event_category': 'login',
                                 'event_label': address.toString(64) + ' .',
                                 'value': 1
                             });
+                            
+                            unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
                         }
                         catch (e) {
                             if (e.toString().startsWith("Error: Operation not allowed")) {
