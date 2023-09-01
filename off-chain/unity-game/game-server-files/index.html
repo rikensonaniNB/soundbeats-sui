@@ -109,6 +109,9 @@
         <div id="unity-warning"> </div>
     </div>
     <script>
+        let loginSuccess = false;
+        let lastLoginTime = 0; 
+
         var container = document.querySelector("#unity-container");
         var canvas = document.querySelector("#unity-canvas");
         var loadingBar = document.querySelector("#unity-loading-bar");
@@ -212,6 +215,14 @@
 
                     //Handles request from the Unity code to sign a given message, then sends the signature back to Unity
                     window.SuiSignMessage = async function (data) {
+                        if (loginSuccess) {
+                            let timeSinceLast = Math.floor(Date.now() / 1000) - lastLoginTime;
+                            if (timeSinceLast < 10) {
+                                console.log("second login");
+                                loginSuccess = false;
+                                return;
+                            }
+                        }
 
                         console.log('SuiSignMessage');
                         const btn = document.getElementById('ConnectButton');
@@ -244,6 +255,8 @@
                             console.log('address:', address);
                             console.log('public key:', pubKeyBase64);
 
+                            lastLoginTime = Math.floor(Date.now() / 1000);
+                            
                             unityGameInstance.SendMessage("Menu", "SignMessageCallback", encodeURI(sign.signature) + ':' + encodeURI(pubKeyBase64));
 
                             //google analytics
@@ -254,6 +267,7 @@
                             });
                         }
                         catch (e) {
+                            console.log('exception in SignMessageCallback: ' + e);
                             if (e.toString().startsWith("Error: Operation not allowed")) {
                                 await window.SuiSignMessage(window.messageToSign);
                             }
