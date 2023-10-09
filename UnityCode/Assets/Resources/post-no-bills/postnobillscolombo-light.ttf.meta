@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 85f3a7526f3544508b2666714f8cef1b
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Post No Bills Colombo
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 45aea807f8c124a749f31836147dc0ac, type: 3}
+  - {fileID: 12800000, guid: c42cfba6693b54472a31d42155b939af, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

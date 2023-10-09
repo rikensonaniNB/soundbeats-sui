@@ -1,0 +1,957 @@
+fileFormatVersion: 2
+guid: 4796804f7d6b20748a8300f2a4f72be0
+ModelImporter:
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      74: -8611213281303301110
+    second: HiphopDance
+  - first:
+      74: 7777352167249682632
+    second: _Flying
+  - first:
+      74: 319596478190329295
+    second: jump_L
+  - first:
+      74: 8763770076563414043
+    second: Defeat
+  - first:
+      74: -4510409428667958191
+    second: Flip
+  - first:
+      74: 4445197765968846166
+    second: jump_R
+  - first:
+      74: -7059890210390442630
+    second: jumpSpin
+  - first:
+      74: -1917880416634630314
+    second: FrontFlip
+  - first:
+      74: -211679115224003283
+    second: CannonBall_v3
+  - first:
+      74: -6333163131637793548
+    second: Spin
+  - first:
+      74: -3872595651091781830
+    second: TwistFlip
+  - first:
+      74: -8509774496751037521
+    second: Run_R
+  - first:
+      74: -5611548747892893979
+    second: Run_L
+  - first:
+      74: 6674566345600768215
+    second: SpRun_L
+  - first:
+      74: 7123736431054339464
+    second: SpRun_R
+  - first:
+      74: 4587682798410044677
+    second: LJump_L
+  - first:
+      74: 4394865213189084996
+    second: LJump_R
+  - first:
+      74: -3100369314251171874
+    second: Idle
+  externalObjects: {}
+  materials:
+    materialImportMode: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: HiphopDance
+      takeName: HiphopDance
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: _Flying
+      takeName: _Flying
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: jump_L
+      takeName: jump_L
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Defeat
+      takeName: Defeat
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Flip
+      takeName: Flip
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: jump_R
+      takeName: jump_R
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: jumpSpin
+      takeName: jumpSpin
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FrontFlip
+      takeName: FrontFlip
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: CannonBall_v3
+      takeName: CannonBall_v3
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Spin
+      takeName: Spin
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: TwistFlip
+      takeName: TwistFlip
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Run_R
+      takeName: Run_R
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Run_L
+      takeName: Run_L
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: SpRun_L
+      takeName: SpRun_L
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: SpRun_R
+      takeName: SpRun_R
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: LJump_L
+      takeName: LJump_L
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: LJump_R
+      takeName: LJump_R
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Idle
+      takeName: Idle
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 520
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: Marshmello(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Marshmello
+      parentName: Marshmello(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Marshmello_lowPoly
+      parentName: Marshmello
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: shadow
+      parentName: Marshmello
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: CATRigRibcage001
+      parentName: Marshmello
+      position: {x: 0.00007081011, y: 0.009379694, z: 0.00012805476}
+      rotation: {x: 0.50000006, y: -0.50000006, z: -0.49999994, w: 0.5}
+      scale: {x: 100, y: 99.99999, z: 99.99999}
+    - name: CATRigLLeg1
+      parentName: CATRigRibcage001
+      position: {x: -1.7881393e-11, y: -0.0000009028149, z: 0.000011120325}
+      rotation: {x: -0.03722687, y: 0.9983526, z: 0.022246584, w: 0.037568852}
+      scale: {x: 1, y: 1, z: 0.9999997}
+    - name: CATRigLLeg2
+      parentName: CATRigLLeg1
+      position: {x: -0.00003765872, y: 2.9057262e-11, z: -5.960464e-11}
+      rotation: {x: 0.007871004, y: -0.0001860857, z: 0.1211892, w: 0.99259824}
+      scale: {x: 1.0000023, y: 0.9999996, z: 1.0000012}
+    - name: CATRigLLegAnkle
+      parentName: CATRigLLeg2
+      position: {x: -0.000039387753, y: 9.313225e-13, z: 0}
+      rotation: {x: -0.025769474, y: 0.030568339, z: -0.4469048, w: 0.8936876}
+      scale: {x: 0.99999094, y: 1.0000081, z: 1.0000001}
+    - name: CATRigLLegDigit11
+      parentName: CATRigLLegAnkle
+      position: {x: -0.000020548314, y: 0, z: -2.9802322e-12}
+      rotation: {x: 0.000253262, y: -0.00035461038, z: -0.3940766, w: 0.9190775}
+      scale: {x: 1.0000025, y: 0.9999972, z: 1.0000001}
+    - name: CATRigSpine1
+      parentName: CATRigRibcage001
+      position: {x: -0.000011157524, y: -0.00000051555855, z: 3.1086244e-19}
+      rotation: {x: 0.000000029802322, y: 0.000000029802322, z: 0.015234143, w: 0.999884}
+      scale: {x: 1.0000006, y: 1.0000002, z: 1.0000001}
+    - name: effectFX
+      parentName: CATRigSpine1
+      position: {x: 0.00000248276, y: -0.000003291868, z: 0}
+      rotation: {x: -0.49232504, y: 0.507559, z: 0.4923249, w: 0.5075591}
+      scale: {x: 0.01, y: 0.009999998, z: 0.009999998}
+    - name: CATRigSpine2
+      parentName: CATRigSpine1
+      position: {x: -0.000016236972, y: 0, z: -8.881784e-20}
+      rotation: {x: 0.00000002840528, y: -0.000000029252126, z: 0.032565087, w: 0.9994697}
+      scale: {x: 1.0000002, y: 1.0000006, z: 1.0000007}
+    - name: CATRigRibcage002
+      parentName: CATRigSpine2
+      position: {x: -0.000018278992, y: 0, z: 1.4210854e-18}
+      rotation: {x: 2.5275776e-11, y: 4.8668614e-10, z: 0.008176172, w: 0.99996656}
+      scale: {x: 1.0000004, y: 0.9999999, z: 1.0000002}
+    - name: CATRigLArmCollarbone
+      parentName: CATRigRibcage002
+      position: {x: -0.000010795855, y: -1.4901161e-12, z: 0.0000048139136}
+      rotation: {x: 0.066294886, y: 0.7880942, z: 0.052865863, w: 0.6096867}
+      scale: {x: 0.99999976, y: 1.0000004, z: 0.99999994}
+    - name: CATRigLArm1
+      parentName: CATRigLArmCollarbone
+      position: {x: -0.00001787513, y: -7.4505804e-13, z: 0}
+      rotation: {x: 0.08356645, y: -0.11372913, z: -0.068271354, w: 0.98763424}
+      scale: {x: 1, y: 1.0000007, z: 1.0000004}
+    - name: CATRigLArm2
+      parentName: CATRigLArm1
+      position: {x: -0.00002439897, y: 0, z: -1.1920929e-11}
+      rotation: {x: -0.0024079815, y: -0.015471615, z: -0.037895687, w: 0.9991591}
+      scale: {x: 1.0000005, y: 1.0000007, z: 1.000001}
+    - name: CATRigLArmPalm
+      parentName: CATRigLArm2
+      position: {x: -0.000025472687, y: 0, z: 0}
+      rotation: {x: -0.6695713, y: 0.06144377, z: -0.05573559, w: 0.73810065}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1.0000002}
+    - name: CATRigLArmDigit11
+      parentName: CATRigLArmPalm
+      position: {x: -0.0000044769226, y: 0.00000030641556, z: 0.000004225943}
+      rotation: {x: 0.5590739, y: 0.28004488, z: -0.18937024, w: 0.7570667}
+      scale: {x: 1.0000002, y: 1.0000004, z: 1.0000011}
+    - name: CATRigLArmDigit12
+      parentName: CATRigLArmDigit11
+      position: {x: -0.0000032807825, y: 0, z: 5.9604643e-12}
+      rotation: {x: -0.00000011920925, y: -0.00000007450578, z: 0.00000011920925,
+        w: 1}
+      scale: {x: 0.99999946, y: 0.99999976, z: 0.9999997}
+    - name: CATRigLArmDigit13
+      parentName: CATRigLArmDigit12
+      position: {x: -0.0000032807825, y: 2.9802322e-12, z: -5.9604643e-12}
+      rotation: {x: -0.00000014901158, y: -0.000000029802276, z: -0.00000014901156,
+        w: 1}
+      scale: {x: 1.0000006, y: 1, z: 1.0000005}
+    - name: CATRigLArmDigit21
+      parentName: CATRigLArmPalm
+      position: {x: -0.000013011419, y: 0.0000005388975, z: 0.0000025839058}
+      rotation: {x: -0.107663326, y: 0.024406996, z: 0.07559141, w: 0.99100906}
+      scale: {x: 0.99999964, y: 1.0000004, z: 1.0000001}
+    - name: CATRigLArmDigit22
+      parentName: CATRigLArmDigit21
+      position: {x: -0.0000032693267, y: -5.9604643e-12, z: -2.9802322e-12}
+      rotation: {x: 0.000000007450578, y: -0.0000004097818, z: 0.000000026077023,
+        w: 1}
+      scale: {x: 1.0000002, y: 1.0000002, z: 1.0000004}
+    - name: CATRigLArmDigit23
+      parentName: CATRigLArmDigit22
+      position: {x: -0.0000025524614, y: 5.9604643e-12, z: -5.9604643e-12}
+      rotation: {x: -0.000000645668, y: -0.0000010981621, z: 0.24200296, w: 0.9702756}
+      scale: {x: 1.0000006, y: 1.0000008, z: 1.0000002}
+    - name: CATRigLArmDigit31
+      parentName: CATRigLArmPalm
+      position: {x: -0.000012939114, y: -0.00000028841492, z: -0.00000034375486}
+      rotation: {x: -0.09983945, y: 0.018467057, z: 0.08467759, w: 0.9912219}
+      scale: {x: 0.9999997, y: 1.0000005, z: 1.0000001}
+    - name: CATRigLArmDigit32
+      parentName: CATRigLArmDigit31
+      position: {x: -0.0000035202622, y: -5.9604643e-12, z: 0}
+      rotation: {x: 0.00000018626439, y: 0.0000012684604, z: 0.03583585, w: 0.99935776}
+      scale: {x: 0.99999994, y: 0.9999999, z: 1.0000005}
+    - name: CATRigLArmDigit33
+      parentName: CATRigLArmDigit32
+      position: {x: -0.0000030010399, y: 0, z: -2.9802322e-12}
+      rotation: {x: -0.0000006342578, y: -0.00000063347375, z: 0.24200317, w: 0.9702755}
+      scale: {x: 0.999999, y: 1.000001, z: 1.0000004}
+    - name: CATRigLArmDigit41
+      parentName: CATRigLArmPalm
+      position: {x: -0.000012403691, y: -0.0000015799521, z: -0.0000026417729}
+      rotation: {x: -0.17848845, y: -0.04039855, z: 0.08628227, w: 0.97931874}
+      scale: {x: 1.0000001, y: 1.0000005, z: 1.0000001}
+    - name: CATRigLArmDigit42
+      parentName: CATRigLArmDigit41
+      position: {x: -0.0000035202622, y: 5.9604643e-12, z: 0}
+      rotation: {x: 0.0000010281794, y: 0.0000028572956, z: 0.028952755, w: 0.9995808}
+      scale: {x: 0.9999993, y: 1.0000007, z: 0.99999994}
+    - name: CATRigLArmDigit43
+      parentName: CATRigLArmDigit42
+      position: {x: -0.0000026399493, y: -8.940696e-12, z: -8.940696e-12}
+      rotation: {x: -0.00000033824676, y: -0.0000011486018, z: 0.094453566, w: 0.9955293}
+      scale: {x: 0.99999994, y: 1.0000015, z: 1.0000005}
+    - name: CATRigLArmDigit51
+      parentName: CATRigLArmPalm
+      position: {x: -0.000010493278, y: -0.000003236997, z: -0.000004674704}
+      rotation: {x: -0.17812152, y: -0.027262447, z: 0.08451211, w: 0.97999346}
+      scale: {x: 0.99999994, y: 1.0000006, z: 1.0000001}
+    - name: CATRigLArmDigit52
+      parentName: CATRigLArmDigit51
+      position: {x: -0.0000035202622, y: 0, z: 0}
+      rotation: {x: 0.00000084936556, y: 0.0000024493766, z: 0.028957905, w: 0.9995807}
+      scale: {x: 1.0000002, y: 1.0000002, z: 0.9999999}
+    - name: CATRigLArmDigit53
+      parentName: CATRigLArmDigit52
+      position: {x: -0.000001985061, y: 0, z: -2.9802322e-12}
+      rotation: {x: -0.00000036105513, y: -0.0000006715835, z: 0.09445303, w: 0.9955294}
+      scale: {x: 1.0000001, y: 1.0000004, z: 1.0000002}
+    - name: CATRigRibcage002Bone001
+      parentName: CATRigRibcage002
+      position: {x: -0.000023681318, y: 0.0000026988118, z: 0}
+      rotation: {x: -0.000000010725948, y: 0.000000068869966, z: -0.10643262, w: 0.9943199}
+      scale: {x: 1, y: 1.0000007, z: 1.0000004}
+    - name: CATRigRArmCollarbone
+      parentName: CATRigRibcage002
+      position: {x: -0.000010795855, y: -1.4901161e-12, z: -0.0000048139136}
+      rotation: {x: 0.066294834, y: 0.78809404, z: -0.052865896, w: -0.6096868}
+      scale: {x: 1.0000006, y: 1.0000006, z: 1.0000005}
+    - name: CATRigRArm1
+      parentName: CATRigRArmCollarbone
+      position: {x: -0.000017875129, y: 0, z: 0}
+      rotation: {x: -0.083566286, y: 0.11372921, z: -0.06827138, w: 0.9876343}
+      scale: {x: 1.0000008, y: 1.0000008, z: 1.0000007}
+    - name: CATRigRArm2
+      parentName: CATRigRArm1
+      position: {x: -0.00002439897, y: 1.4901161e-12, z: -1.1920929e-11}
+      rotation: {x: 0.0024079818, y: 0.015471093, z: -0.03789574, w: 0.99915904}
+      scale: {x: 1.0000006, y: 1.000001, z: 1.0000001}
+    - name: CATRigRArmPalm
+      parentName: CATRigRArm2
+      position: {x: -0.000025472698, y: 0, z: 0}
+      rotation: {x: 0.6695713, y: -0.061443664, z: -0.05573544, w: 0.7381007}
+      scale: {x: 1.0000001, y: 1.0000001, z: 0.9999997}
+    - name: CATRigRArmDigit11
+      parentName: CATRigRArmPalm
+      position: {x: -0.0000044769104, y: 0.00000030639168, z: -0.000004225943}
+      rotation: {x: -0.55907446, y: -0.2800463, z: -0.18937038, w: 0.7570659}
+      scale: {x: 1.0000007, y: 1.0000005, z: 1.0000006}
+    - name: CATRigRArmDigit12
+      parentName: CATRigRArmDigit11
+      position: {x: -0.0000032807825, y: -2.9802322e-12, z: 5.9604643e-12}
+      rotation: {x: -0.00000008940694, y: -0.00000004470347, z: 0.00000007450578,
+        w: 1}
+      scale: {x: 1.0000005, y: 1.0000007, z: 1.0000001}
+    - name: CATRigRArmDigit13
+      parentName: CATRigRArmDigit12
+      position: {x: -0.0000032807886, y: 2.9802322e-12, z: 0}
+      rotation: {x: 0.000000029802305, y: -0.00000007450578, z: -1.0658134e-14, w: 1}
+      scale: {x: 0.9999999, y: 0.99999994, z: 1.0000002}
+    - name: CATRigRArmDigit21
+      parentName: CATRigRArmPalm
+      position: {x: -0.000013011425, y: 0.00000053888556, z: -0.0000025839045}
+      rotation: {x: 0.10766352, y: -0.024407458, z: 0.07559439, w: 0.9910088}
+      scale: {x: 1.0000005, y: 1.0000007, z: 1.0000008}
+    - name: CATRigRArmDigit22
+      parentName: CATRigRArmDigit21
+      position: {x: -0.0000032693267, y: 0, z: 2.9802322e-12}
+      rotation: {x: 0.00000020116565, y: -0.0000005066394, z: 0.00000013131647, w: 1}
+      scale: {x: 1.0000007, y: 1.0000011, z: 1.0000008}
+    - name: CATRigRArmDigit23
+      parentName: CATRigRArmDigit22
+      position: {x: -0.0000025524557, y: 0, z: -5.9604643e-12}
+      rotation: {x: 0.00000019564288, y: -0.0000009647542, z: 0.24200308, w: 0.9702755}
+      scale: {x: 1.0000007, y: 0.99999934, z: 0.9999997}
+    - name: CATRigRArmDigit31
+      parentName: CATRigRArmPalm
+      position: {x: -0.000012939114, y: -0.00000028843877, z: 0.00000034375486}
+      rotation: {x: 0.09983903, y: -0.0184673, z: 0.084678106, w: 0.9912219}
+      scale: {x: 1.000001, y: 1.0000013, z: 1.0000019}
+    - name: CATRigRArmDigit32
+      parentName: CATRigRArmDigit31
+      position: {x: -0.0000035202622, y: -5.9604643e-12, z: 0}
+      rotation: {x: -0.00000017881376, y: 0.0000009145579, z: 0.03583788, w: 0.99935764}
+      scale: {x: 0.99999994, y: 1.0000001, z: 0.9999993}
+    - name: CATRigRArmDigit33
+      parentName: CATRigRArmDigit32
+      position: {x: -0.000003001052, y: 0, z: -2.9802322e-12}
+      rotation: {x: 0.0000004669856, y: -0.0000006404696, z: 0.24200311, w: 0.97027546}
+      scale: {x: 1.0000006, y: 1.0000008, z: 1.0000008}
+    - name: CATRigRArmDigit41
+      parentName: CATRigRArmPalm
+      position: {x: -0.000012403679, y: -0.0000015799641, z: 0.0000026417702}
+      rotation: {x: 0.17848839, y: 0.04039832, z: 0.08628207, w: 0.9793188}
+      scale: {x: 1.0000005, y: 1.0000005, z: 1.0000008}
+    - name: CATRigRArmDigit42
+      parentName: CATRigRArmDigit41
+      position: {x: -0.0000035202622, y: 0, z: 0}
+      rotation: {x: 0.0000003576276, y: 0.0000009387725, z: 0.028954709, w: 0.99958074}
+      scale: {x: 1.0000007, y: 1.0000005, z: 1.000001}
+    - name: CATRigRArmDigit43
+      parentName: CATRigRArmDigit42
+      position: {x: -0.0000026399493, y: 0, z: -8.940696e-12}
+      rotation: {x: 0.000000030828527, y: -0.0000009247141, z: 0.09445371, w: 0.9955293}
+      scale: {x: 1.0000012, y: 0.9999998, z: 1.0000006}
+    - name: CATRigRArmDigit51
+      parentName: CATRigRArmPalm
+      position: {x: -0.000010493275, y: -0.000003237009, z: 0.000004674704}
+      rotation: {x: 0.17812105, y: 0.027262647, z: 0.084514365, w: 0.9799934}
+      scale: {x: 1.000001, y: 1.0000012, z: 1.0000015}
+    - name: CATRigRArmDigit52
+      parentName: CATRigRArmDigit51
+      position: {x: -0.000003520256, y: 5.9604643e-12, z: 0}
+      rotation: {x: -0.00000040233107, y: 0.0000013783564, z: 0.028957797, w: 0.9995807}
+      scale: {x: 1.0000002, y: 1.0000008, z: 1.0000008}
+    - name: CATRigRArmDigit53
+      parentName: CATRigRArmDigit52
+      position: {x: -0.000001985067, y: -5.9604643e-12, z: -2.9802322e-12}
+      rotation: {x: 0.000000321642, y: -0.0000005848763, z: 0.094453566, w: 0.9955293}
+      scale: {x: 1, y: 1.0000004, z: 1.0000002}
+    - name: CATRigRLeg1
+      parentName: CATRigRibcage001
+      position: {x: -1.7881393e-11, y: -0.0000009028149, z: -0.000011120325}
+      rotation: {x: -0.037264362, y: 0.99835116, z: -0.022244781, w: -0.037570328}
+      scale: {x: 1, y: 1, z: 0.99999976}
+    - name: CATRigRLeg2
+      parentName: CATRigRLeg1
+      position: {x: -0.000037658716, y: 2.980232e-11, z: 5.960464e-11}
+      rotation: {x: -0.007817548, y: 0.00020690632, z: 0.12122619, w: 0.9925941}
+      scale: {x: 1.0000076, y: 0.999994, z: 1.000001}
+    - name: CATRigRLegAnkle
+      parentName: CATRigRLeg2
+      position: {x: -0.000039388797, y: -0.0000000019973143, z: 6.4969063e-10}
+      rotation: {x: 0.02566449, y: -0.03071586, z: -0.44678462, w: 0.8937457}
+      scale: {x: 0.99997276, y: 1.000027, z: 1.0000019}
+    - name: CATRigRLegDigit11
+      parentName: CATRigRLegAnkle
+      position: {x: -0.000020548317, y: -2.9802322e-12, z: 1.4901161e-12}
+      rotation: {x: -0.0005978644, y: 0.00059902295, z: -0.39419338, w: 0.9190272}
+      scale: {x: 1.0000131, y: 0.9999864, z: 0.99999994}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
