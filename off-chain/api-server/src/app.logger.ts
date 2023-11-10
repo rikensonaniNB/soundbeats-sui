@@ -7,28 +7,51 @@ export class AppLogger extends Logger {
     
     constructor(context: string) {
         super(context);
-        this.writeStream = fs.createWriteStream('app.log', {
-            flags: 'a', // 'a' means appending (old data will be preserved)
-        });
+        this._checkCreateLogFile(); 
     }
     
     log(message: string) {
+        this._checkCreateLogFile(); 
         super.log(message);
-        this.writeStream.write(`[INFO] ${message}\n`);
+        this._writeEntry("INFO", message); 
     }
 
     error(message: string, trace?: string) {
+        this._checkCreateLogFile(); 
         super.error(message, trace);
-        this.writeStream.write(`[ERROR] ${message} ${trace || ''}\n`);
+        this._writeEntry("ERROR", `${message} ${trace || ''}`); 
     }
 
-    warn(message: string, trace?: string) {
-        super.error(message, trace);
-        this.writeStream.write(`[WARN] ${message} ${trace || ''}\n`);
+    warn(message: string, context?: string) {
+        this._checkCreateLogFile(); 
+        super.warn(message, context);
+        this._writeEntry("WARN", `${message} ${context || ''}`); 
     }
 
-    debug(message: string, trace?: string) {
-        super.error(message, trace);
-        this.writeStream.write(`[DEBUG] ${message} ${trace || ''}\n`);
+    debug(message: string, context?: string) {
+        this._checkCreateLogFile(); 
+        super.debug(message, context);
+        this._writeEntry("DEBUG", `${message} ${context || ''}`); 
+    }
+    
+    _writeEntry(tag, message) {
+        this.writeStream.write(`[${tag}][${new Date(Date.now()).toTimeString()}] ${message}\n`);
+    }
+    
+    _checkCreateLogFile() {
+        const filename = this._getLogFileName();
+        if (!fs.existsSync(filename)) {
+            console.log('creating file');
+            fs.writeFileSync(filename, "\n");
+        }
+        this.writeStream = fs.createWriteStream(filename, {
+            flags: 'a',
+        });
+    }
+    
+    _getLogFileName() {
+        const dt = new Date();
+        const filename = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}.log`; 
+        return `./logs/${filename}`
     }
 }
