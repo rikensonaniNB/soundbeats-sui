@@ -35,7 +35,7 @@ export class AppLogger extends Logger {
     }
     
     _writeEntry(tag, message) {
-        this.writeStream.write(`[${tag}][${new Date(Date.now()).toTimeString()}] ${message}\n`);
+        this.writeStream.write(`[${tag}][${new Date(Date.now()).toTimeString().replace(" (Coordinated Universal Time)", "")}] ${message}\n`);
     }
     
     _checkCreateLogFile() {
