@@ -1,10 +1,15 @@
 import { ILeaderboard } from './ILeaderboard';
-import AWS from 'aws-sdk';
-import { string } from 'superstruct';
+import * as AWS from "aws-sdk";
 
 const DEFAULT_SPRINT_KEY = "default";
-const SCORES_TABLE_NAME = "scores"; 
-const SPRINTS_TABLE_NAME = "sprints"; 
+const SCORES_TABLE_NAME = "leaderboard-scores-test"; 
+const SPRINTS_TABLE_NAME = "leaderboard-sprints-test"; 
+
+//TODO: end sprint automatically if end date is != null and is in past 
+//TODO: enforce only one active sprint at a time 
+//TODO: add logging 
+//TODO: add scores to cache when adding
+//TODO: protect cache from one-off queries
 
 interface IScore {
     wallet: string; 
@@ -15,20 +20,21 @@ class LocalScoreCache {
     expirationSeconds: number; 
     lastRefresh: number; 
     count: number; 
-    data: {};
+    data: { [wallet: string]: IScore };
 
     constructor(expirationSeconds: number = 600) {
         this.expirationSeconds = expirationSeconds;
         this.count = 0;
         this.lastRefresh = 0;
+        this.data = {};
     }
     
     getAsArray(limit: number = 0): IScore[] {
-        return [];
+        return Object.values(this.data);
     }
     
     ageSeconds(): number {
-        return Math.floor(Date.now()/100) - this.lastRefresh;
+        return Math.floor(Date.now()/1000) - this.lastRefresh;
     }
     
     isExpired(): boolean {
@@ -36,7 +42,7 @@ class LocalScoreCache {
     }
     
     update(score: IScore) {
-        this.data[score.wallet] = score.score;
+        this.data[score.wallet] = score;
     }
     
     refresh(scores: IScore[]) {
@@ -64,7 +70,14 @@ export class LeaderboardDynamoDb implements ILeaderboard {
 
     constructor(network: string) {
         this.network = network;
-        AWS.config.update({ region: process.env.AWS_REGION });
+        
+        const n = process.env.AWS_ACCESS_KEY;
+        
+        AWS.config.update({
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_ACCESS_SECRET,
+            region: process.env.AWS_REGION
+        });
         this.dynamoDb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
     }
 
@@ -81,7 +94,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         const result = await this._dataAccess_getScore(wallet, sprintId);
         
         if (result.success) {
-            output.score = result.data.score;
+            output.score = parseInt(result.data.score.N);
         }
         
         return output;
@@ -115,43 +128,75 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         if (sprintId.length == 0)
             sprintId = DEFAULT_SPRINT_KEY;
             
-        const output = { score: 0, network: this.network };
+        const output = { score: score, network: this.network };
         
         //get current score first 
         const result = await this._dataAccess_getScore(wallet, sprintId); 
-        if (result.success) {
-            output.score = result.data.score;
+        if (result.success && result.data) {
+            output.score = parseInt(result.data.score.N) + score;
         }
         
         //write accumulated score 
-        this._dataAccess_putScore(wallet, output.score, sprintId); 
+        await this._dataAccess_putScore(wallet, output.score, sprintId); 
         
         return output; 
     }
 
     //admin methods 
-    async startSprint(sprintId: string): Promise<boolean> {
+    async createSprint(sprintId: string, startDate: number = 0): Promise<boolean> {
+        if (startDate == 0) 
+            startDate = Math.floor(Date.now()/1000); 
+            
         //validation: check that sprint name is not taken 
+        const exists = await this._sprintExists(sprintId); 
+        if (exists) {
+            //TODO: log warning
+            return false;
+        }
+        
         //validation: check that date is ok 
         
         //create sprint record 
+        await this._dataAccess_putSprint(sprintId, startDate); 
+        
         //check that sprint is created 
-        //return true/false
-        return true;
+        return await this._sprintExists(sprintId); 
     }
 
     async endSprint(sprintId: string): Promise<boolean> {
         //validation: check that sprint exists 
+        const dataResult = await this._dataAccess_getSprint(sprintId);
+        if (!dataResult.success || !dataResult.data) {
+            //TODO: log warning
+            return false;
+        }
+        
+        const sprint = dataResult.data;
+        
         //validation: check that sprint not already ended 
+        if (!sprint.active) {
+            //TODO: log warning
+            return false;
+        }
+        
         //write record: set active=false and endDate = now
-        return true;
+        sprint.endDate = Math.floor(Date.now()/1000); 
+        sprint.active = false;
+        await this._dataAccess_putSprint(sprintId, sprint);
+        
+        return !(await this._isCurrentSprint(sprintId));
     }
     
     
     //private methods 
+    async _sprintExists(sprintId: string): Promise<boolean> {
+        const result = await this._dataAccess_getSprint(sprintId);
+        return result.success && result.data;
+    }
+    
     async _isCurrentSprint(sprintId: string): Promise<boolean> {
         const result = await this._dataAccess_getSprint(sprintId); 
-        return result.success && result.data && result.data.active;
+        return result.success && result.data && result.data.active.BOOL;
     }
     
     async _getScoresFromCache(cache: LocalScoreCache, sprintId: string, limit: number = 100): Promise<IScore[]> {
@@ -167,15 +212,35 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
     
     async _scanForScores(sprintId: string, limit: number = 100): Promise<IScore[]> {
-        const result = await this._dataAccess_scanScores(); //TODO: need to apply filter 
-        if (result.success) {
-            return result.data;
+        const params = {
+            TableName: SCORES_TABLE_NAME
+        };
+
+        const results: any = await new Promise((resolve, reject) => 
+        {
+            this.dynamoDb.scan(params, (error, data) => {
+                if (error) {
+                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
+                } else {
+                    const sortedItems = data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N)).slice(0, 10);
+                    resolve(sortedItems);
+                }
+            });
+        }); 
+        
+        let output = results.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
+        
+        if (output.length > limit) {
+            output = output.slice(0, limit);
         }
-        return [];
+        
+        return output;
     }
     
     
     //data access methods 
+    //TODO: log warning or error if any data access call is not successful 
+    
     async _dataAccess_scanScores(): Promise<IDynamoResult> {
         return await this._dataAccess_scanTable(SPRINTS_TABLE_NAME);
     }
@@ -189,7 +254,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
             TableName: SCORES_TABLE_NAME,
             Key: {
                 'wallet': { S: wallet },
-                'sprint': { S: sprintId }
+                'sprintId': { S: sprintId }
             }
         });
     }
@@ -198,9 +263,9 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return await this._dataAccess_putItem({
             TableName: SCORES_TABLE_NAME,
             Item: {
-                wallet,
-                sprintId,
-                score
+                wallet: {'S': wallet },
+                sprintId: { 'S': sprintId },
+                score: { 'N': score.toString() }
             }
         }); 
     }
@@ -218,8 +283,10 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return await this._dataAccess_putItem({
             TableName: SPRINTS_TABLE_NAME,
             Key: {
-                'sprintId': { S: sprintId },
-                'startDate': { N: startDate }
+                'sprintId': { 'S': sprintId },
+                'startDate': { 'N': startDate.toString() },
+                'endDate': { 'N': startDate + 365 * 3.154e+7 },  //one year 
+                'active': { 'BOOL': false }
             }
         });
     }
@@ -248,7 +315,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
 
     async _dataAccess_putItem(params: any): Promise<IDynamoResult> {
         const result: IDynamoResult = await new Promise((resolve, reject) => {
-            this.dynamoDb.put(params, (err, data) => {
+            this.dynamoDb.putItem(params, (err, data) => {
                 if (err) {
                     resolve({
                         success: false,
