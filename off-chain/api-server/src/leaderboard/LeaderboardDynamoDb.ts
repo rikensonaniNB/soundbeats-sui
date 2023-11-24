@@ -3,13 +3,17 @@ import * as AWS from "aws-sdk";
 
 const DEFAULT_SPRINT_KEY = "default";
 const SCORES_TABLE_NAME = "leaderboard-scores-test"; 
-const SPRINTS_TABLE_NAME = "leaderboard-sprints-test"; 
+const SPRINTS_TABLE_NAME = "leaderboard-sprints-test";
+const GSI_SPRINT_NAME = "GSI_SPRINT";
+const GSI_SCORE_NAME = "GSI_SCORE"; 
+const GSI_ACTIVE_NAME = "GSI_ACTIVE";
 
 //TODO: end sprint automatically if end date is != null and is in past 
 //TODO: enforce only one active sprint at a time 
 //TODO: add logging 
 //TODO: add scores to cache when adding
-//TODO: protect cache from one-off queries
+//TODO: exception handling 
+//TODO: clear score cache after changing sprint 
 
 interface IScore {
     wallet: string; 
@@ -101,24 +105,26 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     //TODO: why have wallet param here?
-    async getLeaderboardScores(wallet: string, limit: number = 100, sprintId: string = ""): Promise<{ scores: IScore[], network: string }> {
+    async getLeaderboardScores(wallet: string, limit: number = 100, sprintId: string = ""): Promise<{ scores: IScore[], network: string, fromCache: boolean }> {
         if (sprintId.length == 0)
             sprintId = DEFAULT_SPRINT_KEY;
 
-        let output = { scores: [], network: this.network };
+        let output = { scores: [], network: this.network, fromCache: false };
         
         //if default, get from local cache 
         if (sprintId == DEFAULT_SPRINT_KEY) {
             output.scores = await this._getScoresFromCache(localScoreCache_default, DEFAULT_SPRINT_KEY, limit); 
+            output.fromCache = true;
         }
         else {
             //check: is it current sprint? 
             if (await this._isCurrentSprint(sprintId)) {
-                output.scores = await this._getScoresFromCache(localScoreCache_sprint, DEFAULT_SPRINT_KEY, limit); 
+                output.scores = await this._getScoresFromCache(localScoreCache_sprint, sprintId, limit); 
             }
-            
-            //default: scan table for scores 
-            output.scores = await this._scanForScores(sprintId, limit);
+            else {
+                //default: scan table for scores 
+                output.scores = await this._scanForScores(sprintId, limit);
+            }
         }
 
         return output;
@@ -138,6 +144,9 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         //write accumulated score 
         await this._dataAccess_putScore(wallet, output.score, sprintId); 
+        
+        //update the cache 
+        await this._updateCacheItem(wallet, score, sprintId);
         
         return output; 
     }
@@ -174,19 +183,37 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         const sprint = dataResult.data;
         
         //validation: check that sprint not already ended 
-        if (!sprint.active) {
+        if (sprint.active <= 0) {
             //TODO: log warning
             return false;
         }
         
         //write record: set active=false and endDate = now
         sprint.endDate = Math.floor(Date.now()/1000); 
-        sprint.active = false;
+        sprint.active = 0;
         await this._dataAccess_putSprint(sprintId, sprint);
         
         return !(await this._isCurrentSprint(sprintId));
     }
     
+    async setActiveSprint(sprintId: string) : Promise<boolean> {
+        const sprint = await this._dataAccess_getSprint(sprintId); 
+        
+        //if sprint not found, return false 
+        if (!sprint.success || !sprint.data) 
+            return false; 
+            
+        //deactivate any active sprint 
+        const activeSprints = await this._dataAccess_getActiveSprints(); 
+        
+        //TODO: deactivate any active sprints first
+            
+        //if sprint not active, set active 
+        if (!sprint.data.active) {
+            sprint.data.active = 1; 
+            await this._dataAccess_putSprint(sprintId, sprint.data.startDate, sprint.data.endDate, 1); 
+        }
+    }
     
     //private methods 
     async _sprintExists(sprintId: string): Promise<boolean> {
@@ -196,7 +223,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     
     async _isCurrentSprint(sprintId: string): Promise<boolean> {
         const result = await this._dataAccess_getSprint(sprintId); 
-        return result.success && result.data && result.data.active.BOOL;
+        return result.success && result.data && (result.data.active.N > 0);
     }
     
     async _getScoresFromCache(cache: LocalScoreCache, sprintId: string, limit: number = 100): Promise<IScore[]> {
@@ -211,14 +238,36 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return cache.getAsArray(limit);
     }
     
+    async _updateCacheItem(wallet: string, score:number, sprintId: string) {
+        let cache: LocalScoreCache = null;
+        if (sprintId == DEFAULT_SPRINT_KEY) {
+            cache = localScoreCache_default;
+        }
+        else {
+            if (await this._isCurrentSprint(sprintId)) {
+                cache = localScoreCache_sprint; 
+            }
+        }
+        
+        if (cache) {
+            cache.update({wallet, score}); 
+        }
+    }
+    
+    //TODO: scan by sprint 
     async _scanForScores(sprintId: string, limit: number = 100): Promise<IScore[]> {
         const params = {
-            TableName: SCORES_TABLE_NAME
+            TableName: SCORES_TABLE_NAME,
+            IndexName: GSI_SPRINT_NAME,
+            KeyConditionExpression: "sprintId = :sprintid_val",
+            ExpressionAttributeValues: {
+                ":sprintid_val": {'S': sprintId}
+            }
         };
 
         const results: any = await new Promise((resolve, reject) => 
         {
-            this.dynamoDb.scan(params, (error, data) => {
+            this.dynamoDb.query(params, (error, data) => {
                 if (error) {
                     console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
                 } else {
@@ -236,7 +285,6 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         return output;
     }
-    
     
     //data access methods 
     //TODO: log warning or error if any data access call is not successful 
@@ -279,14 +327,49 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         });
     }
 
-    async _dataAccess_putSprint(sprintId: string, startDate: number): Promise<IDynamoResult> {
+    async _dataAccess_getActiveSprints(): Promise<IDynamoResult> {
+        const params = {
+            TableName: SPRINTS_TABLE_NAME,
+            IndexName: GSI_ACTIVE_NAME,
+            KeyConditionExpression: "active = :active_val",
+            ExpressionAttributeValues: {
+                ":active_val": { 'N': 1 }
+            }
+        };
+
+        const results: any = await new Promise((resolve, reject) => {
+            this.dynamoDb.query(params, (error, data) => {
+                if (error) {
+                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
+                    resolve({
+                        success: false,
+                        error: error,
+                        data: null
+                    });
+                } else {
+                    resolve({
+                        success: true,
+                        error: null, 
+                        data: data.Items
+                    });
+                }
+            });
+        }); 
+        
+        return results;
+    }
+
+    async _dataAccess_putSprint(sprintId: string, startDate: number, endDate = 0, active = 0): Promise<IDynamoResult> {
+        if (endDate == 0) 
+            endDate = startDate + 365 * 3.154e+7;   //one year 
+            
         return await this._dataAccess_putItem({
             TableName: SPRINTS_TABLE_NAME,
             Key: {
                 'sprintId': { 'S': sprintId },
                 'startDate': { 'N': startDate.toString() },
-                'endDate': { 'N': startDate + 365 * 3.154e+7 },  //one year 
-                'active': { 'BOOL': false }
+                'endDate': { 'N': endDate },
+                'active': { 'N': active }
             }
         });
     }
