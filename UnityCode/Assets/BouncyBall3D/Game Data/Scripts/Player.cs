@@ -7,11 +7,15 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public List<GameObject> platformList = new List<GameObject>();
+
+    public GameObject Analyzer, Visualise, PlayerObj;
+    
     public float speed = 10;
     public float Speed => speed * (GameManager.Instance == null ? 1 : GameManager.Instance.GameSpeed);
     public int platformHitCount = 1;
     public Text Text_Name;
-    public LevelGenerator LevelGenerator;
+    //public LevelGenerator LevelGenerator;
 
     public Animator marshmello_Animator;
 
@@ -58,8 +62,11 @@ public class Player : MonoBehaviour
     public bool detectSwipeAfterRelease = false;
     public float SWIPE_THRESHOLD = 20f;
 
+    public static Player instance;
+
     void Awake()
     {
+        instance = this;
         //int check= PlayerPrefs.GetInt("Selected_player");
         //if (PlayerPrefs.GetInt("Selected_player") == null)
         //PlayerPrefs.DeleteKey("Selected_player");
@@ -192,11 +199,17 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 HandleInputActions();
+
             }
         }
 
         if (canMove)
         {
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //Analyzer.SetActive(true);
+            //Visualise.SetActive(true);
+            //PlayerObj.SetActive(true);
             Movement();
             Jumping();
             VelocityScale();

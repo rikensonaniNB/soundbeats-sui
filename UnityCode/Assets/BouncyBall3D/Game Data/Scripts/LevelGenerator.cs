@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LevelGenerator : Singleton<LevelGenerator>
 {
     #region Fields
-    [HideInInspector]
+    //[HideInInspector]
     public Song currentSong;
     [Space]
     [HideInInspector] public int platformsPassed = 0;
@@ -28,7 +28,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     bool nextPlatformIsStart = false;
 #pragma warning restore 0414
     float lastPlatformZ = 0;
-    List<GameObject> platformList = new List<GameObject>();
+    public List<GameObject> platformList = new List<GameObject>();
     public List<int> countlist = new List<int>();
 
     //bool checkAnim = true;
@@ -62,18 +62,18 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         return platformList[id].transform;
     }
+
     private void Start()
     {
+        Debug.Log("!!!!!!!!!!!!!!!!!" + myDataList);
         //for (int i = 0; i <= 300; i++)
         //{
         //    countlist.Add(Random.Range(1, 6));
         //}
-    }
-    public int check = 0;
-    private void Update()
-    {
+        Debug.Log("Log1" + distanceBetweenPlatforms);
 
     }
+    public int check = 0;
 
     public int getcount;
     public Transform GetNextPlatform
@@ -109,7 +109,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
             if (Random.Range(0f, 1f) <= movingPlatformChance && platformCount != beatPerSong - 1)
                 newPlatform = movingPlatformPool.GetItem;
             else
+            {
                 newPlatform = platformPool.GetItem;
+            }
 
             newPlatform.GetComponent<Animator>().SetTrigger("Spawn");
             if (check == 1)
@@ -172,7 +174,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     void IncreaseDificulty()
     {
         //platformsPassed = 0;
-        lastPlatformZ += 40;
+        //lastPlatformZ += 40;
         nextPlatformIsStart = true;
     }
 
@@ -187,6 +189,23 @@ public class LevelGenerator : Singleton<LevelGenerator>
         return false;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    [System.Serializable]
+    public class DataSave
+    {
+        public float zPositons;
+    }
+
+    [System.Serializable]
+    public class DataList
+    {
+        public List<DataSave> dattaSave;
+    }
+
+    public DataList myDataList = new DataList();
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public void Reposition(GameObject platform, int id)
     {
         float posX = id > 3 ? Random.Range(-levelWidth, levelWidth) : 0;
@@ -196,14 +215,25 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         if (platformCount <= 4)
         {
-            lastPlatformZ += distanceBetweenPlatforms + 7;
 
+            //lastPlatformZ += distanceBetweenPlatforms + 7;
+
+            float temp = myDataList.dattaSave[0].zPositons;
+
+            lastPlatformZ = temp;
+            myDataList.dattaSave.RemoveAt(0);
+            Debug.Log("LAST PLATFORM Z - 1 :-" + lastPlatformZ);
         }
 
         else
         {
-            lastPlatformZ += distanceBetweenPlatforms - hitindex;
-            //Debug.Log(lastPlatformZ - platform);
+            float temp = myDataList.dattaSave[0].zPositons;
+
+            lastPlatformZ = temp;
+            myDataList.dattaSave.RemoveAt(0);
+            Debug.Log("LAST PLATFORM Z - 2 :-" + lastPlatformZ);
+            //lastPlatformZ += distanceBetweenPlatforms - hitindex;
+
         }
 
 
@@ -235,4 +265,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             Gizmos.DrawSphere(new Vector3(0, 0, distanceBetweenPlatforms * i), 0.5f);
         }
     }
+
+
+
 }

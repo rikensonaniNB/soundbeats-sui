@@ -7,6 +7,7 @@ public class Song : ScriptableObject
     public int BPM;
     public int stars;
     public int SongScore;
+    public TextAsset songTxtJson;
     public float TimeFromBeat(int beat)
     {
         return song.length / (song.length / 60 * BPM) * beat;

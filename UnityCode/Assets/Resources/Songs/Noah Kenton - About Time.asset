@@ -16,3 +16,4 @@ MonoBehaviour:
   BPM: 123
   stars: 4
   SongScore: 0
+  songTxtJson: {fileID: 4900000, guid: b3b41ebfb749a724cb2a1c259573e941, type: 3}

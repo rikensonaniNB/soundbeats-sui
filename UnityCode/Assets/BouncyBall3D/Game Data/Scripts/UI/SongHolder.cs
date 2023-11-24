@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SongHolder : MonoBehaviour
@@ -101,6 +100,9 @@ public class SongHolder : MonoBehaviour
         //player.SetActive(true);
 
         LevelGenerator.Instance.currentSong = song;
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        LevelGenerator.Instance.myDataList = JsonUtility.FromJson<LevelGenerator.DataList>(LevelGenerator.Instance.currentSong.songTxtJson.text);
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         LevelGenerator.Instance.StartWithSong();
         Advertisements.Instance.ShowInterstitial();
         this.gameObject.SetActive(false);

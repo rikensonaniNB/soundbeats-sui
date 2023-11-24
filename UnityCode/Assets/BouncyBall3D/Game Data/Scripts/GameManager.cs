@@ -58,6 +58,8 @@ public class GameManager : Singleton<GameManager>
         if (scoreAnim.isActiveAndEnabled)
             scoreAnim.SetTrigger("Up");
     }
+
+
     public Text ScoreWin;
 
     public int GetGameDuration()
