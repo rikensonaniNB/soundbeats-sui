@@ -5,7 +5,7 @@ export interface ILeaderboard {
     addLeaderboardScore(wallet: string, score: number, sprintId: string): Promise<{ score: number, network: string }>
     
     //admin methods 
-    startSprint(sprintName: string): Promise<boolean>; 
+    createSprint(sprintName: string, startDate: number): Promise<boolean>; 
     endSprint(sprintName: string): Promise<boolean>;
 }
 

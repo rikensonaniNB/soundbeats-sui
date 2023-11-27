@@ -58,7 +58,7 @@ export class LeaderboardMemory implements ILeaderboard {
     }
 
     //admin methods 
-    async startSprint(sprintName: string): Promise<boolean> {
+    async createSprint(sprintName: string): Promise<boolean> {
         throw "Not implemented";
         return false;
     }
