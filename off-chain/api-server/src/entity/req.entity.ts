@@ -80,7 +80,7 @@ export class VerifySignatureResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
     address: string
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
-    failureReason: string
+    failureReason: string   
 }
 
 export class GetLeaderboardDto {
@@ -88,6 +88,8 @@ export class GetLeaderboardDto {
     wallet: string
     @ApiProperty({ description: 'The max number of records to include in the response' })
     limit: number
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
 }
 
 export class LeaderboardDto {
@@ -95,6 +97,8 @@ export class LeaderboardDto {
     wallet: string
     @ApiProperty({ description: 'The total score of the users' })
     score: number
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
 }
 
 export class GetLeaderboardResponseDto extends ResponseDtoBase {

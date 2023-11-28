@@ -3,18 +3,16 @@ import * as AWS from "aws-sdk";
 import { start } from 'repl';
 
 const DEFAULT_SPRINT_KEY = "default";
-const SCORES_TABLE_NAME = "leaderboard-scores-test"; 
-const SPRINTS_TABLE_NAME = "leaderboard-sprints-test";
+const SCORES_TABLE_NAME = process.env.DBTABLE_NAME_SCORES; 
+const SPRINTS_TABLE_NAME = process.env.DBTABLE_NAME_SPRINTS;
 const GSI_SPRINT_NAME = "GSI_SPRINT";
 const GSI_SCORE_NAME = "GSI_SCORE"; 
 const GSI_ACTIVE_NAME = "GSI_ACTIVE";
 
-//TODO: end sprint automatically if end date is != null and is in past 
-//TODO: enforce only one active sprint at a time 
 //TODO: add logging 
-//TODO: add scores to cache when adding
 //TODO: exception handling 
 //TODO: clear score cache after changing sprint 
+//TODO: log warning or error if any data access call is not successful 
 
 function unixDate() {
     return Math.floor(Date.now()/1000);
@@ -45,8 +43,11 @@ class LocalScoreCache {
         this.data = {};
     }
     
-    getAsArray(limit: number = 0): IScore[] {
-        return Object.values(this.data);
+    getAsArray(limit: number = 0, sort: boolean = false): IScore[] {
+        const output = Object.values(this.data).slice(0, limit);
+        if (sort)
+            output.sort((a, b) => b.score - a.score);
+        return output;
     }
     
     ageSeconds(): number {
@@ -98,7 +99,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, score: number, network: string }> {
-        if (sprintId.length == 0) 
+        if (!sprintId || !sprintId.length) 
             sprintId = DEFAULT_SPRINT_KEY;
         
         const output = {
@@ -109,16 +110,15 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         const result = await this._dataAccess_getScore(wallet, sprintId);
         
-        if (result.success) {
+        if (result.success && result.data) {
             output.score = parseInt(result.data.score.N);
         }
         
         return output;
     }
 
-    //TODO: why have wallet param here?
-    async getLeaderboardScores(wallet: string, limit: number = 100, sprintId: string = ""): Promise<{ scores: IScore[], network: string, fromCache: boolean }> {
-        if (sprintId.length == 0)
+    async getLeaderboardScores(limit: number = 100, sprintId: string = ""): Promise<{ scores: IScore[], network: string, fromCache: boolean }> {
+        if (!sprintId || !sprintId.length) 
             sprintId = DEFAULT_SPRINT_KEY;
 
         let output = { scores: [], network: this.network, fromCache: false };
@@ -140,7 +140,10 @@ export class LeaderboardDynamoDb implements ILeaderboard {
             }
             else {
                 //default: scan table for scores 
-                output.scores = await this._scanForScores(sprintId, limit);
+                output.scores = await this._scanForScores(sprintId);
+                
+                //sort and limit
+                output.scores.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N)).slice(0, limit);
             }
         }
 
@@ -148,7 +151,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     async addLeaderboardScore(wallet: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
-        if (sprintId.length == 0)
+        if (!sprintId || !sprintId.length) 
             sprintId = DEFAULT_SPRINT_KEY;
             
         const output = { score: score, network: this.network };
@@ -161,6 +164,11 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         //write accumulated score 
         await this._dataAccess_putScore(wallet, output.score, sprintId); 
+        
+        //add to default too, if adding to sprint 
+        if (sprintId != DEFAULT_SPRINT_KEY) {
+            await this.addLeaderboardScore(wallet, score); 
+        }
         
         //update the cache 
         await this._updateCacheItem(wallet, score, sprintId);
@@ -245,7 +253,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         //deactivate any active sprint 
         const activeSprints = await this._dataAccess_getActiveSprints(); 
         
-        //TODO: deactivate any active sprints first
+        //deactivate any active sprints first
         let alreadyActive: boolean = false;
         if (activeSprints.data.length > 0) {
             for (let n=0; n<activeSprints.data.length; n++) {
@@ -280,17 +288,19 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         if (!cache.isExpired()) {
             return {
                 fromCache: true,
-                scores: cache.getAsArray(limit)
+                scores: cache.getAsArray(limit, true)
             };
         }
         
         //TODO: if refreshing the cache, do it in separate thread 
-        const data = await this._scanForScores(sprintId, limit); //TODO: need to apply filter 
+        const data = await this._scanForScores(sprintId);
+        
+        //cache entire table
         cache.refresh(data);
 
         return {
             fromCache: false,
-            scores: cache.getAsArray(limit)
+            scores: cache.getAsArray(limit, true)
         };
     }
     
@@ -310,8 +320,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         }
     }
     
-    //TODO: scan by sprint 
-    async _scanForScores(sprintId: string, limit: number = 100): Promise<IScore[]> {
+    async _scanForScores(sprintId: string): Promise<IScore[]> {
         const params = {
             TableName: SCORES_TABLE_NAME,
             IndexName: GSI_SPRINT_NAME,
@@ -327,7 +336,8 @@ export class LeaderboardDynamoDb implements ILeaderboard {
                 if (error) {
                     console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
                 } else {
-                    const sortedItems = data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N)).slice(0, 10);
+                    //TODO: is it necessary to sort here?
+                    const sortedItems = data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
                     resolve(sortedItems);
                 }
             });
@@ -335,15 +345,10 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         let output = results.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
         
-        if (output.length > limit) {
-            output = output.slice(0, limit);
-        }
-        
         return output;
     }
     
     //data access methods 
-    //TODO: log warning or error if any data access call is not successful 
     
     async _dataAccess_scanScores(): Promise<IDynamoResult> {
         return await this._dataAccess_scanTable(SPRINTS_TABLE_NAME);

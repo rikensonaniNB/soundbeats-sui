@@ -6,11 +6,10 @@ import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed2551
 import { TransactionBlock } from '@mysten/sui.js/transactions'
 import { Keypair } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
-import { ILeaderboard, getLeaderboardInstance } from './leaderboard'
+import { ILeaderboard } from './leaderboard/ILeaderboard'
+import { getLeaderboardInstance } from './leaderboard/leaderboard'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
-
-const LEADERBOARD_DEFAULT_LIMIT: number = 100;
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -30,9 +29,16 @@ export class SuiService {
     network: string
     logger: AppLogger
 
+    ownerA: string = "0x8aeae4575ecc01e6563cb1be5b6676451cb029e18dffce4b64018963da96f075"
+    ownerB: string = "0x55ad2abe0abd9756ff6028d9d5c5b8ef46e91af299e1c28927a36648f3ecd23c"
+    currentOwner: string = ""
+
     constructor() {
         //derive keypair
-        this.keypair = Ed25519Keypair.deriveKeypair(Config.mnemonicPhrase);
+        const memA = Config.mnemonicPhrase;
+        const memB = "fancy master wait dune obtain human nephew tattoo ramp return keep relax";
+
+        this.keypair = Ed25519Keypair.deriveKeypair(memA);
 
         this.logger = new AppLogger('sui.service');
 
@@ -58,6 +64,7 @@ export class SuiService {
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         this.logger.log('admin address: ' + suiAddress);
+        this.currentOwner = suiAddress;
 
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
@@ -74,8 +81,137 @@ export class SuiService {
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
                     this.logger.log('detected nftOwnerCap: ' + this.nftOwnerCap);
                     this.logger.log('detected coinCap: ' + this.coinCap);
+
+                    //this.runTests();
                 }
             });
+        }
+        else {
+            //this.runTests();
+            this.getUserNFTs(this.ownerB)
+        }
+
+        this.keypair.signPersonalMessage(new TextEncoder().encode("hello world")).then(async (sig) => {
+            let r = await this.verifySignature("wzA/GfuoWJe1hmzWe0PyBIpkaz85wclgd2pWbjLlJyk=", "AJlJltS7mql3lxnES9NRZtMYxnUqMMgtBCwVIIw9uoMlGK5cZnFI1TYJcUVMRm75XVCuaFgffIJ1IM7b9jU2Ow3DMD8Z+6hYl7WGbNZ7Q/IEimRrPznByWB3alZuMuUnKQ==", "derpy")
+            console.log(r);
+        })
+    }
+
+    async runTests() {
+
+        const callMethod = async (moduleName: string, methodName: string, args) => {
+            const tx = new TransactionBlock();
+            const argv = [];
+
+            for (let i in args) {
+                argv.push(tx.pure(args[i]))
+            }
+            tx.moveCall({
+                target: `${this.packageId}::${moduleName}::${methodName}`,
+                arguments: argv
+            });
+
+            //execute tx 
+            const result = await this.signer.signAndExecuteTransactionBlock({
+                transactionBlock: tx,
+                options: {
+                    showEffects: true,
+                    //showEvents: true,
+                    //showBalanceChanges: true,
+                    showObjectChanges: true,
+                    //showInput: true
+                }
+            });
+
+            //check results 
+            if (result.effects == null) {
+                throw new Error('Fail')
+            }
+
+            return result;
+        };
+
+        const transferNftOwner = (async (newAddress) => {
+            return await callMethod('beats_nft', 'transfer_owner', [
+                this.nftOwnerCap,
+                newAddress
+            ]);
+        });
+
+        const transferTreasuryCap = (async (newAddress) => {
+            return await callMethod('beats', 'transfer_treasury_owner', [
+                this.treasuryCap,
+                newAddress
+            ]);
+        });
+
+        const transferCoinCap = (async (newAddress) => {
+            return await callMethod('beats', 'transfer_coin_owner', [
+                this.coinCap,
+                newAddress
+            ]);
+        });
+
+        const changeCoinName = (async (newName) => {
+            return await callMethod('beats', 'update_name', [
+                this.treasuryCap,
+                this.coinCap,
+                newName
+            ]);
+        });
+
+        const changeCoinSymbol = (async (newSymbol) => {
+            return await callMethod('beats', 'update_symbol', [
+                this.treasuryCap,
+                this.coinCap,
+                newSymbol
+            ]);
+        });
+
+        const changeCoinDesc = (async (desc) => {
+            return await callMethod('beats', 'update_description', [
+                this.treasuryCap,
+                this.coinCap,
+                desc
+            ])
+        });
+
+        const changeCoinUrl = (async (url) => {
+            return await callMethod('beats', 'update_icon_url', [
+                this.treasuryCap,
+                this.coinCap,
+                url
+            ])
+        });
+
+        const func: string = "mintNft";
+        const otherOwner = this.currentOwner == this.ownerA ? this.ownerB : this.ownerA;
+        switch (func) {
+            case "mintNft":
+                console.log(await this.mintNfts(
+                    otherOwner,
+                    "NEOM",
+                    "Neom: the Line",
+                    "https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png",
+                    1
+                ));
+                break;
+            case "mintToken":
+                console.log(await this.mintTokens(otherOwner, 1));
+                break;
+            case "switchNftOwner":
+                console.log(await transferNftOwner(otherOwner));
+                break;
+            case "switchTokenOwner":
+                console.log(await transferTreasuryCap(otherOwner));
+                console.log(await transferCoinCap(otherOwner));
+                break;
+            case "modifyTokenProperties":
+                console.log(await changeCoinName("NOMNOMS"));
+                console.log(await changeCoinDesc("Neom Coin"));
+                console.log(await changeCoinSymbol("NOM"));
+                console.log(await changeCoinUrl("https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png"));
+                break;
         }
     }
 
@@ -210,7 +346,13 @@ export class SuiService {
         };
 
         try {
-            const publicKey = new Ed25519PublicKey(walletPubKey)
+            console.log(walletPubKey);
+            console.log(signature);
+
+            console.log(walletPubKey);
+            console.log(signature);
+            
+            const publicKey = new Ed25519PublicKey(walletPubKey) 
             const msgBytes = new TextEncoder().encode(message);
 
             output.address = publicKey.toSuiAddress();
@@ -239,23 +381,26 @@ export class SuiService {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
-        let response: any = {
-            hasNextPage: true,
-            data: [],
+        let response: any = { 
+            hasNextPage: true, 
+            data: [], 
             nextCursor: null
         };
-
+        
         while (response.hasNextPage) {
             //get objects owned by user
+            console.log('retrieving...');
             response = await this.provider.getOwnedObjects({
                 owner: wallet,
                 options: {
                     showType: true,
                     showContent: true,
                 },
-                limit: 50,
+                limit: 50, 
                 cursor: response.nextCursor
             });
+
+            console.log(response);
 
             if (response && response.data && response.data.length) {
 
@@ -284,40 +429,43 @@ export class SuiService {
             }
         }
 
+        console.log('returning output: ', output);
         return output;
     }
 
     /**
      * Returns the leaderboard score of the given wallet (default 0). 
      * 
-     * @param wallet 
+     * @param wallet the wallet address to query score
+     * @param sprint unique sprint id, or "current", "", or "default"
      * @returns LeaderboardDto
      */
-    getLeaderboardScore(wallet: string): { wallet: string, score: number; network: string } {
-        return this.leaderboard.getLeaderboardScore(wallet);
+    async getLeaderboardScore(wallet: string, sprint: string | null | "current" | "" = null): Promise<{ wallet: string, score: number; network: string }> {
+        return await this.leaderboard.getLeaderboardScore(wallet, sprint);
     }
 
     /**
      * Returns all leaderboard scores, or the leaderboard score of the given wallet only, 
      * if the wallet parameter is provided (i.e., if 'wallet' is null or undefined, returns ALL scores)
      * 
-     * @param wallet 
      * @param limit 0 means 'unlimited'
+     * @param sprint unique sprint id, or "current", "", or "default"
      * @returns GetLeaderboardResponseDto
      */
-    getLeaderboardScores(wallet: string = null, limit: number = 0): { scores: { wallet: string; score: number }[]; network: string } {
-        return this.leaderboard.getLeaderboardScores(wallet, limit);
+    async getLeaderboardScores(limit: number = 0, sprint: string | null | "current" | "" = null): Promise<{ scores: { wallet: string; score: number }[]; network: string }> {
+        return await this.leaderboard.getLeaderboardScores(limit, sprint);
     }
 
     /**
      * Adds a new leaderboard score for the given wallet address. 
      * 
-     * @param wallet 
-     * @param score 
+     * @param wallet the wallet address to add score
+     * @param score the score to add for the given wallet
+     * @param sprint unique sprint id, or "current", "", or "default"
      * @returns LeaderboardDto
      */
-    addLeaderboardScore(wallet: string, score: number): { score: number; network: string } {
-        return this.leaderboard.addLeaderboardScore(wallet, score);
+    async addLeaderboardScore(wallet: string, score: number, sprint: string | null | "current" | "" = null): Promise<{ score: number; network: string }> {
+        return await this.leaderboard.addLeaderboardScore(wallet, score, sprint);
     }
 
     /**
@@ -342,6 +490,12 @@ export class SuiService {
                 showOwner: true
             }
         });
+
+        for (let i in objects.data) {
+            const obj = objects.data[i]
+            console.log(obj)
+        }
+        console.log(objects.data.length);
 
         //parse the objects
         if (objects && objects.data && objects.data.length) {

@@ -25,8 +25,8 @@ const LEADERBOARD_DEFAULT_LIMIT: number = 100;
 @Controller()
 export class AppController {
     logger: AppLogger
-
-    constructor(private readonly appService: AppService, private readonly suiService: SuiService) {
+    
+    constructor(private readonly appService: AppService, private readonly suiService: SuiService) { 
         this.logger = new AppLogger('app.controller');
     }
 
@@ -39,8 +39,9 @@ export class AppController {
     @Post('/api/v1/nfts')
     async mintNft(@Body() body: MintNftDto): Promise<MintNftResponseDto> {
         const logString = `POST /api/v1/nfts ${JSON.stringify(body)}`;
-        this.logger.log(logString);
-        try {
+        this.logger.log(logString); 
+        try 
+        {
             const { name, recipient, imageUrl, quantity } = body;
             if (body.name == null || body.name == '') {
                 throw new Error('name cannot be null or empty');
@@ -50,7 +51,7 @@ export class AppController {
             }
             const output = await this.suiService.mintNfts(recipient, name, "Soundbeats NFT", imageUrl, quantity ?? 1);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -60,9 +61,10 @@ export class AppController {
     @ApiOperation({ summary: 'Request private token' })
     @Post('/api/v1/token')
     async mintToken(@Body() body: MintTokenDto): Promise<MintTokenResponseDto> {
-        const logString = `POST /api/v1/token ${JSON.stringify(body)}`;
-        this.logger.log(logString);
-        try {
+        const logString = `POST /api/v1/token ${JSON.stringify(body) }`;
+        this.logger.log(logString); 
+        try 
+        {
             const { amount, recipient } = body;
             if (amount == null || amount <= 0) {
                 throw new Error('amount cannot be null, zero or negative');
@@ -72,7 +74,7 @@ export class AppController {
             }
             const output = await this.suiService.mintTokens(recipient, amount);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -91,7 +93,7 @@ export class AppController {
             }
             const output = await this.suiService.getTokenBalance(wallet);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -103,14 +105,15 @@ export class AppController {
     async getBeatsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatsNftsResponseDto> {
         const logString = `GET /api/v1/nfts ${JSON.stringify(query)}`;
         this.logger.log(logString);
-        try {
+        try 
+        {
             const { wallet } = query;
             if (wallet == null || wallet == '') {
                 throw new Error('wallet cannot be null or empty');
             }
             const output = await this.suiService.getUserNFTs(wallet);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -120,7 +123,7 @@ export class AppController {
     @ApiOperation({ summary: 'Verify a signed message' })
     @Get('/api/v1/verify')
     async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
-        const logString = `GET /api/v1/verify ${JSON.stringify(query)}`;
+        const logString = `GET /api/v1/verify ${JSON.stringify(query)}`; 
         this.logger.log(logString);
         try {
             let { address, signature, message } = query;
@@ -135,7 +138,7 @@ export class AppController {
             }
             const output = await this.suiService.verifySignature(address, signature, message);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -145,19 +148,26 @@ export class AppController {
     @ApiOperation({ summary: 'Get a user score from the leaderboard' })
     @Get('/api/v1/leaderboard')
     async getLeaderboardScore(@Query() query: GetLeaderboardDto): Promise<GetLeaderboardResponseDto> {
-        const logString = `GET /api/v1/leaderboard ${JSON.stringify(query)}`;
+        const logString = `GET /api/v1/leaderboard ${JSON.stringify(query)}`; 
         this.logger.log(logString);
-        try {
-            let { wallet, limit } = query;
+        try 
+        {
+            let { wallet, limit, sprint } = query;
             if (!wallet || wallet == '') {
                 wallet = null;
             }
-            if (!limit) {
+            if (!limit ) {
                 limit = LEADERBOARD_DEFAULT_LIMIT;
             }
-            const output = this.suiService.getLeaderboardScores(wallet, limit);
+            let output = null;
+            if (wallet && wallet.length) {
+                output = await this.suiService.getLeaderboardScore(wallet, sprint);
+            }
+            else {
+                output = await this.suiService.getLeaderboardScores(limit, sprint);
+            }
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
@@ -167,7 +177,7 @@ export class AppController {
     @ApiOperation({ summary: 'Add to a user score on the leaderboard' })
     @Post('/api/v1/leaderboard')
     async addLeaderboardScore(@Body() body: AddLeaderboardDto): Promise<AddLeaderboardResponseDto> {
-        const logString = `POST /api/v1/leaderboard ${JSON.stringify(body)}`;
+        const logString = `POST /api/v1/leaderboard ${JSON.stringify(body)}`; 
         this.logger.log(logString);
         try {
             const { score, wallet } = body;
@@ -179,7 +189,7 @@ export class AppController {
             }
             const output = await this.suiService.addLeaderboardScore(wallet, score);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
+            return output; 
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);

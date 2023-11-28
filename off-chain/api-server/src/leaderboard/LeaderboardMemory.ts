@@ -23,23 +23,18 @@ export class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    async getLeaderboardScores(wallet: string, limit: number = 100, sprintId: string = ""): Promise<{ scores: { wallet: string, score: number }[], network: string }> {
+    async getLeaderboardScores(limit: number = 100, sprintId: string = ""): Promise<{ scores: { wallet: string, score: number }[], network: string }> {
         let output = { scores: [], network: this.network };
 
-        if (wallet && wallet.length > 0) {
-            output.scores.push(await this.getLeaderboardScore(wallet));
-        }
-        else {
-            this.leaderboardMap.forEach((value: number, key: string) => {
-                output.scores.push({ wallet: key, score: value });
-            });
+        this.leaderboardMap.forEach((value: number, key: string) => {
+            output.scores.push({ wallet: key, score: value });
+        });
 
-            //sort 
-            output.scores.sort((a, b) => { return b.score - a.score });
+        //sort 
+        output.scores.sort((a, b) => { return b.score - a.score });
 
-            if (limit > 0 && output.scores.length > limit) {
-                output.scores = output.scores.slice(0, limit);
-            }
+        if (limit > 0 && output.scores.length > limit) {
+            output.scores = output.scores.slice(0, limit);
         }
 
         return output;
