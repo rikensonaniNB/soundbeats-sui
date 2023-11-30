@@ -29,16 +29,9 @@ export class SuiService {
     network: string
     logger: AppLogger
 
-    ownerA: string = "0x8aeae4575ecc01e6563cb1be5b6676451cb029e18dffce4b64018963da96f075"
-    ownerB: string = "0x55ad2abe0abd9756ff6028d9d5c5b8ef46e91af299e1c28927a36648f3ecd23c"
-    currentOwner: string = ""
-
     constructor() {
         //derive keypair
-        const memA = Config.mnemonicPhrase;
-        const memB = "fancy master wait dune obtain human nephew tattoo ramp return keep relax";
-
-        this.keypair = Ed25519Keypair.deriveKeypair(memA);
+        this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
         this.logger = new AppLogger('sui.service');
 
@@ -64,7 +57,6 @@ export class SuiService {
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         this.logger.log('admin address: ' + suiAddress);
-        this.currentOwner = suiAddress;
 
         //detect token info from blockchain 
         if (Config.detectPackageInfo) {
@@ -81,137 +73,8 @@ export class SuiService {
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
                     this.logger.log('detected nftOwnerCap: ' + this.nftOwnerCap);
                     this.logger.log('detected coinCap: ' + this.coinCap);
-
-                    //this.runTests();
                 }
             });
-        }
-        else {
-            //this.runTests();
-            this.getUserNFTs(this.ownerB)
-        }
-
-        this.keypair.signPersonalMessage(new TextEncoder().encode("hello world")).then(async (sig) => {
-            let r = await this.verifySignature("wzA/GfuoWJe1hmzWe0PyBIpkaz85wclgd2pWbjLlJyk=", "AJlJltS7mql3lxnES9NRZtMYxnUqMMgtBCwVIIw9uoMlGK5cZnFI1TYJcUVMRm75XVCuaFgffIJ1IM7b9jU2Ow3DMD8Z+6hYl7WGbNZ7Q/IEimRrPznByWB3alZuMuUnKQ==", "derpy")
-            console.log(r);
-        })
-    }
-
-    async runTests() {
-
-        const callMethod = async (moduleName: string, methodName: string, args) => {
-            const tx = new TransactionBlock();
-            const argv = [];
-
-            for (let i in args) {
-                argv.push(tx.pure(args[i]))
-            }
-            tx.moveCall({
-                target: `${this.packageId}::${moduleName}::${methodName}`,
-                arguments: argv
-            });
-
-            //execute tx 
-            const result = await this.signer.signAndExecuteTransactionBlock({
-                transactionBlock: tx,
-                options: {
-                    showEffects: true,
-                    //showEvents: true,
-                    //showBalanceChanges: true,
-                    showObjectChanges: true,
-                    //showInput: true
-                }
-            });
-
-            //check results 
-            if (result.effects == null) {
-                throw new Error('Fail')
-            }
-
-            return result;
-        };
-
-        const transferNftOwner = (async (newAddress) => {
-            return await callMethod('beats_nft', 'transfer_owner', [
-                this.nftOwnerCap,
-                newAddress
-            ]);
-        });
-
-        const transferTreasuryCap = (async (newAddress) => {
-            return await callMethod('beats', 'transfer_treasury_owner', [
-                this.treasuryCap,
-                newAddress
-            ]);
-        });
-
-        const transferCoinCap = (async (newAddress) => {
-            return await callMethod('beats', 'transfer_coin_owner', [
-                this.coinCap,
-                newAddress
-            ]);
-        });
-
-        const changeCoinName = (async (newName) => {
-            return await callMethod('beats', 'update_name', [
-                this.treasuryCap,
-                this.coinCap,
-                newName
-            ]);
-        });
-
-        const changeCoinSymbol = (async (newSymbol) => {
-            return await callMethod('beats', 'update_symbol', [
-                this.treasuryCap,
-                this.coinCap,
-                newSymbol
-            ]);
-        });
-
-        const changeCoinDesc = (async (desc) => {
-            return await callMethod('beats', 'update_description', [
-                this.treasuryCap,
-                this.coinCap,
-                desc
-            ])
-        });
-
-        const changeCoinUrl = (async (url) => {
-            return await callMethod('beats', 'update_icon_url', [
-                this.treasuryCap,
-                this.coinCap,
-                url
-            ])
-        });
-
-        const func: string = "mintNft";
-        const otherOwner = this.currentOwner == this.ownerA ? this.ownerB : this.ownerA;
-        switch (func) {
-            case "mintNft":
-                console.log(await this.mintNfts(
-                    otherOwner,
-                    "NEOM",
-                    "Neom: the Line",
-                    "https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png",
-                    1
-                ));
-                break;
-            case "mintToken":
-                console.log(await this.mintTokens(otherOwner, 1));
-                break;
-            case "switchNftOwner":
-                console.log(await transferNftOwner(otherOwner));
-                break;
-            case "switchTokenOwner":
-                console.log(await transferTreasuryCap(otherOwner));
-                console.log(await transferCoinCap(otherOwner));
-                break;
-            case "modifyTokenProperties":
-                console.log(await changeCoinName("NOMNOMS"));
-                console.log(await changeCoinDesc("Neom Coin"));
-                console.log(await changeCoinSymbol("NOM"));
-                console.log(await changeCoinUrl("https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png"));
-                break;
         }
     }
 
