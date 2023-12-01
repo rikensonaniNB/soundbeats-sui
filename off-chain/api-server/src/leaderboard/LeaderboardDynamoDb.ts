@@ -1,6 +1,6 @@
 import { ILeaderboard } from './ILeaderboard';
-import * as AWS from "aws-sdk";
 import { Config } from '../config'; 
+const AWS = require("aws-sdk");
 
 const DEFAULT_SPRINT_KEY = "default";
 const GSI_SPRINT_NAME = "GSI_SPRINT";
@@ -79,9 +79,10 @@ interface IDynamoResult {
     error: any;
 }
 
-const localScoreCache_default = new LocalScoreCache(); 
+//TODO: cache expiration seconds should come from .env
+const localScoreCache_default = new LocalScoreCache(300); 
 
-const localScoreCache_sprint = new LocalScoreCache(); 
+const localScoreCache_sprint = new LocalScoreCache(300); 
    
 
 export class LeaderboardDynamoDb implements ILeaderboard {
@@ -164,6 +165,8 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         if (sprintId == "current")
             sprintId = await this._getActiveSprintName(); 
             
+        score = parseInt(score.toString());
+            
         const output = { score: score, network: this.network };
         
         //get current score first 
@@ -181,7 +184,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         }
         
         //update the cache 
-        await this._updateCacheItem(wallet, score, sprintId);
+        await this._updateCacheItem(wallet, output.score, sprintId);
         
         return output; 
     }
@@ -388,10 +391,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     
     //data access methods 
     
-    async _dataAccess_scanScores(): Promise<IDynamoResult> {
-        return await this._dataAccess_scanTable(Config.scoresTableName);
-    }
-
+    //TODO: not used
     async _dataAccess_scanSprints(): Promise<IDynamoResult> {
         return await this._dataAccess_scanTable(Config.sprintsTableName);
     }
@@ -547,6 +547,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return result;
     }
 
+    //TODO: not used
     async _dataAccess_scanTable(tableName: string): Promise<IDynamoResult> {
         return {
             error: null, 
