@@ -174,12 +174,12 @@ public class NetworkManager : Singleton<NetworkManager>
     /// </summary>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
-    public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail, String sprintId = "")
     {
-        Debug.Log(ServerConfig.API_GET_LEADERBOARD);
+        Debug.Log(ServerConfig.API_GET_LEADERBOARD + sprintId);
 
         SendRequest(
-            ServerConfig.FormatServerUrl(ServerConfig.API_GET_LEADERBOARD),
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_LEADERBOARD + sprintId),
             callbackOnSuccess,
             callbackOnFail,
             "get"

@@ -1,5 +1,5 @@
 //FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-#define FAKE_SIGNIN
+//#define FAKE_SIGNIN
 
 using System;
 using System.Collections;

@@ -21,6 +21,7 @@ public class GameManager : Singleton<GameManager>
     float songProgress = 0;
     public bool isPausePopupOpen = false;
     int tempTokenAmount = 0;
+    private int previousGameSpeed = 0;
 
     [Header("UI")]
     public Image levelProgress;
@@ -267,6 +268,18 @@ public class GameManager : Singleton<GameManager>
     {
         if (gameSpeed < 5)
             gameSpeed++;
+    }
+
+    public void IncreaseGameSpeedForNSec()
+    {
+        previousGameSpeed = gameSpeed;
+        gameSpeed += 3;
+        Invoke("resetGameSpeedToPrevious", PowerUp.powerUpTimer);
+    }
+
+    public void resetGameSpeedToPrevious()
+    {
+        gameSpeed = previousGameSpeed;
     }
 
     public void AddScore(bool perfect)

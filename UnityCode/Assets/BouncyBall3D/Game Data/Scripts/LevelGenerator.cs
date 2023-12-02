@@ -19,9 +19,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
     [SerializeField] Player player;
     [SerializeField] Pool platformPool;
     [SerializeField] Pool movingPlatformPool;
-    [SerializeField] GameObject starPrefab;
+    [SerializeField] GameObject starPrefab, PowerUpPrefab;
     public int hitindex = 0;
     int[] starIDs = new int[3];
+    private bool isSpeedupActive = false;
+
     //int songLevel = 0;
     int platformCount;
 #pragma warning disable 0414
@@ -212,6 +214,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
             //GameObject star = Instantiate(starPrefab, platform.transform);
         }
 
+        //if (Random.Range(0, 10) > 2 && isSpeedupActive == false)
+        //{
+        //    GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
+        //}
 
     }
 
