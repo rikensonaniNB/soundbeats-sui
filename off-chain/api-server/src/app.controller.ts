@@ -15,7 +15,9 @@ import {
     GetLeaderboardDto,
     GetLeaderboardResponseDto,
     AddLeaderboardDto,
-    AddLeaderboardResponseDto
+    AddLeaderboardResponseDto, 
+    GetLeaderboardSprintDto, 
+    GetLeaderboardSprintResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -190,6 +192,28 @@ export class AppController {
             const output = await this.suiService.addLeaderboardScore(wallet, score);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output; 
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+        }
+    }
+
+    @ApiOperation({ summary: 'Add to a user score on the leaderboard' })
+    @Get('/api/v1/sprint')
+    async getLeaderboardSprint(@Body() query: GetLeaderboardSprintDto): Promise<GetLeaderboardSprintResponseDto> {
+        const logString = `GET /api/v1/sprint ${JSON.stringify(query)}`;
+        this.logger.log(logString);
+        try {
+            let { sprint, limit } = query;
+            let output = null;
+            if (sprint && sprint.length) {
+                output = await this.suiService.getLeaderboardSprint(sprint);
+            }
+            else {
+                output = await this.suiService.getLeaderboardSprints(limit);
+            }
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);

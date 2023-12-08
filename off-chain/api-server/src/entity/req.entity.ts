@@ -117,3 +117,21 @@ export class AddLeaderboardResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The total score of the user' })
     score: number
 }
+
+export class GetLeaderboardSprintDto {
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
+    @ApiProperty({ description: 'Optional max number of records to return' })
+    limit: number
+}
+
+export class GetLeaderboardSprintResponseDto {
+    @ApiProperty({ description: 'Unique id of sprint' })
+    sprintId: string
+    @ApiProperty({ description: 'Whether or not sprint is currently active' })
+    active: boolean
+    @ApiProperty({ description: 'Sprint start date' })
+    startDate: number
+    @ApiProperty({ description: 'Sprint end date' })
+    endDate: number
+}

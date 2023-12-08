@@ -1,5 +1,6 @@
-import { ILeaderboard } from './ILeaderboard';
+import { ILeaderboard, ISprint } from './ILeaderboard';
 import { Config } from '../config'; 
+import { Sse } from '@nestjs/common';
 const AWS = require("aws-sdk");
 
 const DEFAULT_SPRINT_KEY = "default";
@@ -19,13 +20,6 @@ function unixDate() {
 interface IScore {
     wallet: string; 
     score: number;
-}
-
-interface ISprint {
-    sprintId: string; 
-    active: boolean; 
-    startDate: number; 
-    endDate: number; 
 }
 
 class LocalScoreCache {
@@ -255,6 +249,23 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         }
         
         return output; 
+    }
+    
+    async getSprints(limit: number) : Promise<ISprint[]> {
+        const result = await this._dataAccess_scanSprints();
+        const items = result.success ? result.data : [];
+        const sprints = [];
+        
+        items.forEach(s => {
+            sprints.push({
+                sprintId: s.sprintId.S,
+                startDate: parseInt(s.startDate.N),
+                endDate: parseInt(s.endDate.N),
+                active: parseInt(s.active.N) > 0
+            });
+        });
+        
+        return sprints;
     }
     
     async setActiveSprint(sprintId: string) : Promise<boolean> {
@@ -547,12 +558,30 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return result;
     }
 
-    //TODO: not used
     async _dataAccess_scanTable(tableName: string): Promise<IDynamoResult> {
-        return {
-            error: null, 
-            success: true, 
-            data: []
-        }
+        const params = {
+            TableName: tableName
+        };
+
+        const results: any = await new Promise((resolve, reject) => {
+            this.dynamoDb.scan(params, (error, data) => {
+                if (error) {
+                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
+                    resolve({
+                        success: false,
+                        error: error,
+                        data: null
+                    });
+                } else {
+                    resolve({
+                        success: true,
+                        error: null,
+                        data: data.Items
+                    });
+                }
+            });
+        });
+
+        return results;
     }
 }

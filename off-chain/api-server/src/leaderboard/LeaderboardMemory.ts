@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { ILeaderboard } from './ILeaderboard';
+import { ILeaderboard, ISprint } from './ILeaderboard';
 
 /***
  * Implementation of ILeaderboard that just stores the data in memory (which is wiped out when 
@@ -61,5 +61,13 @@ export class LeaderboardMemory implements ILeaderboard {
     async endSprint(sprintName: string): Promise<boolean> {
         throw "Not implemented";
         return false;
+    }
+    
+    async getSprint(sprintId: string): Promise<ISprint> {
+        return null;
+    }
+
+    async getSprints(limit: number): Promise<ISprint[]> {
+        return [];
     }
 }

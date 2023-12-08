@@ -6,7 +6,7 @@ import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed2551
 import { TransactionBlock } from '@mysten/sui.js/transactions'
 import { Keypair } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
-import { ILeaderboard } from './leaderboard/ILeaderboard'
+import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard'
 import { getLeaderboardInstance } from './leaderboard/leaderboard'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
@@ -214,8 +214,8 @@ export class SuiService {
 
             console.log(walletPubKey);
             console.log(signature);
-            
-            const publicKey = new Ed25519PublicKey(walletPubKey) 
+
+            const publicKey = new Ed25519PublicKey(walletPubKey)
             const msgBytes = new TextEncoder().encode(message);
 
             output.address = publicKey.toSuiAddress();
@@ -244,12 +244,12 @@ export class SuiService {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
-        let response: any = { 
-            hasNextPage: true, 
-            data: [], 
+        let response: any = {
+            hasNextPage: true,
+            data: [],
             nextCursor: null
         };
-        
+
         while (response.hasNextPage) {
             //get objects owned by user
             console.log('retrieving...');
@@ -259,7 +259,7 @@ export class SuiService {
                     showType: true,
                     showContent: true,
                 },
-                limit: 50, 
+                limit: 50,
                 cursor: response.nextCursor
             });
 
@@ -329,6 +329,26 @@ export class SuiService {
      */
     async addLeaderboardScore(wallet: string, score: number, sprint: string | null | "current" | "" = null): Promise<{ score: number; network: string }> {
         return await this.leaderboard.addLeaderboardScore(wallet, score, sprint);
+    }
+    
+    /**
+     * Gets the specified leaderboard sprint configuration, if it exists. 
+     * 
+     * @param sprintId 
+     * @returns The given sprint configuration, if found; otherwise null. 
+     */
+    async getLeaderboardSprint(sprintId: string): Promise<ISprint> {
+        return await this.leaderboard.getSprint(sprintId);
+    }
+
+    /**
+     * Gets all leaderboard sprints. 
+     * 
+     * @param limit Max number of records to return; <=0 for unlimited.
+     * @returns An array of leaderboard sprints that exist.
+     */
+    async getLeaderboardSprints(limit: number = 0): Promise<ISprint[]> {
+        return await this.leaderboard.getSprints(limit);
     }
 
     /**
@@ -451,4 +471,123 @@ export class SuiService {
             url: getFullnodeUrl("devnet")
         });
     }
+
+/*
+    async runTests() {
+
+        const callMethod = async (moduleName: string, methodName: string, args) => {
+            const tx = new TransactionBlock();
+            const argv = [];
+
+            for (let i in args) {
+                argv.push(tx.pure(args[i]))
+            }
+            tx.moveCall({
+                target: `${this.packageId}::${moduleName}::${methodName}`,
+                arguments: argv
+            });
+
+            //execute tx 
+            const result = await this.signer.signAndExecuteTransactionBlock({
+                transactionBlock: tx,
+                options: {
+                    showEffects: true,
+                    //showEvents: true,
+                    //showBalanceChanges: true,
+                    showObjectChanges: true,
+                    //showInput: true
+                }
+            });
+
+            //check results 
+            if (result.effects == null) {
+                throw new Error('Fail')
+            }
+
+            return result;
+        };
+
+        const transferNftOwner = (async (newAddress) => {
+            return await callMethod('beats_nft', 'transfer_owner', [
+                this.nftOwnerCap,
+                newAddress
+            ]);
+        });
+
+        const transferTreasuryCap = (async (newAddress) => {
+            return await callMethod('beats', 'transfer_treasury_owner', [
+                this.treasuryCap,
+                newAddress
+            ]);
+        });
+
+        const transferCoinCap = (async (newAddress) => {
+            return await callMethod('beats', 'transfer_coin_owner', [
+                this.coinCap,
+                newAddress
+            ]);
+        });
+
+        const changeCoinName = (async (newName) => {
+            return await callMethod('beats', 'update_name', [
+                this.treasuryCap,
+                this.coinCap,
+                newName
+            ]);
+        });
+
+        const changeCoinSymbol = (async (newSymbol) => {
+            return await callMethod('beats', 'update_symbol', [
+                this.treasuryCap,
+                this.coinCap,
+                newSymbol
+            ]);
+        });
+
+        const changeCoinDesc = (async (desc) => {
+            return await callMethod('beats', 'update_description', [
+                this.treasuryCap,
+                this.coinCap,
+                desc
+            ])
+        });
+
+        const changeCoinUrl = (async (url) => {
+            return await callMethod('beats', 'update_icon_url', [
+                this.treasuryCap,
+                this.coinCap,
+                url
+            ])
+        });
+
+        const func: string = "mintNft";
+        const otherOwner = this.currentOwner == this.ownerA ? this.ownerB : this.ownerA;
+        switch (func) {
+            case "mintNft":
+                console.log(await this.mintNfts(
+                    otherOwner,
+                    "NEOM",
+                    "Neom: the Line",
+                    "https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png",
+                    1
+                ));
+                break;
+            case "mintToken":
+                console.log(await this.mintTokens(otherOwner, 1));
+                break;
+            case "switchNftOwner":
+                console.log(await transferNftOwner(otherOwner));
+                break;
+            case "switchTokenOwner":
+                console.log(await transferTreasuryCap(otherOwner));
+                console.log(await transferCoinCap(otherOwner));
+                break;
+            case "modifyTokenProperties":
+                console.log(await changeCoinName("NOMNOMS"));
+                console.log(await changeCoinDesc("Neom Coin"));
+                console.log(await changeCoinSymbol("NOM"));
+                console.log(await changeCoinUrl("https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png"));
+                break;
+        }
+    }*/
 }

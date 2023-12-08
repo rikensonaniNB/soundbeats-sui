@@ -1,4 +1,11 @@
 
+export interface ISprint {
+    sprintId: string;
+    active: boolean;
+    startDate: number;
+    endDate: number;
+}
+
 export interface ILeaderboard {
     /**
      * Gets the current score for the given wallet. If no sprint is specified, gets
@@ -44,4 +51,18 @@ export interface ILeaderboard {
      * @param sprintId unique sprint id, the sprint to end
      */
     endSprint(sprintId: string): Promise<boolean>;
+    
+    /**
+     * Gets the given sprint. 
+     * 
+     * @param sprintId 
+     */
+    getSprint(sprintId: string): Promise<ISprint>; 
+    
+    /**
+     * Gets all sprints that exist. 
+     * 
+     * @param limit Max number of records to return; <= 0 for unlimited
+     */
+    getSprints(limit: number): Promise<ISprint[]>; 
 }
