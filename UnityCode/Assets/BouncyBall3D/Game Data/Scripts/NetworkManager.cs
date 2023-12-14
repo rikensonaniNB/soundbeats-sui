@@ -30,7 +30,7 @@ public class ServerConfig
     public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
 
     //URL of Leaderboard and NFT
-    public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
+    public const string API_POST_LEADERBOARD = "api/v1/leaderboard?sprint=current";
     public const string API_GET_LEADERBOARD = "api/v1/leaderboard";
 
     public static string GetServerDomain()
@@ -152,7 +152,7 @@ public class NetworkManager : Singleton<NetworkManager>
         CreateLeaderboardDto body = new CreateLeaderboardDto();
         body.wallet = wallet;
         body.score = score;
-
+        body.sprintId = "current";
         SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
     }
 
@@ -426,6 +426,7 @@ public class CreateLeaderboardDto
 {
     public string wallet;
     public int score;
+    public string sprintId;
 }
 
 [Serializable]
