@@ -17,7 +17,11 @@ import {
     AddLeaderboardDto,
     AddLeaderboardResponseDto, 
     GetLeaderboardSprintDto, 
-    GetLeaderboardSprintResponseDto
+    GetLeaderboardSprintResponseDto, 
+    RegisterEvmDto,
+    RegisterEvmResponseDto, 
+    GetAccountDto, 
+    GetAccountResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -37,6 +41,8 @@ export class AppController {
         return 'ok';
     }
 
+    // *** NFTS and TOKENS *** 
+    
     @ApiOperation({ summary: 'Create NFT' })
     @Post('/api/v1/nfts')
     async mintNft(@Body() body: MintNftDto): Promise<MintNftResponseDto> {
@@ -122,31 +128,8 @@ export class AppController {
         }
     }
 
-    @ApiOperation({ summary: 'Verify a signed message' })
-    @Get('/api/v1/verify')
-    async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
-        const logString = `GET /api/v1/verify ${JSON.stringify(query)}`; 
-        this.logger.log(logString);
-        try {
-            let { address, signature, message } = query;
-            if (address == null || address == '') {
-                throw new Error('address cannot be null or empty')
-            }
-            if (signature == null || signature == '') {
-                throw new Error('signature cannot be null or empty')
-            }
-            if (message == null || message == '') {
-                throw new Error('message cannot be null or empty')
-            }
-            const output = await this.suiService.verifySignature(address, signature, message);
-            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output; 
-        }
-        catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-        }
-    }
-
+    // *** LEADERBOARD *** 
+    
     @ApiOperation({ summary: 'Get a user score from the leaderboard' })
     @Get('/api/v1/leaderboard')
     async getLeaderboardScore(@Query() query: GetLeaderboardDto): Promise<GetLeaderboardResponseDto> {
@@ -212,6 +195,74 @@ export class AppController {
             else {
                 output = await this.suiService.getLeaderboardSprints(limit);
             }
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+        }
+    }
+    
+    // *** AUTH and REGISTRATION *** 
+
+    @ApiOperation({ summary: 'Verify a signed message' })
+    @Get('/api/v1/verify')
+    async verifySignature(@Query() query: VerifySignatureDto): Promise<VerifySignatureResponseDto> {
+        const logString = `GET /api/v1/verify ${JSON.stringify(query)}`;
+        this.logger.log(logString);
+        try {
+            let { address, signature, message } = query;
+            if (address == null || address == '') {
+                throw new Error('address cannot be null or empty')
+            }
+            if (signature == null || signature == '') {
+                throw new Error('signature cannot be null or empty')
+            }
+            if (message == null || message == '') {
+                throw new Error('message cannot be null or empty')
+            }
+            const output = await this.suiService.verifySignature(address, signature, message);
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+        }
+    }
+
+    @ApiOperation({ summary: 'Register a new Sui wallet using an EVM wallet' })
+    @Post('/api/v1/register_evm')
+    async registerEvm(@Body() body: RegisterEvmDto): Promise<RegisterEvmResponseDto> {
+        const logString = `GET /api/v1/register_evm ${JSON.stringify(body)}`;
+        this.logger.log(logString);
+        try {
+            let { evmWallet } = body;
+            if (evmWallet == null || evmWallet == '') {
+                throw new Error('EVM address cannot be null or empty')
+            }
+            const output = this.suiService.registerEvm(evmWallet); 
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+        }
+    }
+
+    @ApiOperation({ summary: 'Get a SUI address given an associated login' })
+    @Get('/api/v1/accounts')
+    async getAccountFromLogin(@Query() query: GetAccountDto): Promise<GetAccountResponseDto> {
+        const logString = `GET /api/v1/register_evm ${JSON.stringify(query)}`;
+        this.logger.log(logString);
+        try {
+            let { authId, authType } = query;
+            if (authId == null || authId == '') {
+                throw new Error('Auth Id cannot be null or empty')
+            }
+            if (authType == null || authType == '') {
+                throw new Error('Auth type cannot be null or empty')
+            }
+            const output = this.suiService.getAccountFromLogin(authId, authType);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }

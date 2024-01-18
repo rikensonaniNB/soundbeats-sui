@@ -8,6 +8,8 @@ import { Keypair } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard'
 import { getLeaderboardInstance } from './leaderboard/leaderboard'
+import { IAuthManager, IAuthRecord } from './auth/IAuthManager'
+import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
 
@@ -26,6 +28,7 @@ export class SuiService {
     nftOwnerCap: string
     coinCap: string
     leaderboard: ILeaderboard
+    authManager: IAuthManager
     network: string
     logger: AppLogger
 
@@ -42,6 +45,7 @@ export class SuiService {
 
         //leaderboard
         this.leaderboard = getLeaderboardInstance(this.network);
+        this.authManager = getAuthManagerInstance();
 
         //get initial addresses from config setting 
         this.packageId = Config.packageId;
@@ -75,6 +79,16 @@ export class SuiService {
                     this.logger.log('detected coinCap: ' + this.coinCap);
                 }
             });
+        }
+    }
+
+    createWallet(): { address: string, privateKey: string } {
+        const keypair = new Ed25519Keypair();
+        const exported = keypair.export();
+
+        return {
+            address: keypair.toSuiAddress(),
+            privateKey: exported.privateKey
         }
     }
 
@@ -349,6 +363,54 @@ export class SuiService {
      */
     async getLeaderboardSprints(limit: number = 0): Promise<ISprint[]> {
         return await this.leaderboard.getSprints(limit);
+    }
+    
+    //TODO: comment header
+    //TODO: http status codes would be good 
+    async registerEvm(evmWallet: string): Promise<{ evmWallet: string, suiWallet: string, status: string } > {
+        const output = {
+            evmWallet: evmWallet,
+            suiWallet: "",
+            status: ""
+        }; 
+        
+        //make sure first that the login doesn't already exist
+        const authRecord = await this.authManager.getRecord(evmWallet, "evm"); 
+        if (authRecord != null) {
+            output.status = "duplicate"; 
+            output.suiWallet = authRecord.authId; 
+        }
+        else {
+            //create a new wallet 
+            const suiWallet = this.createWallet();
+            output.suiWallet = suiWallet.address;
+
+            //store the info in the database
+            const success = await this.authManager.register(evmWallet, "evm", {
+                privateKey: suiWallet.privateKey
+            });
+
+            if (success) {
+                output.status = "success";
+            }
+        }
+        
+        return output; 
+    }
+
+    //TODO: comment header
+    async getAccountFromLogin(authId: string, authType: string): Promise<{suiWallet: string, status: string }> {
+        const output = { suiWallet: "", status: "" }
+        const authRecord = await this.authManager.getRecord(authId, authType); 
+        if (authRecord == null) {
+            output.status = "notfound"; 
+        }
+        else {
+            output.suiWallet = authRecord.authId;
+            output.status = "success"; 
+        }
+        
+        return output; 
     }
 
     /**

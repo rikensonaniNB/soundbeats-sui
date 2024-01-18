@@ -135,3 +135,31 @@ export class GetLeaderboardSprintResponseDto {
     @ApiProperty({ description: 'Sprint end date' })
     endDate: number
 }
+
+export class RegisterEvmDto {
+    @ApiProperty({ description: 'EVM wallet address' })
+    evmWallet: string
+}
+
+export class RegisterEvmResponseDto {
+    @ApiProperty({ description: 'EVM wallet address' })
+    evmWallet: string
+    @ApiProperty({ description: 'SUI wallet address' })
+    suiWallet: string
+    @ApiProperty({ description: 'Success or failure of the operation' })
+    status: string
+}
+
+export class GetAccountDto {
+    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
+    authId: string
+    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
+    authType: string
+}
+
+export class GetAccountResponseDto {
+    @ApiProperty({ description: 'SUI wallet address' })
+    suiWallet: string
+    @ApiProperty({ description: 'Success or failure of the operation' })
+    status: string
+}
