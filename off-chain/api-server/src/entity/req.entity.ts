@@ -80,7 +80,7 @@ export class VerifySignatureResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
     address: string
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
-    failureReason: string
+    failureReason: string   
 }
 
 export class GetLeaderboardDto {
@@ -88,6 +88,8 @@ export class GetLeaderboardDto {
     wallet: string
     @ApiProperty({ description: 'The max number of records to include in the response' })
     limit: number
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
 }
 
 export class LeaderboardDto {
@@ -95,6 +97,8 @@ export class LeaderboardDto {
     wallet: string
     @ApiProperty({ description: 'The total score of the users' })
     score: number
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
 }
 
 export class GetLeaderboardResponseDto extends ResponseDtoBase {
@@ -112,4 +116,50 @@ export class AddLeaderboardDto {
 export class AddLeaderboardResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The total score of the user' })
     score: number
+}
+
+export class GetLeaderboardSprintDto {
+    @ApiProperty({ description: 'Optional unique id of sprint' })
+    sprint: string
+    @ApiProperty({ description: 'Optional max number of records to return' })
+    limit: number
+}
+
+export class GetLeaderboardSprintResponseDto {
+    @ApiProperty({ description: 'Unique id of sprint' })
+    sprintId: string
+    @ApiProperty({ description: 'Whether or not sprint is currently active' })
+    active: boolean
+    @ApiProperty({ description: 'Sprint start date' })
+    startDate: number
+    @ApiProperty({ description: 'Sprint end date' })
+    endDate: number
+}
+
+export class RegisterEvmDto {
+    @ApiProperty({ description: 'EVM wallet address' })
+    evmWallet: string
+}
+
+export class RegisterEvmResponseDto {
+    @ApiProperty({ description: 'EVM wallet address' })
+    evmWallet: string
+    @ApiProperty({ description: 'SUI wallet address' })
+    suiWallet: string
+    @ApiProperty({ description: 'Success or failure of the operation' })
+    status: string
+}
+
+export class GetAccountDto {
+    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
+    authId: string
+    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
+    authType: string
+}
+
+export class GetAccountResponseDto {
+    @ApiProperty({ description: 'SUI wallet address' })
+    suiWallet: string
+    @ApiProperty({ description: 'Success or failure of the operation' })
+    status: string
 }
