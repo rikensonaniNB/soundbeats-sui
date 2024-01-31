@@ -1,4 +1,6 @@
 export class Config {
+    static get aProp(): string { return "no:" }
+    static aMethod(): string { return "no:" }
     static get useTls(): boolean {
         return Config.getBooleanSetting(process.env.USE_TLS);
     }
@@ -22,6 +24,15 @@ export class Config {
     }
     static get coinCap(): string {
         return process.env.COIN_CAP;
+    }
+    static get sprintsTableName(): string {
+        return process.env.DBTABLE_NAME_SPRINTS;
+    }
+    static get scoresTableName(): string {
+        return process.env.DBTABLE_NAME_SCORES;
+    }
+    static get authTableName(): string {
+        return process.env.DBTABLE_NAME_AUTH || "auth-dev";
     }
     static get allowedCorsOrigin(): string {
         return `${process.env.GAME_SERVER_DOMAIN}`;

@@ -52,6 +52,39 @@ export class AuthManagerDynamoDb implements IAuthManager {
         return output;
     }
 
+    async getAuthRecords(): Promise<IAuthRecord[]> {
+        const result = await await this._dataAccess_scanTable(Config.authTableName);
+        const items = result.success ? result.data : [];
+        const output = [];
+
+        items.forEach(s => {
+            output.push({
+                authId: s.authId.S,
+                authType: s.authType.S,
+                extraData: s.extraData && s.extraData.S && s.extraData.S.length ? JSON.parse(s.extraData.S) : null
+            });
+        });
+
+        return output;
+    }
+
+    async setSuiWalletAddress(authId: string, authType: string, suiAddress: string): Promise<boolean> {
+        //get the record 
+        const record: IAuthRecord = await this.getRecord(authId, authType); 
+        if (!record)
+            return false;
+            
+        //remove private key if it exists
+        if (record.extraData.privateKey) {
+            record.extraData.privateKey = null;
+        }
+        
+        //update the data
+        record.authId = suiAddress;
+        const response = await this._dataAccess_putAuthRecord(authId, authType); 
+        return response.success;
+    }
+
     //private methods 
     
     async _dataAccess_getAuthRecord(authId: string, authType: string): Promise<IDynamoResult> {
@@ -128,5 +161,33 @@ export class AuthManagerDynamoDb implements IAuthManager {
             });
         });
         return result;
+    }
+
+    //TODO: move to utilities in dataAccess
+    async _dataAccess_scanTable(tableName: string): Promise<IDynamoResult> {
+        const params = {
+            TableName: tableName
+        };
+
+        const results: any = await new Promise((resolve, reject) => {
+            this.dynamoDb.scan(params, (error, data) => {
+                if (error) {
+                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
+                    resolve({
+                        success: false,
+                        error: error,
+                        data: null
+                    });
+                } else {
+                    resolve({
+                        success: true,
+                        error: null,
+                        data: data.Items
+                    });
+                }
+            });
+        });
+
+        return results;
     }
 }

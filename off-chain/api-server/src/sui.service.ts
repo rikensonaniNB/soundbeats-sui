@@ -4,7 +4,7 @@ import {
 import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client'
 import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519'
 import { TransactionBlock } from '@mysten/sui.js/transactions'
-import { Keypair } from '@mysten/sui.js/cryptography'
+import { Keypair, Signer } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard'
 import { getLeaderboardInstance } from './leaderboard/leaderboard'
@@ -12,6 +12,7 @@ import { IAuthManager, IAuthRecord } from './auth/IAuthManager'
 import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
+import { Sign } from 'crypto'
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -367,9 +368,16 @@ export class SuiService {
     
     //TODO: comment header
     //TODO: http status codes would be good 
-    async registerEvm(evmWallet: string): Promise<{ evmWallet: string, suiWallet: string, status: string } > {
+    /**
+     * 
+     * @param evmWallet 
+     * @returns 
+     */
+    //TODO: make mroe genereic
+    async registerAccountEvm(evmWallet: string): Promise<{ authId: string, authType: string, suiWallet: string, status: string } > {
         const output = {
-            evmWallet: evmWallet,
+            authId: evmWallet,
+            authType: "evm",
             suiWallet: "",
             status: ""
         }; 
@@ -399,6 +407,12 @@ export class SuiService {
     }
 
     //TODO: comment header
+    /**
+     * 
+     * @param authId 
+     * @param authType 
+     * @returns 
+     */
     async getAccountFromLogin(authId: string, authType: string): Promise<{suiWallet: string, status: string }> {
         const output = { suiWallet: "", status: "" }
         const authRecord = await this.authManager.getRecord(authId, authType); 
@@ -411,6 +425,71 @@ export class SuiService {
         }
         
         return output; 
+    }
+
+    //TODO: comment header
+    /**
+     * 
+     * @param authId 
+     * @param authType 
+     * @param newSuiWallet 
+     * @returns 
+     */
+    async changeSuiWalletAddress(authId: string, authType: string, newSuiWallet: string) : Promise<{status: string}> {
+        const output = { status: "" }
+        
+        //get existing auth record
+        const authRecord = await this.authManager.getRecord(authId, authType);
+        if (authRecord == null) {
+            output.status = "notfound";
+        }
+        else {
+            newSuiWallet = newSuiWallet.trim();
+            
+            //check that the new wallet doesn't match the old 
+            if (newSuiWallet != authRecord.authId.trim()) {
+                output.status = "duplicate";
+            }
+            else {
+                //move assets from old wallet to new one 
+                if (authRecord.extraData && authRecord.extraData.privateKey) {
+                    await this._moveAssets(authRecord, newSuiWallet);
+                }
+                
+                //update the database 
+                this.authManager.setSuiWalletAddress(authRecord.authId, authRecord.authType, newSuiWallet);
+                
+                output.status = "success";
+            }
+        }
+
+        return output; 
+    }
+    
+    //TODO: comment header 
+    /**
+     * 
+     * @param source 
+     * @param dest 
+     */
+    async _moveAssets(source: IAuthRecord, dest: string) {
+        const privateKey = source.extraData.privateKey;
+        const walletAddr = source.authId;
+        const keypair: Ed25519Keypair = Ed25519Keypair.fromSecretKey(privateKey);
+        
+        //TODO: check that the address of the keypair matches the stored address
+        
+        const tokenType = `${this.packageId}::beats::BEATS`;
+        const tokenBalance = await this.getTokenBalance(walletAddr);
+        const nftBalances = await this.getUserNFTs(walletAddr);
+        
+        //mint equal number of token to new address
+        await this.mintTokens(dest, tokenBalance.balance);
+        
+        //for each NFT owned
+        nftBalances.nfts.forEach(async nft => {
+            await this.mintNfts(dest, nft.name, "Soundbeats NFT", nft.url, 1);
+        });
     }
 
     /**

@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { ILeaderboard } from './ILeaderboard';
 import { LeaderboardMemory } from './LeaderboardMemory';
 import { LeaderboardJsonFile } from './LeaderboardJsonFile';

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 import { AppService } from './app.service'
 import {
@@ -18,10 +18,12 @@ import {
     AddLeaderboardResponseDto, 
     GetLeaderboardSprintDto, 
     GetLeaderboardSprintResponseDto, 
-    RegisterEvmDto,
-    RegisterEvmResponseDto, 
+    RegisterAccountDto,
+    RegisterAccountResponseDto, 
     GetAccountDto, 
-    GetAccountResponseDto
+    GetAccountResponseDto,
+    PutAccountDto, 
+    PutAccountResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -231,17 +233,23 @@ export class AppController {
     }
 
     @ApiOperation({ summary: 'Register a new Sui wallet using an EVM wallet' })
-    @Post('/api/v1/register_evm')
-    async registerEvm(@Body() body: RegisterEvmDto): Promise<RegisterEvmResponseDto> {
-        const logString = `GET /api/v1/register_evm ${JSON.stringify(body)}`;
+    @Post('/api/v1/accounts')
+    async registerAccount(@Body() body: RegisterAccountDto): Promise<RegisterAccountResponseDto> {
+        const logString = `POST /api/v1/accounts ${JSON.stringify(body)}`;
         this.logger.log(logString);
         try {
-            let { evmWallet } = body;
-            if (evmWallet == null || evmWallet == '') {
+            let { authId, authType } = body;
+            if (authId == null || authId == '') {
                 throw new Error('EVM address cannot be null or empty')
             }
-            const output = this.suiService.registerEvm(evmWallet); 
+            if (authType == null || authType == '') {
+                throw new Error('Auth type cannot be null or empty')
+            }
+            
+            //TODO: make this call more generic
+            const output = await this.suiService.registerAccountEvm(authId); 
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            
             return output;
         }
         catch (e) {
@@ -252,7 +260,7 @@ export class AppController {
     @ApiOperation({ summary: 'Get a SUI address given an associated login' })
     @Get('/api/v1/accounts')
     async getAccountFromLogin(@Query() query: GetAccountDto): Promise<GetAccountResponseDto> {
-        const logString = `GET /api/v1/register_evm ${JSON.stringify(query)}`;
+        const logString = `GET /api/v1/accounts ${JSON.stringify(query)}`;
         this.logger.log(logString);
         try {
             let { authId, authType } = query;
@@ -263,6 +271,28 @@ export class AppController {
                 throw new Error('Auth type cannot be null or empty')
             }
             const output = this.suiService.getAccountFromLogin(authId, authType);
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+        }
+    }
+
+    @ApiOperation({ summary: 'Get a SUI address given an associated login' })
+    @Put('/api/v1/accounts')
+    async putAccount(@Body() body: PutAccountDto): Promise<PutAccountResponseDto> {
+        const logString = `PUT /api/v1/accounts ${JSON.stringify(body)}`;
+        this.logger.log(logString);
+        try {
+            let { authId, authType, suiWallet } = body;
+            if (authId == null || authId == '') {
+                throw new Error('Auth Id cannot be null or empty')
+            }
+            if (authType == null || authType == '') {
+                throw new Error('Auth type cannot be null or empty')
+            }
+            const output = this.suiService.changeSuiWalletAddress(authId, authType, suiWallet);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }

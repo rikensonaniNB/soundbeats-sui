@@ -1,4 +1,5 @@
 import { ILeaderboard, ISprint } from './ILeaderboard';
+import { IDynamoResult } from '../dataAccess/IDynamoResult';
 import { Config } from '../config'; 
 import { Sse } from '@nestjs/common';
 const AWS = require("aws-sdk");
@@ -65,12 +66,6 @@ class LocalScoreCache {
         this.lastRefresh = 0;
         this.data = {};
     }
-}
-
-interface IDynamoResult {
-    success: boolean;
-    data: any;
-    error: any;
 }
 
 //TODO: cache expiration seconds should come from .env
@@ -484,6 +479,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         });
     }
 
+    //TODO: move to utilities in dataAccess
     async _dataAccess_getItem(params: any): Promise<IDynamoResult> {
         const result: IDynamoResult = await new Promise((resolve, reject) => {
             this.dynamoDb.getItem(params, (err, data) => {
@@ -507,6 +503,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return result;
     }
 
+    //TODO: move to utilities in dataAccess
     async _dataAccess_putItem(params: any): Promise<IDynamoResult> {
         const result: IDynamoResult = await new Promise((resolve, reject) => {
             this.dynamoDb.putItem(params, (err, data) => {

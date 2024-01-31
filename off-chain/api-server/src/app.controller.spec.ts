@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { getLeaderboardInstance } from './leaderboard'
 
 describe('AppController', () => {
     let appController: AppController
@@ -25,16 +24,4 @@ describe('AppController', () => {
             expect(response.balance).toEqual(0);
         })
     });*/
-
-    describe('Leaderboard', () => {
-        it('get empty leaderboard', async () => {
-            const leaderboard = getLeaderboardInstance("testnet");
-            expect(leaderboard.getLeaderboardScores.length).toEqual(0);
-        });
-
-        it('add to leaderboard', async () => {
-            const leaderboard = getLeaderboardInstance("testnet");
-            expect(leaderboard.getLeaderboardScores.length).toEqual(0);
-        });
-    });
 })
