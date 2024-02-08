@@ -8,15 +8,17 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using WalletConnectSharp.Common.Model.Errors;
+using WalletConnectSharp.Common.Utils;
+using WalletConnectSharp.Network.Models;
+using WalletConnectUnity.Core;
+using UnityEngine.Scripting;
+using WalletConnectUnity.Modal;
 
 public class UIController : MonoBehaviour
 {
     private const int SIGNING_MESSAGE_LENGTH = 32;
     private static string MessageToSign = "";
-
-    //call to request the front end Javascript code to sign a message 
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void CallSuiSignMessage(string msg);
 
     #region UI Components 
 
@@ -221,7 +223,7 @@ public class UIController : MonoBehaviour
                 dto.failureReason = "";
                 this.OnSuccessfulVerifySignature(dto);
 #else
-                CallSuiSignMessage(MessageToSign);
+                WalletConnectModal.InitializeAsync();
 #endif
             }
             catch (Exception e)
@@ -377,6 +379,27 @@ public class UIController : MonoBehaviour
             Application.OpenURL(transactionSign);
         });
 
+    }
+
+    public async void OnPersonalSignButton()
+    {
+        var session = WalletConnect.Instance.ActiveSession;
+        var sessionNamespace = session.Namespaces;
+        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
+            .Address;
+
+        var data = new PersonalSign("Hello world!", address);
+
+        try
+        {
+            var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+            this.ShowError($"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
+        }
+        catch (WalletConnectException e)
+        {
+            this.ShowError($"Personal Sign Request Error: {e.Message}");
+            Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
+        }
     }
 
     private void CreateNFT(string name, string imageUrl)
@@ -761,4 +784,18 @@ public class UIController : MonoBehaviour
     }
 
     #endregion 
+}
+
+[RpcMethod("personal_sign")]
+[RpcRequestOptions(Clock.ONE_MINUTE, 99998)]
+public class PersonalSign : List<string>
+{
+    public PersonalSign(string hexUtf8, string account) : base(new[] { hexUtf8, account })
+    {
+    }
+
+    [Preserve]
+    public PersonalSign()
+    {
+    }
 }

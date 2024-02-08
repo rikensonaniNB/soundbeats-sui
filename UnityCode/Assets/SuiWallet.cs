@@ -1,8 +1,7 @@
-using Suinet.Wallet;
 using UnityEngine;
 using System;
 
-public class SuiExplorer 
+public class SuiExplorer
 {
     public static string FormatAddressUri(string address)
     {
@@ -20,12 +19,15 @@ public class SuiExplorer
 /// </summary>
 public class SuiWallet
 {
-    public const string WalletAddressKey = "suiaddress"; 
+    public const string WalletAddressKey = "suiaddress";
     public static string ErrorMessage = "";
 
-    public static string ActiveWalletAddress {
+    public static string ActiveWalletAddress
+    {
         get { return PlayerPrefs.GetString(WalletAddressKey); }
-        set {
+
+        set
+        {
             PlayerPrefs.SetString(WalletAddressKey, value);
         }
     }
@@ -37,7 +39,7 @@ public class SuiWallet
 
     public static void Logout()
     {
-        PlayerPrefs.DeleteKey(WalletAddressKey); 
+        PlayerPrefs.DeleteKey(WalletAddressKey);
         PlayerPrefs.Save();
     }
 }
