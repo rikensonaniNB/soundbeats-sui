@@ -95619,6 +95619,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 62641603626978669, guid: 04f87422bbc7e41e18fe377c29510e85, type: 3}
+      propertyPath: m_ChildAlignment
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 62641603626978669, guid: 04f87422bbc7e41e18fe377c29510e85, type: 3}
+      propertyPath: m_ChildScaleWidth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 494431589941642330, guid: 04f87422bbc7e41e18fe377c29510e85, type: 3}
       propertyPath: m_IsActive
       value: 0
