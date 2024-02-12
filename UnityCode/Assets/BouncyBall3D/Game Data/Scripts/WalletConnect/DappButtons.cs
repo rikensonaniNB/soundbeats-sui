@@ -21,6 +21,7 @@ namespace WalletConnectUnity.Modal.Sample
         {
             WalletConnect.Instance.ActiveSessionChanged += (_, @struct) =>
             {
+                print("ActiveSessionChanged");
                 _disconnectButton.interactable = true;
                 _personalSignButton.interactable = true;
                 _transactionButton.interactable = true;
@@ -40,6 +41,7 @@ namespace WalletConnectUnity.Modal.Sample
 
         public void OnConnectButton()
         {
+            print("InitializeAsync");
             WalletConnectModal.InitializeAsync();
         }
 
@@ -57,12 +59,12 @@ namespace WalletConnectUnity.Modal.Sample
             try
             {
                 var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
-                Notification.ShowMessage(
+                Debug.Log(
                     $"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
             }
             catch (WalletConnectException e)
             {
-                Notification.ShowMessage($"Personal Sign Request Error: {e.Message}");
+                Debug.Log($"Personal Sign Request Error: {e.Message}");
                 Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
             }
         }
@@ -88,11 +90,11 @@ namespace WalletConnectUnity.Modal.Sample
             {
                 var result = await signClient.Request<EthSendTransaction, string>(request);
                 // var result = await WalletConnect.Instance.RequestAsync<EthSendTransaction, string>(request);
-                Notification.ShowMessage($"Done!\nResponse: {result}");
+                Debug.Log($"Done!\nResponse: {result}");
             }
             catch (WalletConnectException e)
             {
-                Notification.ShowMessage($"Transaction Request Error: {e.Message}");
+                Debug.Log($"Transaction Request Error: {e.Message}");
                 Debug.Log($"[WalletConnectModalSample] Transaction Error: {e.Message}");
             }
         }

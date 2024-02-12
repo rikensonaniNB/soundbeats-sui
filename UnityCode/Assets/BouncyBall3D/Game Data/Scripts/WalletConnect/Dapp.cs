@@ -44,7 +44,7 @@ namespace WalletConnectUnity.Modal.Sample
                 {
                     if (string.IsNullOrEmpty(@struct.Topic))
                         return;
-                    
+
                     Debug.Log($"[WalletConnectModalSample] Session connected. Topic: {@struct.Topic}");
                     EnableDappButtons();
                 };

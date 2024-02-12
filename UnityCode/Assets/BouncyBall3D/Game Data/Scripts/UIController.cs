@@ -223,7 +223,7 @@ public class UIController : MonoBehaviour
                 dto.failureReason = "";
                 this.OnSuccessfulVerifySignature(dto);
 #else
-                WalletConnectModal.InitializeAsync();
+                OnPersonalSignButton();
 #endif
             }
             catch (Exception e)
@@ -388,11 +388,12 @@ public class UIController : MonoBehaviour
         var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
             .Address;
 
-        var data = new PersonalSign("Hello world!", address);
+        var data = new PersonalSign(MessageToSign, address);
 
         try
         {
             var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+            SignMessageCallback(result);
             this.ShowError($"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
         }
         catch (WalletConnectException e)
@@ -453,6 +454,7 @@ public class UIController : MonoBehaviour
             //retrieve the wallet address and signature 
             string signature = args[0];
             string address = args[1];
+
 
             Debug.Log("signed message:" + signature);
             Debug.Log("wallet address:" + address);
