@@ -80,8 +80,11 @@ export class VerifySignatureResponseDto extends ResponseDtoBase {
     @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
     address: string
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
-    failureReason: string   
+    failureReason: string
 }
+
+
+/// --- LEADERBOARD --- /// 
 
 export class GetLeaderboardDto {
     @ApiProperty({ description: 'The address of the wallet of the user' })
@@ -136,15 +139,20 @@ export class GetLeaderboardSprintResponseDto {
     endDate: number
 }
 
+
+/// --- AUTH --- /// 
+
 //TODO: make type-agnostic (i.e. not EVM-specific)
+//TODO: need this? 
 export class RegisterAccountDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
     authId: string
     @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: string
+    authType: 'evm' | 'sui'
 }
 
 //TODO: make type-agnostic (i.e. not EVM-specific)
+//TODO: need this? 
 export class RegisterAccountResponseDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
     authId: string
@@ -156,13 +164,15 @@ export class RegisterAccountResponseDto {
     status: string
 }
 
+//TODO: need this? 
 export class GetAccountDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
     authId: string
     @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: string
+    authType: 'evm' | 'sui'
 }
 
+//TODO: need this? 
 export class GetAccountResponseDto {
     @ApiProperty({ description: 'SUI wallet address' })
     suiWallet: string
@@ -170,18 +180,53 @@ export class GetAccountResponseDto {
     status: string
 }
 
+//TODO: need this? 
 export class PutAccountDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
     authId: string
     @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: string
+    authType: 'evm' | 'sui'
     @ApiProperty({ description: 'SUI wallet address' })
     suiWallet: string
     @ApiProperty({ description: 'Success or failure of the operation' })
     status: string
 }
 
+//TODO: need this? 
 export class PutAccountResponseDto {
     @ApiProperty({ description: 'Success or failure of the operation' })
     status: string
 }
+
+//TODO: descriptions
+export class StartAuthSessionDto {
+    @ApiProperty({ description: 'EVM wallet address' })
+    evmWallet: string
+}
+
+//TODO: descriptions
+export class StartAuthSessionResponseDto {
+    sessionId: string
+    messageToSign: string
+}
+
+//TODO: descriptions
+export class AuthVerifyDto {
+    wallet: string
+    walletType: 'sui' | 'evm'
+    action: 'verify' | 'update'
+    sessionId: string
+    messageToSign: string
+    signature: string
+}
+
+//TODO: descriptions
+export class AuthVerifyResponseDto {
+    @ApiProperty({ description: 'Whether or not the signature was verified' })
+    verified: boolean
+    @ApiProperty({ description: 'The address of the wallet that signed the transaction' })
+    wallet: string
+    @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
+    failureReason: string
+}
+

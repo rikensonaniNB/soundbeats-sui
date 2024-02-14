@@ -34,6 +34,9 @@ export class Config {
     static get authTableName(): string {
         return process.env.DBTABLE_NAME_AUTH || "auth-dev";
     }
+    static get authSessionTableName(): string {
+        return process.env.DBTABLE_NAME_AUTH_SESSION || "auth-session-dev";
+    }
     static get allowedCorsOrigin(): string {
         return `${process.env.GAME_SERVER_DOMAIN}`;
     }

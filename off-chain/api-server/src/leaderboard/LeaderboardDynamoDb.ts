@@ -1,8 +1,7 @@
 import { ILeaderboard, ISprint } from './ILeaderboard';
 import { IDynamoResult } from '../dataAccess/IDynamoResult';
-import { Config } from '../config'; 
-import { Sse } from '@nestjs/common';
-const AWS = require("aws-sdk");
+import { Config } from '../config';
+import { DynamoDbAccess } from '../dataAccess/DynamoDbAccess';
 
 const DEFAULT_SPRINT_KEY = "default";
 const GSI_SPRINT_NAME = "GSI_SPRINT";
@@ -76,19 +75,14 @@ const localScoreCache_sprint = new LocalScoreCache(300);
 
 export class LeaderboardDynamoDb implements ILeaderboard {
     network: string;
-    dynamoDb: any;
+    dynamoDb: DynamoDbAccess;
 
     constructor(network: string) {
         this.network = network;
         
         const n = process.env.AWS_ACCESS_KEY;
         
-        AWS.config.update({
-            accessKeyId: process.env.AWS_ACCESS_KEY,
-            secretAccessKey: process.env.AWS_ACCESS_SECRET,
-            region: process.env.AWS_REGION
-        });
-        this.dynamoDb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+        this.dynamoDb = new DynamoDbAccess();
     }
 
     async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, score: number, network: string }> {
@@ -179,10 +173,13 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     //admin methods 
-    //TODO: disallow values 'default' and 'current'
     async createSprint(sprintId: string, startDate: number = 0): Promise<boolean> {
         if (startDate == 0) 
             startDate = unixDate();
+
+        //disallow values 'default' and 'current'
+        if (sprintId.trim().toLowerCase() == "default" || sprintId.trim().toLowerCase() == "current")
+            throw new Error(`Invalid sprintId identifier: ${sprintId}`); 
 
         //validation: check that date is ok 
         if (startDate < unixDate() - 1000) {
@@ -376,34 +373,25 @@ export class LeaderboardDynamoDb implements ILeaderboard {
                 ":sprintid_val": {'S': sprintId}
             }
         };
+        
+        const result = await this.dynamoDb.query(params); 
+        if (!result.success) {
+            const sortedItems = result.data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
+            return sortedItems.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
+        }
 
-        const results: any = await new Promise((resolve, reject) => 
-        {
-            this.dynamoDb.query(params, (error, data) => {
-                if (error) {
-                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
-                } else {
-                    //TODO: is it necessary to sort here?
-                    const sortedItems = data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
-                    resolve(sortedItems);
-                }
-            });
-        }); 
-        
-        let output = results.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
-        
-        return output;
+        return [];
     }
     
     //data access methods 
     
     //TODO: not used
     async _dataAccess_scanSprints(): Promise<IDynamoResult> {
-        return await this._dataAccess_scanTable(Config.sprintsTableName);
+        return await this.dynamoDb.scanTable(Config.sprintsTableName);
     }
 
     async _dataAccess_getScore(wallet: string, sprintId: string): Promise<IDynamoResult> {
-        return await this._dataAccess_getItem({
+        return await this.dynamoDb.getItem({
             TableName: Config.scoresTableName,
             Key: {
                 'wallet': { S: wallet },
@@ -413,7 +401,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     async _dataAccess_putScore(wallet: string, score: number, sprintId: string): Promise<IDynamoResult> {
-        return await this._dataAccess_putItem({
+        return await this.dynamoDb.putItem({
             TableName: Config.scoresTableName,
             Item: {
                 wallet: {'S': wallet },
@@ -424,7 +412,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
     }
 
     async _dataAccess_getSprint(sprintId: string): Promise<IDynamoResult> {
-        return await this._dataAccess_getItem({
+        return await this.dynamoDb.getItem({
             TableName: Config.sprintsTableName,
             Key: {
                 'sprintId': { S: sprintId }
@@ -441,34 +429,15 @@ export class LeaderboardDynamoDb implements ILeaderboard {
                 ":active_val": { 'N': "1" }
             }
         };
-
-        const results: any = await new Promise((resolve, reject) => {
-            this.dynamoDb.query(params, (error, data) => {
-                if (error) {
-                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
-                    resolve({
-                        success: false,
-                        error: error,
-                        data: null
-                    });
-                } else {
-                    resolve({
-                        success: true,
-                        error: null, 
-                        data: data.Items
-                    });
-                }
-            });
-        }); 
         
-        return results;
+        return await this.dynamoDb.query(params);
     }
 
     async _dataAccess_putSprint(sprintId: string, startDate: number, endDate: number = 0, active: number = 0): Promise<IDynamoResult> {
         if (endDate == 0) 
             endDate = startDate + 365 * 3.154e+7;   //one year 
             
-        return await this._dataAccess_putItem({ 
+        return await this.dynamoDb.putItem({ 
             TableName: Config.sprintsTableName,
             Item: {
                 'sprintId': { 'S': sprintId },
@@ -477,53 +446,6 @@ export class LeaderboardDynamoDb implements ILeaderboard {
                 'active': { 'N': active.toString() }
             }
         });
-    }
-
-    //TODO: move to utilities in dataAccess
-    async _dataAccess_getItem(params: any): Promise<IDynamoResult> {
-        const result: IDynamoResult = await new Promise((resolve, reject) => {
-            this.dynamoDb.getItem(params, (err, data) => {
-                if (err) {
-                    console.error(err);
-                    resolve({
-                        success: false,
-                        error: err,
-                        data: null
-                    });
-                } else {
-                    resolve({
-                        success: true,
-                        error: null,
-                        data: data.Item
-                    });
-                }
-            });
-        });
-
-        return result;
-    }
-
-    //TODO: move to utilities in dataAccess
-    async _dataAccess_putItem(params: any): Promise<IDynamoResult> {
-        const result: IDynamoResult = await new Promise((resolve, reject) => {
-            this.dynamoDb.putItem(params, (err, data) => {
-                if (err) {
-                    console.error(err);
-                    resolve({
-                        success: false,
-                        error: err,
-                        data: params
-                    });
-                } else {
-                    resolve({
-                        success: true,
-                        error: null,
-                        data: params
-                    });
-                }
-            });
-        });
-        return result;
     }
     
     async _dataAccess_deleteSprint(sprintId: string): Promise<IDynamoResult> {
@@ -534,51 +456,6 @@ export class LeaderboardDynamoDb implements ILeaderboard {
             }
         }; 
 
-        const result: IDynamoResult = await new Promise((resolve, reject) => {
-            this.dynamoDb.deleteItem(params, (err, data) => {
-                if (err) {
-                    console.error(err);
-                    resolve({
-                        success: false,
-                        error: err,
-                        data: params
-                    });
-                } else {
-                    resolve({
-                        success: true,
-                        error: null,
-                        data: params
-                    });
-                }
-            });
-        });
-        return result;
-    }
-
-    async _dataAccess_scanTable(tableName: string): Promise<IDynamoResult> {
-        const params = {
-            TableName: tableName
-        };
-
-        const results: any = await new Promise((resolve, reject) => {
-            this.dynamoDb.scan(params, (error, data) => {
-                if (error) {
-                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(error, null, 2));
-                    resolve({
-                        success: false,
-                        error: error,
-                        data: null
-                    });
-                } else {
-                    resolve({
-                        success: true,
-                        error: null,
-                        data: data.Items
-                    });
-                }
-            });
-        });
-
-        return results;
+        return await this.dynamoDb.deleteItem(params);
     }
 }

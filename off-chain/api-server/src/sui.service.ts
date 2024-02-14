@@ -8,11 +8,10 @@ import { Keypair, Signer } from '@mysten/sui.js/cryptography'
 import { Injectable } from '@nestjs/common'
 import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard'
 import { getLeaderboardInstance } from './leaderboard/leaderboard'
-import { IAuthManager, IAuthRecord } from './auth/IAuthManager'
+import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager'
 import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
-import { Sign } from 'crypto'
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -81,6 +80,12 @@ export class SuiService {
                 }
             });
         }
+        
+        this.test();
+    }
+    
+    async test(): Promise<void> {
+        console.log(await this.startAuthSession("0x112244556677889900112244556677889900"));
     }
 
     createWallet(): { address: string, privateKey: string } {
@@ -224,18 +229,10 @@ export class SuiService {
         };
 
         try {
-            console.log(walletPubKey);
-            console.log(signature);
-
-            console.log(walletPubKey);
-            console.log(signature);
-
-            const publicKey = new Ed25519PublicKey(walletPubKey)
-            const msgBytes = new TextEncoder().encode(message);
-
-            output.address = publicKey.toSuiAddress();
-            output.verified = await publicKey.verifyPersonalMessage(msgBytes, signature);
-
+            const { address, verified } = await this._verifySuiSignature(walletPubKey, signature, message);
+            output.address = address;
+            output.verified = verified; 
+            
             if (!output.verified) {
                 output.failureReason = "unknown";
             }
@@ -245,6 +242,69 @@ export class SuiService {
             output.failureReason = `${e}`;
         }
 
+        return output;
+    }
+    
+    //TODO: comment 
+    async verifySignature2(
+        sessionId: string,
+        walletType: 'evm' | 'sui', 
+        walletPubKey: string,
+        action: 'update' | 'verify', 
+        signature: string, 
+        message: string): Promise<{ 
+            success: boolean, failureReason: string, wallet: string; network: string, verified: boolean
+        }> {
+        
+        const output = {
+            success: false,
+            failureReason: '', 
+            wallet: '', 
+            network: '', 
+            verified: false
+        }; 
+        
+        //first verify session id, if any
+        if (sessionId && sessionId.length) {
+            if (!(await this._verifySessionId(sessionId))) {
+                output.failureReason = 'sessionIdInvalid'; 
+                return output;
+            }
+        }
+        
+        //SUI verification 
+        if (walletType == 'sui') {
+            const { verified, address } = await this._verifySuiSignature(walletPubKey, signature, message);
+            output.success = verified;
+            output.wallet = address;
+            output.verified = verified;
+            
+            if (!verified) {
+                output.failureReason = 'unknown'; 
+            }
+        }
+
+        //EVM verification 
+        if (walletType == 'evm') {
+            const { verified, address } = await this._verifyEvmSignature(walletPubKey, signature, message);
+            output.success = verified;
+            output.wallet = address;
+
+            if (!verified) {
+                output.failureReason = 'unknown';
+            }
+        }
+        
+        //update the auth session record 
+        let evmWallet: string = walletType == 'evm' ? output.wallet : null;
+        let suiWallet: string = walletType == 'sui' ? output.wallet : null; 
+        this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
+
+        //TODO: update the auth record if the action is 'update'
+        if (action == 'update') {
+            this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
+        }
+        
         return output;
     }
 
@@ -373,7 +433,7 @@ export class SuiService {
      * @param evmWallet 
      * @returns 
      */
-    //TODO: make mroe genereic
+    //TODO: make more genereic
     async registerAccountEvm(evmWallet: string): Promise<{ authId: string, authType: string, suiWallet: string, status: string } > {
         const output = {
             authId: evmWallet,
@@ -383,7 +443,7 @@ export class SuiService {
         }; 
         
         //make sure first that the login doesn't already exist
-        const authRecord = await this.authManager.getRecord(evmWallet, "evm"); 
+        const authRecord = await this.authManager.getAuthRecord(evmWallet, "evm"); 
         if (authRecord != null) {
             output.status = "duplicate"; 
             output.suiWallet = authRecord.authId; 
@@ -394,7 +454,7 @@ export class SuiService {
             output.suiWallet = suiWallet.address;
 
             //store the info in the database
-            const success = await this.authManager.register(evmWallet, "evm", {
+            const success = await this.authManager.register(evmWallet, "evm", suiWallet.address, {
                 privateKey: suiWallet.privateKey
             });
 
@@ -406,16 +466,16 @@ export class SuiService {
         return output; 
     }
 
-    //TODO: comment header
     /**
+     * Tries to retrieve an existing SUI wallet address given the login information. 
      * 
      * @param authId 
      * @param authType 
-     * @returns 
+     * @returns The status of the search and SUI wallet address (if found)
      */
-    async getAccountFromLogin(authId: string, authType: string): Promise<{suiWallet: string, status: string }> {
+    async getAccountFromLogin(authId: string, authType: 'evm' | 'sui'): Promise<{suiWallet: string, status: string }> {
         const output = { suiWallet: "", status: "" }
-        const authRecord = await this.authManager.getRecord(authId, authType); 
+        const authRecord = await this.authManager.getAuthRecord(authId, authType); 
         if (authRecord == null) {
             output.status = "notfound"; 
         }
@@ -435,11 +495,11 @@ export class SuiService {
      * @param newSuiWallet 
      * @returns 
      */
-    async changeSuiWalletAddress(authId: string, authType: string, newSuiWallet: string) : Promise<{status: string}> {
+    async changeSuiWalletAddress(authId: string, authType: 'evm' | 'sui', newSuiWallet: string) : Promise<{status: string}> {
         const output = { status: "" }
         
         //get existing auth record
-        const authRecord = await this.authManager.getRecord(authId, authType);
+        const authRecord = await this.authManager.getAuthRecord(authId, authType);
         if (authRecord == null) {
             output.status = "notfound";
         }
@@ -464,6 +524,11 @@ export class SuiService {
         }
 
         return output; 
+    }
+
+    //TODO: comment header
+    async startAuthSession(evmWallet: string): Promise<{messageToSign: string, sessionId: string }> {
+        return await this.authManager.startAuthSession(evmWallet); 
     }
     
     //TODO: comment header 
@@ -495,8 +560,6 @@ export class SuiService {
     /**
      * From objects owned by the admin wallet, extracts the package id and object id of the 
      * BEATS token and NFT library. 
-     * 
-     * NOTE: 20 nights in the ice is a long time, when there's hostiles on the hill
      * 
      * @param wallet 
      * @returns A package id and treasury cap id
@@ -613,122 +676,29 @@ export class SuiService {
         });
     }
 
-/*
-    async runTests() {
+    async _verifySuiSignature(walletPubKey: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
 
-        const callMethod = async (moduleName: string, methodName: string, args) => {
-            const tx = new TransactionBlock();
-            const argv = [];
+        console.log(walletPubKey);
+        console.log(signature);
 
-            for (let i in args) {
-                argv.push(tx.pure(args[i]))
-            }
-            tx.moveCall({
-                target: `${this.packageId}::${moduleName}::${methodName}`,
-                arguments: argv
-            });
+        console.log(walletPubKey);
+        console.log(signature);
 
-            //execute tx 
-            const result = await this.signer.signAndExecuteTransactionBlock({
-                transactionBlock: tx,
-                options: {
-                    showEffects: true,
-                    //showEvents: true,
-                    //showBalanceChanges: true,
-                    showObjectChanges: true,
-                    //showInput: true
-                }
-            });
+        const publicKey = new Ed25519PublicKey(walletPubKey)
+        const msgBytes = new TextEncoder().encode(message);
 
-            //check results 
-            if (result.effects == null) {
-                throw new Error('Fail')
-            }
+        const address = publicKey.toSuiAddress();
+        const verified = await publicKey.verifyPersonalMessage(msgBytes, signature);
 
-            return result;
-        };
+        return { address, verified };
+    }
 
-        const transferNftOwner = (async (newAddress) => {
-            return await callMethod('beats_nft', 'transfer_owner', [
-                this.nftOwnerCap,
-                newAddress
-            ]);
-        });
+    async _verifyEvmSignature(walletPubKey: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
+        return { address: '', verified: true };
+    }
 
-        const transferTreasuryCap = (async (newAddress) => {
-            return await callMethod('beats', 'transfer_treasury_owner', [
-                this.treasuryCap,
-                newAddress
-            ]);
-        });
-
-        const transferCoinCap = (async (newAddress) => {
-            return await callMethod('beats', 'transfer_coin_owner', [
-                this.coinCap,
-                newAddress
-            ]);
-        });
-
-        const changeCoinName = (async (newName) => {
-            return await callMethod('beats', 'update_name', [
-                this.treasuryCap,
-                this.coinCap,
-                newName
-            ]);
-        });
-
-        const changeCoinSymbol = (async (newSymbol) => {
-            return await callMethod('beats', 'update_symbol', [
-                this.treasuryCap,
-                this.coinCap,
-                newSymbol
-            ]);
-        });
-
-        const changeCoinDesc = (async (desc) => {
-            return await callMethod('beats', 'update_description', [
-                this.treasuryCap,
-                this.coinCap,
-                desc
-            ])
-        });
-
-        const changeCoinUrl = (async (url) => {
-            return await callMethod('beats', 'update_icon_url', [
-                this.treasuryCap,
-                this.coinCap,
-                url
-            ])
-        });
-
-        const func: string = "mintNft";
-        const otherOwner = this.currentOwner == this.ownerA ? this.ownerB : this.ownerA;
-        switch (func) {
-            case "mintNft":
-                console.log(await this.mintNfts(
-                    otherOwner,
-                    "NEOM",
-                    "Neom: the Line",
-                    "https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png",
-                    1
-                ));
-                break;
-            case "mintToken":
-                console.log(await this.mintTokens(otherOwner, 1));
-                break;
-            case "switchNftOwner":
-                console.log(await transferNftOwner(otherOwner));
-                break;
-            case "switchTokenOwner":
-                console.log(await transferTreasuryCap(otherOwner));
-                console.log(await transferCoinCap(otherOwner));
-                break;
-            case "modifyTokenProperties":
-                console.log(await changeCoinName("NOMNOMS"));
-                console.log(await changeCoinDesc("Neom Coin"));
-                console.log(await changeCoinSymbol("NOM"));
-                console.log(await changeCoinUrl("https://cdn.cookielaw.org/logos/f679119d-9fd4-415a-9e05-8f9162663cd6/ceeed3e8-2342-4b07-91d9-4dc66a2001f4/306ff93c-b794-45f2-82df-bb410624e6f4/neom-logo-white.png"));
-                break;
-        }
-    }*/
+    async _verifySessionId(sessionId: string): Promise<boolean> {
+        const session: IAuthSession = await this.authManager.getAuthSession(sessionId);
+        return (session != null);
+    }
 }
