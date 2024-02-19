@@ -384,15 +384,22 @@ public class UIController : MonoBehaviour
     public async void OnPersonalSignButton()
     {
         var session = WalletConnect.Instance.ActiveSession;
+        Debug.Log($"[WalletConnectModalSample] session: {session}");
+
         var sessionNamespace = session.Namespaces;
         var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
             .Address;
 
-        var data = new PersonalSign(MessageToSign, address);
+        Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
+        Debug.Log($"[WalletConnectModalSample] address: {address}");
 
+        var data = new PersonalSign(MessageToSign, address);
+        Debug.Log($"[WalletConnectModalSample] data: {data}");
         try
         {
             var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+            Debug.Log($"[WalletConnectModalSample] result: {result}");
+
             SignMessageCallback(result);
             this.ShowError($"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
         }
@@ -794,6 +801,7 @@ public class PersonalSign : List<string>
 {
     public PersonalSign(string hexUtf8, string account) : base(new[] { hexUtf8, account })
     {
+
     }
 
     [Preserve]

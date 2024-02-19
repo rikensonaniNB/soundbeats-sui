@@ -24,21 +24,27 @@ namespace WalletConnectUnity.Modal.Sample
         private void Start()
         {
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
+            Debug.Log($"[WalletConnectModalSample] WalletConnectModal.SignClient : " + WalletConnectModal.SignClient);
 
             // When WalletConnectModal is ready, enable buttons and subscribe to other events.
             // WalletConnectModal.SignClient can be null if WalletConnectModal is not ready.
             WalletConnectModal.Ready += (sender, args) =>
             {
                 // SessionResumed is true if Modal resumed session from storage
+                Debug.Log($"[WalletConnectModalSample] SessionResumed.");
+
                 if (args.SessionResumed)
                 {
                     EnableDappButtons();
+                    Debug.Log($"[WalletConnectModalSample] EnableDappButtons.");
+
                 }
                 else
                 {
                     EnableNetworksList();
-                }
+                    Debug.Log($"[WalletConnectModalSample] EnableNetworksList.");
 
+                }
                 // Invoked after wallet connected
                 WalletConnect.Instance.ActiveSessionChanged += (_, @struct) =>
                 {
