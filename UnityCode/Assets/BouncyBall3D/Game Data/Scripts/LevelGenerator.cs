@@ -22,7 +22,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     [SerializeField] GameObject starPrefab, PowerUpPrefab;
     public int hitindex = 0;
     int[] starIDs = new int[3];
-    private bool isSpeedupActive = false;
 
     //int songLevel = 0;
     int platformCount;
@@ -214,10 +213,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
             //GameObject star = Instantiate(starPrefab, platform.transform);
         }
 
-        //if (Random.Range(0, 10) > 2 && isSpeedupActive == false)
-        //{
-        //    GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
-        //}
+        if (GameManager.Instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 5 && GameManager.Instance.isSpeedupActive == false)
+        {
+            GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
+        }
 
     }
 

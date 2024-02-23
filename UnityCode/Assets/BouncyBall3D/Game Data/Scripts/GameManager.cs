@@ -17,6 +17,8 @@ public class GameManager : Singleton<GameManager>
     private System.DateTime gameStartTime;
 
     public GameState gameState;
+    public bool isSpeedupActive = false;
+
     public Player player;
     float songProgress = 0;
     public bool isPausePopupOpen = false;
@@ -25,6 +27,7 @@ public class GameManager : Singleton<GameManager>
 
     [Header("UI")]
     public Image levelProgress;
+    [SerializeField] PowerupProgress powerupTimer;
     [SerializeField] Text scoreText;
     [SerializeField] Animator scoreAnim;
     [SerializeField] Animator reviveAnim;
@@ -272,13 +275,18 @@ public class GameManager : Singleton<GameManager>
 
     public void IncreaseGameSpeedForNSec()
     {
-        previousGameSpeed = gameSpeed;
-        gameSpeed += 3;
-        Invoke("resetGameSpeedToPrevious", PowerUp.powerUpTimer);
+        if (gameState == GameState.Gameplay)
+        {
+            previousGameSpeed = gameSpeed;
+            gameSpeed += 3;
+            powerupTimer.gameObject.SetActive(true);
+            Invoke("resetGameSpeedToPrevious", PowerUp.powerUpTimer);
+        }
     }
 
     public void resetGameSpeedToPrevious()
     {
+        Debug.Log("Resetting to Previous state");
         gameSpeed = previousGameSpeed;
     }
 

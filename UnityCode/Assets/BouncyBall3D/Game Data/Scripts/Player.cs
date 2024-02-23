@@ -203,7 +203,7 @@ public class Player : MonoBehaviour
 
             if (check == true)
             {
-                Debug.Log("Isgrounded");
+
 
                 if (index % 2 == 0)
                 {
@@ -464,7 +464,6 @@ public class Player : MonoBehaviour
     }
     void CheckPlatform()
     {
-        Debug.Log("CheckPlatform");
         if (Physics.CheckSphere(jumpingPart.position, 0.5f, platformLayer))
         {
             //randomNumber = UnityEngine.Random.Range(1, 3);
@@ -509,7 +508,7 @@ public class Player : MonoBehaviour
 
     void StopMoving()
     {
-        Debug.Log("StopMoving");
+        //Debug.Log("StopMoving");
         if (canMove)
         {
             canMove = false;
@@ -521,7 +520,7 @@ public class Player : MonoBehaviour
     [ContextMenu("Revive")]
     public void Revive()
     {
-        Debug.Log("Revive");
+        //Debug.Log("Revive");
         canMove = false;
         //jumpingPartRB.isKinematic = true;
 
