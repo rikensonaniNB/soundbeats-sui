@@ -381,6 +381,16 @@ public class UIController : MonoBehaviour
 
     }
 
+    public void EVMSelect(bool value)
+    {
+
+    }
+
+    public void SUISelect(bool value)
+    {
+
+    }
+
     public async void OnPersonalSignButton()
     {
         var session = WalletConnect.Instance.ActiveSession;
