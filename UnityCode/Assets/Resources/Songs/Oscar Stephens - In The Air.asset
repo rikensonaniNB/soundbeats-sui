@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   song: {fileID: 8300000, guid: 1211c5702ae8d4e02a361d181d1af025, type: 3}
   BPM: 80
-  stars: 2
+  stars: 3
   SongScore: 0
-  songTxtJson: {fileID: 4900000, guid: 7e73853b0b6405b4a95926a07a14d969, type: 3}
+  songTxtJson: {fileID: 4900000, guid: cad1d3c1d7188214fa632131d6a2edd2, type: 3}

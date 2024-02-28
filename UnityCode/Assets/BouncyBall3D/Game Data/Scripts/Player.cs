@@ -99,7 +99,7 @@ public class Player : MonoBehaviour
         Debug.Log("MakeCharacterReady :==>  " + UserData.SelectedNftIndex);
 
         //ResetPlayer();
-        StartCoroutine(GameManager.Instance.GameStartText());
+      //  StartCoroutine(GameManager.Instance.GameStartText());
         jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
@@ -128,9 +128,9 @@ public class Player : MonoBehaviour
         Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
 
         var obj = transform;
-        obj.position = new Vector3(0f, 0.3900146f, 0f);
+        obj.position = new Vector3(0f, .5f, 0f);
         obj.rotation = Quaternion.identity;
-        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = Vector3.zero;
+        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = /*Vector3.zero;*/new Vector3(0f, .5f, 0f); 
         Selected_character[UserData.SelectedNftIndex].gameObject.transform.rotation = Quaternion.identity;
     }
 
@@ -437,6 +437,7 @@ public class Player : MonoBehaviour
         if (platformA == null)
         {
             platformA = LevelGenerator.Instance.GetSpecificPlatform(0);
+            //platformA = LevelGenerator.Instance.GetSpecificPlatformBox(0);
             //Debug.Log("platA");
             return;
         }
@@ -444,6 +445,7 @@ public class Player : MonoBehaviour
         if (platformB == null)
         {
             platformB = LevelGenerator.Instance.GetSpecificPlatform(1);
+            //platformB = LevelGenerator.Instance.GetSpecificPlatformBox(1);
             //Debug.Log("platB");
 
             return;
@@ -478,7 +480,7 @@ public class Player : MonoBehaviour
     void CheckPlatform()
     {
         Debug.Log("CheckPlatform");
-        if (Physics.CheckSphere(jumpingPart.position, 0.5f, platformLayer))
+        if (Physics.CheckSphere(jumpingPart.position, 1.5f, platformLayer))
         {
             //randomNumber = UnityEngine.Random.Range(1, 3);
 
@@ -496,8 +498,13 @@ public class Player : MonoBehaviour
                 Show_WinPanel();
                 return;
             }
+
+
+
             hitEffect.transform.position = platformB.position;
             hitEffect.Play();
+
+            Debug.Log("Hit plateform");
 
             float distanceToCenter = Vector3.Distance(jumpingPart.position, platformB.position + Vector3.up * 0.3f);
             bool perfect = distanceToCenter < 0.6f;

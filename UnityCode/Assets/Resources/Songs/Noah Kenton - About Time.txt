@@ -1,1 +1,2386 @@
-{"dattaSave":[{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":0.0},{"zPositons":3.39794922},{"zPositons":6.425293},{"zPositons":9.748535},{"zPositons":11.9267578},{"zPositons":15.7871094},{"zPositons":18.4865723},{"zPositons":21.6811523},{"zPositons":27.9477539},{"zPositons":30.4401855},{"zPositons":33.2319336},{"zPositons":39.3544922},{"zPositons":42.2993164},{"zPositons":45.35962},{"zPositons":51.7868652},{"zPositons":51.7868652},{"zPositons":51.7868652},{"zPositons":54.91748},{"zPositons":58.1357422},{"zPositons":63.6428223},{"zPositons":66.66528},{"zPositons":73.1189},{"zPositons":75.8935547},{"zPositons":78.4973145},{"zPositons":84.25122},{"zPositons":87.82031},{"zPositons":90.55151},{"zPositons":93.39819},{"zPositons":96.6875},{"zPositons":98.97339},{"zPositons":102.400391},{"zPositons":105.386963},{"zPositons":108.540039},{"zPositons":110.706787},{"zPositons":114.349609},{"zPositons":119.9375},{"zPositons":123.22168},{"zPositons":125.895996},{"zPositons":131.891113},{"zPositons":134.6499},{"zPositons":137.967529},{"zPositons":140.57959},{"zPositons":144.346436},{"zPositons":149.68335},{"zPositons":152.575684},{"zPositons":155.746338},{"zPositons":158.738037},{"zPositons":161.612549},{"zPositons":167.835449},{"zPositons":170.458008},{"zPositons":173.646973},{"zPositons":178.98291},{"zPositons":182.186035},{"zPositons":185.203857},{"zPositons":188.094238},{"zPositons":191.484863},{"zPositons":193.876953},{"zPositons":196.984863},{"zPositons":199.9878},{"zPositons":203.340576},{"zPositons":205.913574},{"zPositons":208.773682},{"zPositons":214.826416},{"zPositons":218.0105},{"zPositons":226.625732},{"zPositons":232.990967},{"zPositons":235.969482},{"zPositons":238.647217},{"zPositons":244.2688},{"zPositons":247.4502},{"zPositons":250.624512},{"zPositons":253.8982},{"zPositons":256.423828},{"zPositons":262.28418},{"zPositons":265.14917},{"zPositons":268.115},{"zPositons":274.0005},{"zPositons":277.155762},{"zPositons":280.116455},{"zPositons":283.02002},{"zPositons":285.970459},{"zPositons":288.8396},{"zPositons":291.650146},{"zPositons":295.081055},{"zPositons":298.042725},{"zPositons":300.5735},{"zPositons":303.4651},{"zPositons":307.052246},{"zPositons":309.638916},{"zPositons":312.664551},{"zPositons":315.604248},{"zPositons":321.432373},{"zPositons":324.763672},{"zPositons":327.940918},{"zPositons":330.490723},{"zPositons":333.253418},{"zPositons":336.7893},{"zPositons":339.347168},{"zPositons":341.986572},{"zPositons":345.157471},{"zPositons":348.689453},{"zPositons":351.24},{"zPositons":357.155518},{"zPositons":360.155762},{"zPositons":363.000732},{"zPositons":368.948975},{"zPositons":371.912354},{"zPositons":374.896},{"zPositons":378.145264},{"zPositons":380.702881},{"zPositons":383.250244},{"zPositons":386.3694},{"zPositons":389.9331},{"zPositons":392.144531},{"zPositons":398.5276},{"zPositons":404.833984},{"zPositons":407.1548},{"zPositons":416.159668},{"zPositons":419.251953},{"zPositons":422.280029},{"zPositons":425.411133},{"zPositons":428.517578},{"zPositons":430.47168},{"zPositons":434.0017},{"zPositons":437.485352},{"zPositons":443.263916},{"zPositons":452.083984},{"zPositons":454.7212},{"zPositons":457.810059},{"zPositons":463.375244},{"zPositons":466.515137},{"zPositons":469.594482},{"zPositons":472.2207},{"zPositons":475.5122},{"zPositons":478.2146},{"zPositons":481.4978},{"zPositons":484.651123},{"zPositons":487.388428},{"zPositons":493.025879},{"zPositons":499.131836},{"zPositons":502.311523},{"zPositons":504.9795},{"zPositons":510.686768},{"zPositons":513.709},{"zPositons":516.92334},{"zPositons":519.5405},{"zPositons":522.779053},{"zPositons":525.510742},{"zPositons":528.8611},{"zPositons":531.454834},{"zPositons":534.7344},{"zPositons":537.4253},{"zPositons":540.6846},{"zPositons":546.355957},{"zPositons":549.5642},{"zPositons":552.303},{"zPositons":558.1321},{"zPositons":561.397461},{"zPositons":563.921143},{"zPositons":567.1272},{"zPositons":570.4697},{"zPositons":573.1775},{"zPositons":575.9121},{"zPositons":579.4558},{"zPositons":582.199951},{"zPositons":584.9497},{"zPositons":587.6748},{"zPositons":593.91626},{"zPositons":596.573},{"zPositons":599.9077},{"zPositons":605.421143},{"zPositons":608.646},{"zPositons":611.9165},{"zPositons":614.560547},{"zPositons":617.9458},{"zPositons":620.7605},{"zPositons":623.5432},{"zPositons":626.7573},{"zPositons":635.3862},{"zPositons":641.277832},{"zPositons":644.2732},{"zPositons":652.9668},{"zPositons":656.286133},{"zPositons":659.266357},{"zPositons":662.1221},{"zPositons":664.9612},{"zPositons":667.765869},{"zPositons":670.752441},{"zPositons":673.7771},{"zPositons":682.6804},{"zPositons":688.2239},{"zPositons":691.7041},{"zPositons":694.654053},{"zPositons":700.2444},{"zPositons":703.29834},{"zPositons":706.249756},{"zPositons":709.218},{"zPositons":712.197},{"zPositons":715.8008},{"zPositons":718.2612},{"zPositons":721.6604},{"zPositons":724.399658},{"zPositons":727.1372},{"zPositons":729.6946},{"zPositons":735.729},{"zPositons":738.669434},{"zPositons":741.6133},{"zPositons":747.8867},{"zPositons":750.885254},{"zPositons":753.827637},{"zPositons":756.6731},{"zPositons":759.6262},{"zPositons":762.6719},{"zPositons":765.6797},{"zPositons":771.9646},{"zPositons":774.9407},{"zPositons":777.378662},{"zPositons":783.1719},{"zPositons":786.5503},{"zPositons":789.704346},{"zPositons":795.4607},{"zPositons":797.8589},{"zPositons":801.5437},{"zPositons":803.981445},{"zPositons":807.214844},{"zPositons":813.1946},{"zPositons":816.197},{"zPositons":819.1658},{"zPositons":825.0801},{"zPositons":830.8082},{"zPositons":833.6437},{"zPositons":836.600952},{"zPositons":842.4613},{"zPositons":845.4463},{"zPositons":849.016846},{"zPositons":851.4746},{"zPositons":854.5204},{"zPositons":857.0725},{"zPositons":860.0696},{"zPositons":863.669434},{"zPositons":866.112549},{"zPositons":869.176},{"zPositons":872.1848},{"zPositons":878.1393},{"zPositons":881.089966},{"zPositons":883.7667},{"zPositons":889.93396},{"zPositons":893.1195},{"zPositons":895.5609},{"zPositons":898.6819},{"zPositons":901.761},{"zPositons":904.9498},{"zPositons":907.901},{"zPositons":916.522},{"zPositons":919.6008},{"zPositons":922.6843},{"zPositons":925.1671},{"zPositons":928.379761},{"zPositons":931.4851},{"zPositons":937.5934},{"zPositons":940.016357},{"zPositons":943.373657},{"zPositons":946.0912},{"zPositons":949.4667},{"zPositons":952.23584},{"zPositons":955.371},{"zPositons":958.4109},{"zPositons":964.064453},{"zPositons":972.670654},{"zPositons":975.952},{"zPositons":979.215332},{"zPositons":984.973},{"zPositons":987.802734},{"zPositons":990.827759},{"zPositons":993.6105},{"zPositons":996.4453},{"zPositons":999.318359},{"zPositons":1002.81042},{"zPositons":1006.57507},{"zPositons":1008.40906},{"zPositons":1011.41406},{"zPositons":1019.89526},{"zPositons":1023.07617},{"zPositons":1026.01343},{"zPositons":1032.061},{"zPositons":1034.90637},{"zPositons":1037.67139},{"zPositons":1040.9856},{"zPositons":1043.70667},{"zPositons":1046.45093},{"zPositons":1049.90027},{"zPositons":1056.40112},{"zPositons":1058.35632},{"zPositons":1061.72766},{"zPositons":1084.94238},{"zPositons":1139.73474},{"zPositons":1143.20483},{"zPositons":1145.37292},{"zPositons":1149.62634},{"zPositons":1155.72729},{"zPositons":1160.67261},{"zPositons":1164.13269},{"zPositons":1167.15466},{"zPositons":1172.97827},{"zPositons":1176.30933},{"zPositons":1179.108},{"zPositons":1181.86853},{"zPositons":1184.91846},{"zPositons":1188.42834},{"zPositons":1191.28015},{"zPositons":1193.84778},{"zPositons":1197.07935},{"zPositons":1199.53674},{"zPositons":1202.08459},{"zPositons":1208.865},{"zPositons":1212.53882},{"zPositons":1215.0625},{"zPositons":1220.47131},{"zPositons":1223.54541},{"zPositons":1226.28381},{"zPositons":1229.57751},{"zPositons":1232.35681},{"zPositons":1235.21631},{"zPositons":1238.21655},{"zPositons":1241.30322},{"zPositons":1244.47754},{"zPositons":1246.50732},{"zPositons":1250.05652},{"zPositons":1256.05579},{"zPositons":1259.59558},{"zPositons":1261.98877},{"zPositons":1268.05884},{"zPositons":1273.75452},{"zPositons":1277.12537},{"zPositons":1280.59119},{"zPositons":1285.52209},{"zPositons":1288.4115},{"zPositons":1291.67383},{"zPositons":1294.49573},{"zPositons":1297.41577},{"zPositons":1303.12024},{"zPositons":1306.58118},{"zPositons":1309.30945},{"zPositons":1315.10022},{"zPositons":1321.17261},{"zPositons":1324.75757},{"zPositons":1327.12842},{"zPositons":1330.40576},{"zPositons":1333.25415},{"zPositons":1336.50317},{"zPositons":1339.86987},{"zPositons":1341.88452},{"zPositons":1344.99414},{"zPositons":1351.30371},{"zPositons":1357.37622},{"zPositons":1362.43762},{"zPositons":1368.34106},{"zPositons":1371.92163},{"zPositons":1374.28979},{"zPositons":1377.49329},{"zPositons":1381.11353},{"zPositons":1383.4198},{"zPositons":1392.144},{"zPositons":1394.59058},{"zPositons":1398.08484},{"zPositons":1401.24023},{"zPositons":1403.76135},{"zPositons":1410.44531},{"zPositons":1413.054},{"zPositons":1416.73083},{"zPositons":1419.09045},{"zPositons":1422.30371},{"zPositons":1424.80054},{"zPositons":1427.597},{"zPositons":1430.559},{"zPositons":1434.278},{"zPositons":1436.60535},{"zPositons":1439.759},{"zPositons":1445.76953},{"zPositons":1451.88843},{"zPositons":1459.1853},{"zPositons":1460.86829},{"zPositons":1462.94263},{"zPositons":1465.98608},{"zPositons":1468.7926},{"zPositons":1475.428},{"zPositons":1477.8252},{"zPositons":1481.1178},{"zPositons":1485.12952},{"zPositons":1487.01624},{"zPositons":1493.1958},{"zPositons":1498.35669},{"zPositons":1504.45349},{"zPositons":1507.51428},{"zPositons":1510.86475},{"zPositons":1513.52136},{"zPositons":1516.17493},{"zPositons":1522.27307},{"zPositons":1525.7843},{"zPositons":1531.41882},{"zPositons":1534.48535},{"zPositons":1540.43713},{"zPositons":1543.77527},{"zPositons":1546.73108},{"zPositons":1552.21875},{"zPositons":1555.624},{"zPositons":1560.93774},{"zPositons":1563.7262},{"zPositons":1566.72021},{"zPositons":1569.635},{"zPositons":1573.12341},{"zPositons":1579.47949},{"zPositons":1582.02112},{"zPositons":1588.01086},{"zPositons":1590.75671},{"zPositons":1593.63293},{"zPositons":1599.80273},{"zPositons":1601.99451},{"zPositons":1605.56372},{"zPositons":1607.88831},{"zPositons":1611.4342},{"zPositons":1614.02039},{"zPositons":1616.68713},{"zPositons":1620.50293},{"zPositons":1623.69849},{"zPositons":1625.27625},{"zPositons":1629.22986},{"zPositons":1634.6355},{"zPositons":1641.46057},{"zPositons":1647.42151},{"zPositons":1650.00623},{"zPositons":1652.59839},{"zPositons":1655.016},{"zPositons":1659.319},{"zPositons":1664.60242},{"zPositons":1667.543},{"zPositons":1673.537},{"zPositons":1676.6803},{"zPositons":1682.27075},{"zPositons":1688.52893},{"zPositons":1694.74756},{"zPositons":1697.71973},{"zPositons":1699.489},{"zPositons":1702.60168},{"zPositons":1706.53748},{"zPositons":1708.86755},{"zPositons":1712.20752},{"zPositons":1714.62744},{"zPositons":1718.49377},{"zPositons":1721.75342},{"zPositons":1723.63867},{"zPositons":1730.20508},{"zPositons":1735.436},{"zPositons":1742.0625},{"zPositons":1744.70142},{"zPositons":1747.89307},{"zPositons":1750.41663},{"zPositons":1753.9812},{"zPositons":1756.67847},{"zPositons":1759.45056},{"zPositons":1762.32874},{"zPositons":1765.599},{"zPositons":1768.823},{"zPositons":1771.03223},{"zPositons":1777.12781},{"zPositons":1781.062},{"zPositons":1783.01648},{"zPositons":1789.87207},{"zPositons":1792.90942},{"zPositons":1794.40137},{"zPositons":1797.83423},{"zPositons":1801.54749},{"zPositons":1804.334},{"zPositons":1806.9519},{"zPositons":1809.6676},{"zPositons":1812.25488},{"zPositons":1818.68213},{"zPositons":1824.76831},{"zPositons":1828.22913},{"zPositons":1830.9552},{"zPositons":1836.15613},{"zPositons":1838.89075},{"zPositons":1842.67041},{"zPositons":1845.56421},{"zPositons":1850.1571},{"zPositons":1850.1571},{"zPositons":1853.78662},{"zPositons":1857.75171},{"zPositons":1860.54736},{"zPositons":1863.24854},{"zPositons":1871.94543},{"zPositons":1877.9978},{"zPositons":1884.25146},{"zPositons":1886.99609},{"zPositons":1890.64392},{"zPositons":1893.80957},{"zPositons":1895.18652},{"zPositons":1898.71021},{"zPositons":1901.11829},{"zPositons":1904.885},{"zPositons":1910.4563},{"zPositons":1913.32031},{"zPositons":1919.09375},{"zPositons":1922.84546},{"zPositons":1925.11157},{"zPositons":1933.769},{"zPositons":1937.16626},{"zPositons":1940.23218},{"zPositons":1943.09387},{"zPositons":1948.56177},{"zPositons":1951.447},{"zPositons":1954.53149},{"zPositons":1957.40649},{"zPositons":1960.363},{"zPositons":1966.77954},{"zPositons":1969.48828},{"zPositons":1972.917},{"zPositons":1978.59448},{"zPositons":1981.09863},{"zPositons":1984.58618},{"zPositons":1987.14185},{"zPositons":1990.62964},{"zPositons":1993.27539},{"zPositons":1995.9895},{"zPositons":1999.52417},{"zPositons":2004.59229},{"zPositons":2007.93237},{"zPositons":2048.42114},{"zPositons":2052.68848},{"zPositons":2056.35327},{"zPositons":2058.945},{"zPositons":2085.01953},{"zPositons":2144.69},{"zPositons":2150.38623},{"zPositons":2152.05566},{"zPositons":2188.78516},{"zPositons":2194.56616},{"zPositons":2197.94287},{"zPositons":2200.44336},{"zPositons":2203.04272},{"zPositons":2206.45557},{"zPositons":2209.06934},{"zPositons":2212.73975},{"zPositons":2215.56836},{"zPositons":2218.206},{"zPositons":2220.92334},{"zPositons":2224.76245},{"zPositons":2227.31543},{"zPositons":2230.149},{"zPositons":2232.9043},{"zPositons":2236.47559},{"zPositons":2241.81885},{"zPositons":2245.17822},{"zPositons":2251.09},{"zPositons":2253.61963},{"zPositons":2257.183},{"zPositons":2262.334},{"zPositons":2265.85938},{"zPositons":2268.51929},{"zPositons":2271.24219},{"zPositons":2274.67236},{"zPositons":2280.525},{"zPositons":2283.95361},{"zPositons":2286.67334},{"zPositons":2288.41626},{"zPositons":2292.09668},{"zPositons":2295.07275},{"zPositons":2298.558},{"zPositons":2301.06323},{"zPositons":2303.735},{"zPositons":2306.59253},{"zPositons":2310.08154},{"zPositons":2312.78076},{"zPositons":2316.37354},{"zPositons":2319.00684},{"zPositons":2321.7},{"zPositons":2324.43115},{"zPositons":2327.89673},{"zPositons":2331.292},{"zPositons":2336.55762},{"zPositons":2340.09058},{"zPositons":2345.41943},{"zPositons":2348.16357},{"zPositons":2351.79932},{"zPositons":2357.7854},{"zPositons":2360.36182},{"zPositons":2364.00073},{"zPositons":2366.6958},{"zPositons":2369.54932},{"zPositons":2375.13135},{"zPositons":2378.657},{"zPositons":2387.20874},{"zPositons":2393.22144},{"zPositons":2395.936},{"zPositons":2398.68726},{"zPositons":2404.90918},{"zPositons":2407.51685},{"zPositons":2410.29834},{"zPositons":2413.893},{"zPositons":2416.68359},{"zPositons":2419.44287},{"zPositons":2422.17188},{"zPositons":2425.76514},{"zPositons":2428.50317},{"zPositons":2440.47632},{"zPositons":2445.8},{"zPositons":2452.28345},{"zPositons":2455.05542},{"zPositons":2457.79126},{"zPositons":2461.46533},{"zPositons":2464.16357},{"zPositons":2469.51855},{"zPositons":2473.023},{"zPositons":2474.92749},{"zPositons":2481.3335},{"zPositons":2487.67627},{"zPositons":2490.45679},{"zPositons":2494.09888},{"zPositons":2501.00781},{"zPositons":2503.15039},{"zPositons":2505.08716},{"zPositons":2511.26782},{"zPositons":2514.24316},{"zPositons":2517.18677},{"zPositons":2520.354},{"zPositons":2523.134},{"zPositons":2526.403},{"zPositons":2535.24365},{"zPositons":2540.57764},{"zPositons":2546.72437},{"zPositons":2550.00952},{"zPositons":2553.20117},{"zPositons":2555.98047},{"zPositons":2558.83179},{"zPositons":2564.19336},{"zPositons":2567.75928},{"zPositons":2573.924},{"zPositons":2576.96216},{"zPositons":2582.19922},{"zPositons":2585.01245},{"zPositons":2588.305},{"zPositons":2594.21851},{"zPositons":2597.31519},{"zPositons":2603.45825},{"zPositons":2606.66846},{"zPositons":2609.55249},{"zPositons":2612.42529},{"zPositons":2614.86426},{"zPositons":2617.8252},{"zPositons":2620.68579},{"zPositons":2623.44238},{"zPositons":2630.175},{"zPositons":2633.17456},{"zPositons":2636.33},{"zPositons":2642.12866},{"zPositons":2644.81885},{"zPositons":2647.66479},{"zPositons":2650.46045},{"zPositons":2654.10767},{"zPositons":2659.82251},{"zPositons":2662.69238},{"zPositons":2665.57324},{"zPositons":2668.54517},{"zPositons":2671.522},{"zPositons":2677.13428},{"zPositons":2680.18066},{"zPositons":2683.184},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314},{"zPositons":2691.22314}]}
+{
+    "dataSave": [
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.1182606
+        },
+        {
+            "time": 0.451593935
+        },
+        {
+            "time": 0.756983638
+        },
+        {
+            "time": 0.756983638
+        },
+        {
+            "time": 0.9727721
+        },
+        {
+            "time": 1.1619463
+        },
+        {
+            "time": 1.29349148
+        },
+        {
+            "time": 1.513668
+        },
+        {
+            "time": 1.71130431
+        },
+        {
+            "time": 2.13259029
+        },
+        {
+            "time": 2.31809616
+        },
+        {
+            "time": 2.31809616
+        },
+        {
+            "time": 2.521172
+        },
+        {
+            "time": 2.923688
+        },
+        {
+            "time": 2.923688
+        },
+        {
+            "time": 3.11563325
+        },
+        {
+            "time": 3.31408358
+        },
+        {
+            "time": 3.50273
+        },
+        {
+            "time": 3.725003
+        },
+        {
+            "time": 3.90971279
+        },
+        {
+            "time": 3.90971279
+        },
+        {
+            "time": 4.1158886
+        },
+        {
+            "time": 4.29929066
+        },
+        {
+            "time": 4.71624231
+        },
+        {
+            "time": 4.895279
+        },
+        {
+            "time": 5.31012535
+        },
+        {
+            "time": 5.50013638
+        },
+        {
+            "time": 5.71036673
+        },
+        {
+            "time": 6.06986952
+        },
+        {
+            "time": 6.289514
+        },
+        {
+            "time": 6.48022127
+        },
+        {
+            "time": 6.663567
+        },
+        {
+            "time": 6.88763142
+        },
+        {
+            "time": 7.059619
+        },
+        {
+            "time": 7.059619
+        },
+        {
+            "time": 7.26290655
+        },
+        {
+            "time": 7.523706
+        },
+        {
+            "time": 7.66624451
+        },
+        {
+            "time": 7.845177
+        },
+        {
+            "time": 8.085495
+        },
+        {
+            "time": 8.454589
+        },
+        {
+            "time": 8.669162
+        },
+        {
+            "time": 8.857572
+        },
+        {
+            "time": 9.250263
+        },
+        {
+            "time": 9.435899
+        },
+        {
+            "time": 9.64178848
+        },
+        {
+            "time": 9.86266
+        },
+        {
+            "time": 10.0674772
+        },
+        {
+            "time": 10.4303474
+        },
+        {
+            "time": 10.6257191
+        },
+        {
+            "time": 10.8430195
+        },
+        {
+            "time": 11.0105
+        },
+        {
+            "time": 11.2223673
+        },
+        {
+            "time": 11.2223673
+        },
+        {
+            "time": 11.6269083
+        },
+        {
+            "time": 11.8131046
+        },
+        {
+            "time": 12.0059023
+        },
+        {
+            "time": 12.4000645
+        },
+        {
+            "time": 12.6075687
+        },
+        {
+            "time": 12.7966042
+        },
+        {
+            "time": 12.9889164
+        },
+        {
+            "time": 13.209631
+        },
+        {
+            "time": 13.209631
+        },
+        {
+            "time": 13.38056
+        },
+        {
+            "time": 13.38056
+        },
+        {
+            "time": 13.5865316
+        },
+        {
+            "time": 13.7775583
+        },
+        {
+            "time": 14.0214033
+        },
+        {
+            "time": 14.1864672
+        },
+        {
+            "time": 14.3897276
+        },
+        {
+            "time": 14.7969494
+        },
+        {
+            "time": 14.984972
+        },
+        {
+            "time": 15.553031
+        },
+        {
+            "time": 16.00795
+        },
+        {
+            "time": 16.1681652
+        },
+        {
+            "time": 16.358181
+        },
+        {
+            "time": 16.7609978
+        },
+        {
+            "time": 16.9341946
+        },
+        {
+            "time": 17.1506081
+        },
+        {
+            "time": 17.3679161
+        },
+        {
+            "time": 17.3679161
+        },
+        {
+            "time": 17.5390968
+        },
+        {
+            "time": 17.5390968
+        },
+        {
+            "time": 17.94366
+        },
+        {
+            "time": 18.1401424
+        },
+        {
+            "time": 18.3393021
+        },
+        {
+            "time": 18.70455
+        },
+        {
+            "time": 18.9180164
+        },
+        {
+            "time": 19.116045
+        },
+        {
+            "time": 19.3150139
+        },
+        {
+            "time": 19.5140686
+        },
+        {
+            "time": 19.5140686
+        },
+        {
+            "time": 19.70985
+        },
+        {
+            "time": 19.70985
+        },
+        {
+            "time": 19.9088154
+        },
+        {
+            "time": 20.12295
+        },
+        {
+            "time": 20.3057652
+        },
+        {
+            "time": 20.5045719
+        },
+        {
+            "time": 20.68681
+        },
+        {
+            "time": 20.89857
+        },
+        {
+            "time": 21.1046085
+        },
+        {
+            "time": 21.3015251
+        },
+        {
+            "time": 21.4832649
+        },
+        {
+            "time": 21.8714828
+        },
+        {
+            "time": 22.079771
+        },
+        {
+            "time": 22.287653
+        },
+        {
+            "time": 22.46802
+        },
+        {
+            "time": 22.6703053
+        },
+        {
+            "time": 22.8847923
+        },
+        {
+            "time": 23.06607
+        },
+        {
+            "time": 23.2483635
+        },
+        {
+            "time": 23.2483635
+        },
+        {
+            "time": 23.459446
+        },
+        {
+            "time": 23.6718159
+        },
+        {
+            "time": 23.8482914
+        },
+        {
+            "time": 23.8482914
+        },
+        {
+            "time": 24.2540474
+        },
+        {
+            "time": 24.4601555
+        },
+        {
+            "time": 24.6452045
+        },
+        {
+            "time": 25.0368366
+        },
+        {
+            "time": 25.2319984
+        },
+        {
+            "time": 25.44527
+        },
+        {
+            "time": 25.6387444
+        },
+        {
+            "time": 25.8383865
+        },
+        {
+            "time": 25.99952
+        },
+        {
+            "time": 26.214468
+        },
+        {
+            "time": 26.44737
+        },
+        {
+            "time": 26.6088314
+        },
+        {
+            "time": 27.0116711
+        },
+        {
+            "time": 27.4398766
+        },
+        {
+            "time": 27.5994244
+        },
+        {
+            "time": 28.2069473
+        },
+        {
+            "time": 28.3904362
+        },
+        {
+            "time": 28.5866
+        },
+        {
+            "time": 28.7973671
+        },
+        {
+            "time": 29.0066471
+        },
+        {
+            "time": 29.1347675
+        },
+        {
+            "time": 29.3755474
+        },
+        {
+            "time": 29.6034451
+        },
+        {
+            "time": 29.997858
+        },
+        {
+            "time": 30.569479
+        },
+        {
+            "time": 30.7673416
+        },
+        {
+            "time": 30.9631977
+        },
+        {
+            "time": 31.3427086
+        },
+        {
+            "time": 31.5540676
+        },
+        {
+            "time": 31.76545
+        },
+        {
+            "time": 31.76545
+        },
+        {
+            "time": 31.9294281
+        },
+        {
+            "time": 32.14361
+        },
+        {
+            "time": 32.14361
+        },
+        {
+            "time": 32.3403664
+        },
+        {
+            "time": 32.3403664
+        },
+        {
+            "time": 32.5269928
+        },
+        {
+            "time": 32.74164
+        },
+        {
+            "time": 32.74164
+        },
+        {
+            "time": 32.9408264
+        },
+        {
+            "time": 33.3157272
+        },
+        {
+            "time": 33.7186127
+        },
+        {
+            "time": 33.9264565
+        },
+        {
+            "time": 34.1195
+        },
+        {
+            "time": 34.4884338
+        },
+        {
+            "time": 34.7146721
+        },
+        {
+            "time": 34.90418
+        },
+        {
+            "time": 35.0856552
+        },
+        {
+            "time": 35.3132172
+        },
+        {
+            "time": 35.3132172
+        },
+        {
+            "time": 35.47992
+        },
+        {
+            "time": 35.682415
+        },
+        {
+            "time": 35.882
+        },
+        {
+            "time": 36.09179
+        },
+        {
+            "time": 36.285038
+        },
+        {
+            "time": 36.4804153
+        },
+        {
+            "time": 36.8846626
+        },
+        {
+            "time": 37.07881
+        },
+        {
+            "time": 37.07881
+        },
+        {
+            "time": 37.27712
+        },
+        {
+            "time": 37.65589
+        },
+        {
+            "time": 37.8663025
+        },
+        {
+            "time": 38.06261
+        },
+        {
+            "time": 38.2781639
+        },
+        {
+            "time": 38.4628639
+        },
+        {
+            "time": 38.648777
+        },
+        {
+            "time": 38.648777
+        },
+        {
+            "time": 38.8496246
+        },
+        {
+            "time": 39.0646324
+        },
+        {
+            "time": 39.0646324
+        },
+        {
+            "time": 39.2521858
+        },
+        {
+            "time": 39.4511757
+        },
+        {
+            "time": 39.6368065
+        },
+        {
+            "time": 40.0452156
+        },
+        {
+            "time": 40.0452156
+        },
+        {
+            "time": 40.227623
+        },
+        {
+            "time": 40.4251976
+        },
+        {
+            "time": 40.8180847
+        },
+        {
+            "time": 41.02211
+        },
+        {
+            "time": 41.02211
+        },
+        {
+            "time": 41.23169
+        },
+        {
+            "time": 41.440033
+        },
+        {
+            "time": 41.6220436
+        },
+        {
+            "time": 41.818512
+        },
+        {
+            "time": 41.9974937
+        },
+        {
+            "time": 42.239315
+        },
+        {
+            "time": 42.80028
+        },
+        {
+            "time": 43.19407
+        },
+        {
+            "time": 43.3912048
+        },
+        {
+            "time": 43.3912048
+        },
+        {
+            "time": 43.9624176
+        },
+        {
+            "time": 44.1781349
+        },
+        {
+            "time": 44.3990021
+        },
+        {
+            "time": 44.3990021
+        },
+        {
+            "time": 44.5801735
+        },
+        {
+            "time": 44.7822075
+        },
+        {
+            "time": 44.7822075
+        },
+        {
+            "time": 44.9803963
+        },
+        {
+            "time": 44.9803963
+        },
+        {
+            "time": 45.17903
+        },
+        {
+            "time": 45.17903
+        },
+        {
+            "time": 45.3472366
+        },
+        {
+            "time": 45.98035
+        },
+        {
+            "time": 45.98035
+        },
+        {
+            "time": 46.33816
+        },
+        {
+            "time": 46.33816
+        },
+        {
+            "time": 46.5507927
+        },
+        {
+            "time": 46.739006
+        },
+        {
+            "time": 47.13085
+        },
+        {
+            "time": 47.33255
+        },
+        {
+            "time": 47.5340958
+        },
+        {
+            "time": 47.7177734
+        },
+        {
+            "time": 47.93513
+        },
+        {
+            "time": 48.15461
+        },
+        {
+            "time": 48.315033
+        },
+        {
+            "time": 48.5254822
+        },
+        {
+            "time": 48.7398262
+        },
+        {
+            "time": 48.9336281
+        },
+        {
+            "time": 49.1382179
+        },
+        {
+            "time": 49.4959145
+        },
+        {
+            "time": 49.7119827
+        },
+        {
+            "time": 49.8919334
+        },
+        {
+            "time": 50.29654
+        },
+        {
+            "time": 50.4930878
+        },
+        {
+            "time": 50.70374
+        },
+        {
+            "time": 50.9011269
+        },
+        {
+            "time": 51.09892
+        },
+        {
+            "time": 51.2928162
+        },
+        {
+            "time": 51.47431
+        },
+        {
+            "time": 51.8983
+        },
+        {
+            "time": 52.0897255
+        },
+        {
+            "time": 52.28622
+        },
+        {
+            "time": 52.6686974
+        },
+        {
+            "time": 52.869915
+        },
+        {
+            "time": 53.0697861
+        },
+        {
+            "time": 53.4652977
+        },
+        {
+            "time": 53.65115
+        },
+        {
+            "time": 53.8655853
+        },
+        {
+            "time": 54.0651321
+        },
+        {
+            "time": 54.2497444
+        },
+        {
+            "time": 54.65901
+        },
+        {
+            "time": 54.8401566
+        },
+        {
+            "time": 55.05846
+        },
+        {
+            "time": 55.4587631
+        },
+        {
+            "time": 55.82053
+        },
+        {
+            "time": 56.01429
+        },
+        {
+            "time": 56.2142067
+        },
+        {
+            "time": 56.6112823
+        },
+        {
+            "time": 56.8139038
+        },
+        {
+            "time": 57.0136147
+        },
+        {
+            "time": 57.2121048
+        },
+        {
+            "time": 57.4003868
+        },
+        {
+            "time": 57.6003647
+        },
+        {
+            "time": 57.6003647
+        },
+        {
+            "time": 57.7893
+        },
+        {
+            "time": 58.0088539
+        },
+        {
+            "time": 58.1958351
+        },
+        {
+            "time": 58.4025536
+        },
+        {
+            "time": 58.58838
+        },
+        {
+            "time": 58.9876022
+        },
+        {
+            "time": 59.17099
+        },
+        {
+            "time": 59.3624229
+        },
+        {
+            "time": 59.77268
+        },
+        {
+            "time": 59.96501
+        },
+        {
+            "time": 60.18036
+        },
+        {
+            "time": 60.39398
+        },
+        {
+            "time": 60.5647
+        },
+        {
+            "time": 60.76062
+        },
+        {
+            "time": 60.9742432
+        },
+        {
+            "time": 61.5437851
+        },
+        {
+            "time": 61.7306175
+        },
+        {
+            "time": 61.9789467
+        },
+        {
+            "time": 62.1447
+        },
+        {
+            "time": 62.1447
+        },
+        {
+            "time": 62.34658
+        },
+        {
+            "time": 62.5587463
+        },
+        {
+            "time": 62.953228
+        },
+        {
+            "time": 63.13065
+        },
+        {
+            "time": 63.34804
+        },
+        {
+            "time": 63.5464439
+        },
+        {
+            "time": 63.71669
+        },
+        {
+            "time": 63.9135246
+        },
+        {
+            "time": 64.12917
+        },
+        {
+            "time": 64.31535
+        },
+        {
+            "time": 64.7028046
+        },
+        {
+            "time": 65.29599
+        },
+        {
+            "time": 65.29599
+        },
+        {
+            "time": 65.48197
+        },
+        {
+            "time": 65.7006149
+        },
+        {
+            "time": 66.08852
+        },
+        {
+            "time": 66.2812653
+        },
+        {
+            "time": 66.47747
+        },
+        {
+            "time": 66.6928558
+        },
+        {
+            "time": 66.90585
+        },
+        {
+            "time": 67.07015
+        },
+        {
+            "time": 67.07015
+        },
+        {
+            "time": 67.305336
+        },
+        {
+            "time": 67.52215
+        },
+        {
+            "time": 67.67622
+        },
+        {
+            "time": 67.8553848
+        },
+        {
+            "time": 68.43307
+        },
+        {
+            "time": 68.64743
+        },
+        {
+            "time": 68.86548
+        },
+        {
+            "time": 69.24784
+        },
+        {
+            "time": 69.43264
+        },
+        {
+            "time": 69.6319962
+        },
+        {
+            "time": 69.84554
+        },
+        {
+            "time": 70.02995
+        },
+        {
+            "time": 70.2246
+        },
+        {
+            "time": 70.4458542
+        },
+        {
+            "time": 70.8647156
+        },
+        {
+            "time": 71.02347
+        },
+        {
+            "time": 71.25694
+        },
+        {
+            "time": 72.7927856
+        },
+        {
+            "time": 76.47638
+        },
+        {
+            "time": 76.7389755
+        },
+        {
+            "time": 76.90264
+        },
+        {
+            "time": 77.13697
+        },
+        {
+            "time": 77.13697
+        },
+        {
+            "time": 77.5479355
+        },
+        {
+            "time": 77.92756
+        },
+        {
+            "time": 78.15212
+        },
+        {
+            "time": 78.33765
+        },
+        {
+            "time": 78.71964
+        },
+        {
+            "time": 78.93579
+        },
+        {
+            "time": 78.93579
+        },
+        {
+            "time": 79.1039658
+        },
+        {
+            "time": 79.32076
+        },
+        {
+            "time": 79.50943
+        },
+        {
+            "time": 79.72715
+        },
+        {
+            "time": 79.91118
+        },
+        {
+            "time": 80.1131439
+        },
+        {
+            "time": 80.3134
+        },
+        {
+            "time": 80.51212
+        },
+        {
+            "time": 80.67888
+        },
+        {
+            "time": 81.1180649
+        },
+        {
+            "time": 81.2957
+        },
+        {
+            "time": 81.49637
+        },
+        {
+            "time": 81.49637
+        },
+        {
+            "time": 81.88449
+        },
+        {
+            "time": 82.06294
+        },
+        {
+            "time": 82.26139
+        },
+        {
+            "time": 82.4779
+        },
+        {
+            "time": 82.6636353
+        },
+        {
+            "time": 82.6636353
+        },
+        {
+            "time": 82.85961
+        },
+        {
+            "time": 82.85961
+        },
+        {
+            "time": 83.07122
+        },
+        {
+            "time": 83.26365
+        },
+        {
+            "time": 83.4801
+        },
+        {
+            "time": 83.64417
+        },
+        {
+            "time": 83.83959
+        },
+        {
+            "time": 84.23511
+        },
+        {
+            "time": 84.45576
+        },
+        {
+            "time": 84.64494
+        },
+        {
+            "time": 85.02751
+        },
+        {
+            "time": 85.43564
+        },
+        {
+            "time": 85.63137
+        },
+        {
+            "time": 85.81688
+        },
+        {
+            "time": 86.22509
+        },
+        {
+            "time": 86.42478
+        },
+        {
+            "time": 86.62655
+        },
+        {
+            "time": 86.82064
+        },
+        {
+            "time": 86.98647
+        },
+        {
+            "time": 87.39699
+        },
+        {
+            "time": 87.6186447
+        },
+        {
+            "time": 87.8042755
+        },
+        {
+            "time": 87.8042755
+        },
+        {
+            "time": 88.18451
+        },
+        {
+            "time": 88.5761948
+        },
+        {
+            "time": 88.78573
+        },
+        {
+            "time": 88.98468
+        },
+        {
+            "time": 88.98468
+        },
+        {
+            "time": 89.16814
+        },
+        {
+            "time": 89.16814
+        },
+        {
+            "time": 89.37772
+        },
+        {
+            "time": 89.56936
+        },
+        {
+            "time": 89.79468
+        },
+        {
+            "time": 89.9676361
+        },
+        {
+            "time": 90.17823
+        },
+        {
+            "time": 90.56303
+        },
+        {
+            "time": 90.9610062
+        },
+        {
+            "time": 91.34881
+        },
+        {
+            "time": 91.72711
+        },
+        {
+            "time": 91.9432449
+        },
+        {
+            "time": 92.14306
+        },
+        {
+            "time": 92.33412
+        },
+        {
+            "time": 92.54429
+        },
+        {
+            "time": 92.75365
+        },
+        {
+            "time": 93.33644
+        },
+        {
+            "time": 93.49777
+        },
+        {
+            "time": 93.73326
+        },
+        {
+            "time": 93.9351
+        },
+        {
+            "time": 94.12073
+        },
+        {
+            "time": 94.52097
+        },
+        {
+            "time": 94.72096
+        },
+        {
+            "time": 94.9095
+        },
+        {
+            "time": 95.1070557
+        },
+        {
+            "time": 95.29072
+        },
+        {
+            "time": 95.29072
+        },
+        {
+            "time": 95.482666
+        },
+        {
+            "time": 95.482666
+        },
+        {
+            "time": 95.70125
+        },
+        {
+            "time": 95.88919
+        },
+        {
+            "time": 96.1102753
+        },
+        {
+            "time": 96.30088
+        },
+        {
+            "time": 96.48464
+        },
+        {
+            "time": 96.89882
+        },
+        {
+            "time": 97.2837
+        },
+        {
+            "time": 97.2837
+        },
+        {
+            "time": 97.67631
+        },
+        {
+            "time": 97.87793
+        },
+        {
+            "time": 98.04645
+        },
+        {
+            "time": 98.26177
+        },
+        {
+            "time": 98.26177
+        },
+        {
+            "time": 98.4563141
+        },
+        {
+            "time": 98.86417
+        },
+        {
+            "time": 99.04898
+        },
+        {
+            "time": 99.2374039
+        },
+        {
+            "time": 99.47546
+        },
+        {
+            "time": 99.6472
+        },
+        {
+            "time": 100.026352
+        },
+        {
+            "time": 100.442085
+        },
+        {
+            "time": 100.839752
+        },
+        {
+            "time": 101.032249
+        },
+        {
+            "time": 101.231956
+        },
+        {
+            "time": 101.409859
+        },
+        {
+            "time": 101.604073
+        },
+        {
+            "time": 102.010757
+        },
+        {
+            "time": 102.202919
+        },
+        {
+            "time": 102.611633
+        },
+        {
+            "time": 102.797844
+        },
+        {
+            "time": 103.210442
+        },
+        {
+            "time": 103.397545
+        },
+        {
+            "time": 103.6004
+        },
+        {
+            "time": 103.999
+        },
+        {
+            "time": 104.185081
+        },
+        {
+            "time": 104.570511
+        },
+        {
+            "time": 104.771233
+        },
+        {
+            "time": 104.986237
+        },
+        {
+            "time": 105.174362
+        },
+        {
+            "time": 105.391167
+        },
+        {
+            "time": 105.741982
+        },
+        {
+            "time": 105.9609
+        },
+        {
+            "time": 105.9609
+        },
+        {
+            "time": 106.360153
+        },
+        {
+            "time": 106.565117
+        },
+        {
+            "time": 106.7548
+        },
+        {
+            "time": 106.7548
+        },
+        {
+            "time": 107.130577
+        },
+        {
+            "time": 107.354446
+        },
+        {
+            "time": 107.541565
+        },
+        {
+            "time": 107.541565
+        },
+        {
+            "time": 107.725807
+        },
+        {
+            "time": 107.938919
+        },
+        {
+            "time": 107.938919
+        },
+        {
+            "time": 108.112885
+        },
+        {
+            "time": 108.112885
+        },
+        {
+            "time": 108.330246
+        },
+        {
+            "time": 108.330246
+        },
+        {
+            "time": 108.516464
+        },
+        {
+            "time": 108.516464
+        },
+        {
+            "time": 108.728287
+        },
+        {
+            "time": 108.876793
+        },
+        {
+            "time": 109.115265
+        },
+        {
+            "time": 109.480949
+        },
+        {
+            "time": 109.910843
+        },
+        {
+            "time": 110.309174
+        },
+        {
+            "time": 110.5236
+        },
+        {
+            "time": 110.726837
+        },
+        {
+            "time": 110.888557
+        },
+        {
+            "time": 111.126671
+        },
+        {
+            "time": 111.478912
+        },
+        {
+            "time": 111.697113
+        },
+        {
+            "time": 112.065437
+        },
+        {
+            "time": 112.26902
+        },
+        {
+            "time": 112.686546
+        },
+        {
+            "time": 113.061829
+        },
+        {
+            "time": 113.061829
+        },
+        {
+            "time": 113.47316
+        },
+        {
+            "time": 113.657738
+        },
+        {
+            "time": 113.847473
+        },
+        {
+            "time": 114.045868
+        },
+        {
+            "time": 114.261177
+        },
+        {
+            "time": 114.261177
+        },
+        {
+            "time": 114.430611
+        },
+        {
+            "time": 114.430611
+        },
+        {
+            "time": 114.642654
+        },
+        {
+            "time": 114.847023
+        },
+        {
+            "time": 115.052132
+        },
+        {
+            "time": 115.289604
+        },
+        {
+            "time": 115.43837
+        },
+        {
+            "time": 115.85054
+        },
+        {
+            "time": 116.216194
+        },
+        {
+            "time": 116.626907
+        },
+        {
+            "time": 116.8141
+        },
+        {
+            "time": 117.00502
+        },
+        {
+            "time": 117.206154
+        },
+        {
+            "time": 117.450188
+        },
+        {
+            "time": 117.620934
+        },
+        {
+            "time": 117.620934
+        },
+        {
+            "time": 117.809349
+        },
+        {
+            "time": 117.990936
+        },
+        {
+            "time": 118.203827
+        },
+        {
+            "time": 118.415535
+        },
+        {
+            "time": 118.597588
+        },
+        {
+            "time": 118.995438
+        },
+        {
+            "time": 119.188416
+        },
+        {
+            "time": 119.188416
+        },
+        {
+            "time": 119.379639
+        },
+        {
+            "time": 119.379639
+        },
+        {
+            "time": 119.792015
+        },
+        {
+            "time": 119.9756
+        },
+        {
+            "time": 120.169945
+        },
+        {
+            "time": 120.169945
+        },
+        {
+            "time": 120.370331
+        },
+        {
+            "time": 120.370331
+        },
+        {
+            "time": 120.569427
+        },
+        {
+            "time": 120.569427
+        },
+        {
+            "time": 120.745689
+        },
+        {
+            "time": 120.745689
+        },
+        {
+            "time": 120.962074
+        },
+        {
+            "time": 120.962074
+        },
+        {
+            "time": 121.149147
+        },
+        {
+            "time": 121.149147
+        },
+        {
+            "time": 121.149147
+        },
+        {
+            "time": 121.344582
+        },
+        {
+            "time": 121.752235
+        },
+        {
+            "time": 122.160873
+        },
+        {
+            "time": 122.392136
+        },
+        {
+            "time": 122.537727
+        },
+        {
+            "time": 122.537727
+        },
+        {
+            "time": 122.94207
+        },
+        {
+            "time": 123.109116
+        },
+        {
+            "time": 123.333481
+        },
+        {
+            "time": 123.524834
+        },
+        {
+            "time": 123.736786
+        },
+        {
+            "time": 123.901123
+        },
+        {
+            "time": 124.124352
+        },
+        {
+            "time": 124.354607
+        },
+        {
+            "time": 124.354607
+        },
+        {
+            "time": 124.520981
+        },
+        {
+            "time": 124.520981
+        },
+        {
+            "time": 124.717819
+        },
+        {
+            "time": 125.308327
+        },
+        {
+            "time": 125.696579
+        },
+        {
+            "time": 126.10154
+        },
+        {
+            "time": 126.299316
+        },
+        {
+            "time": 126.299316
+        },
+        {
+            "time": 126.477943
+        },
+        {
+            "time": 126.679138
+        },
+        {
+            "time": 126.891426
+        },
+        {
+            "time": 127.078636
+        },
+        {
+            "time": 127.27874
+        },
+        {
+            "time": 127.492287
+        },
+        {
+            "time": 127.865715
+        },
+        {
+            "time": 128.058929
+        },
+        {
+            "time": 128.447662
+        },
+        {
+            "time": 128.674637
+        },
+        {
+            "time": 128.876022
+        },
+        {
+            "time": 128.876022
+        },
+        {
+            "time": 129.433441
+        },
+        {
+            "time": 129.64238
+        },
+        {
+            "time": 129.827133
+        },
+        {
+            "time": 130.065018
+        },
+        {
+            "time": 130.4273
+        },
+        {
+            "time": 130.629517
+        },
+        {
+            "time": 130.816132
+        },
+        {
+            "time": 131.011429
+        },
+        {
+            "time": 131.231277
+        },
+        {
+            "time": 131.625046
+        },
+        {
+            "time": 131.82547
+        },
+        {
+            "time": 132.011383
+        },
+        {
+            "time": 132.011383
+        },
+        {
+            "time": 132.392654
+        },
+        {
+            "time": 132.6072
+        },
+        {
+            "time": 132.801422
+        },
+        {
+            "time": 133.008209
+        },
+        {
+            "time": 133.223846
+        },
+        {
+            "time": 133.223846
+        },
+        {
+            "time": 133.37149
+        },
+        {
+            "time": 133.37149
+        },
+        {
+            "time": 133.6164
+        },
+        {
+            "time": 133.782639
+        },
+        {
+            "time": 133.782639
+        },
+        {
+            "time": 134.1627
+        },
+        {
+            "time": 134.383316
+        },
+        {
+            "time": 137.067841
+        },
+        {
+            "time": 137.337967
+        },
+        {
+            "time": 137.57756
+        },
+        {
+            "time": 137.7725
+        },
+        {
+            "time": 139.501526
+        },
+        {
+            "time": 143.46347
+        },
+        {
+            "time": 143.852234
+        },
+        {
+            "time": 143.98201
+        },
+        {
+            "time": 143.98201
+        },
+        {
+            "time": 146.405624
+        },
+        {
+            "time": 146.808
+        },
+        {
+            "time": 147.041992
+        },
+        {
+            "time": 147.224716
+        },
+        {
+            "time": 147.381348
+        },
+        {
+            "time": 147.6238
+        },
+        {
+            "time": 147.794769
+        },
+        {
+            "time": 148.012253
+        },
+        {
+            "time": 148.191757
+        },
+        {
+            "time": 148.41188
+        },
+        {
+            "time": 148.7963
+        },
+        {
+            "time": 148.7963
+        },
+        {
+            "time": 148.981689
+        },
+        {
+            "time": 149.174164
+        },
+        {
+            "time": 149.370377
+        },
+        {
+            "time": 149.582016
+        },
+        {
+            "time": 149.9702
+        },
+        {
+            "time": 150.198212
+        },
+        {
+            "time": 150.577545
+        },
+        {
+            "time": 150.761826
+        },
+        {
+            "time": 150.953827
+        },
+        {
+            "time": 151.341415
+        },
+        {
+            "time": 151.554214
+        },
+        {
+            "time": 151.760376
+        },
+        {
+            "time": 151.933365
+        },
+        {
+            "time": 152.120926
+        },
+        {
+            "time": 152.526932
+        },
+        {
+            "time": 152.751831
+        },
+        {
+            "time": 152.751831
+        },
+        {
+            "time": 152.9319
+        },
+        {
+            "time": 153.107788
+        },
+        {
+            "time": 153.321686
+        },
+        {
+            "time": 153.538483
+        },
+        {
+            "time": 153.748871
+        },
+        {
+            "time": 153.935791
+        },
+        {
+            "time": 154.100723
+        },
+        {
+            "time": 154.295685
+        },
+        {
+            "time": 154.522034
+        },
+        {
+            "time": 154.6979
+        },
+        {
+            "time": 154.893539
+        },
+        {
+            "time": 155.103745
+        },
+        {
+            "time": 155.3014
+        },
+        {
+            "time": 155.475555
+        },
+        {
+            "time": 155.690353
+        },
+        {
+            "time": 155.892838
+        },
+        {
+            "time": 156.28
+        },
+        {
+            "time": 156.4787
+        },
+        {
+            "time": 156.86084
+        },
+        {
+            "time": 157.0919
+        },
+        {
+            "time": 157.30278
+        },
+        {
+            "time": 157.672516
+        },
+        {
+            "time": 157.865921
+        },
+        {
+            "time": 158.086624
+        },
+        {
+            "time": 158.274765
+        },
+        {
+            "time": 158.459335
+        },
+        {
+            "time": 158.841583
+        },
+        {
+            "time": 159.054047
+        },
+        {
+            "time": 159.636642
+        },
+        {
+            "time": 160.064072
+        },
+        {
+            "time": 160.2526
+        },
+        {
+            "time": 160.439392
+        },
+        {
+            "time": 160.8394
+        },
+        {
+            "time": 161.021286
+        },
+        {
+            "time": 161.235367
+        },
+        {
+            "time": 161.450043
+        },
+        {
+            "time": 161.632217
+        },
+        {
+            "time": 161.818085
+        },
+        {
+            "time": 161.818085
+        },
+        {
+            "time": 162.057434
+        },
+        {
+            "time": 162.2155
+        },
+        {
+            "time": 162.40181
+        },
+        {
+            "time": 163.192062
+        },
+        {
+            "time": 163.586685
+        },
+        {
+            "time": 163.999512
+        },
+        {
+            "time": 164.187149
+        },
+        {
+            "time": 164.367371
+        },
+        {
+            "time": 164.58757
+        },
+        {
+            "time": 164.773
+        },
+        {
+            "time": 165.171463
+        },
+        {
+            "time": 165.402176
+        },
+        {
+            "time": 165.557159
+        },
+        {
+            "time": 165.957535
+        },
+        {
+            "time": 166.3293
+        },
+        {
+            "time": 166.548233
+        },
+        {
+            "time": 166.766159
+        },
+        {
+            "time": 166.766159
+        },
+        {
+            "time": 167.153656
+        },
+        {
+            "time": 167.352676
+        },
+        {
+            "time": 167.528931
+        },
+        {
+            "time": 167.937424
+        },
+        {
+            "time": 168.1155
+        },
+        {
+            "time": 168.314316
+        },
+        {
+            "time": 168.529
+        },
+        {
+            "time": 168.723633
+        },
+        {
+            "time": 168.938828
+        },
+        {
+            "time": 169.515533
+        },
+        {
+            "time": 169.899841
+        },
+        {
+            "time": 170.269958
+        },
+        {
+            "time": 170.48999
+        },
+        {
+            "time": 170.678909
+        },
+        {
+            "time": 170.894547
+        },
+        {
+            "time": 171.090485
+        },
+        {
+            "time": 171.090485
+        },
+        {
+            "time": 171.472733
+        },
+        {
+            "time": 171.692734
+        },
+        {
+            "time": 172.074417
+        },
+        {
+            "time": 172.074417
+        },
+        {
+            "time": 172.263657
+        },
+        {
+            "time": 172.651031
+        },
+        {
+            "time": 172.8725
+        },
+        {
+            "time": 173.075012
+        },
+        {
+            "time": 173.075012
+        },
+        {
+            "time": 173.462463
+        },
+        {
+            "time": 173.6505
+        },
+        {
+            "time": 174.057648
+        },
+        {
+            "time": 174.244614
+        },
+        {
+            "time": 174.424072
+        },
+        {
+            "time": 174.629471
+        },
+        {
+            "time": 174.8486
+        },
+        {
+            "time": 175.035309
+        },
+        {
+            "time": 175.200592
+        },
+        {
+            "time": 175.423843
+        },
+        {
+            "time": 175.83252
+        },
+        {
+            "time": 176.015244
+        },
+        {
+            "time": 176.207672
+        },
+        {
+            "time": 176.625778
+        },
+        {
+            "time": 176.828751
+        },
+        {
+            "time": 177.030869
+        },
+        {
+            "time": 177.2505
+        },
+        {
+            "time": 177.430084
+        },
+        {
+            "time": 177.808777
+        },
+        {
+            "time": 178.007
+        },
+        {
+            "time": 178.192352
+        },
+        {
+            "time": 178.3845
+        },
+        {
+            "time": 178.584763
+        },
+        {
+            "time": 178.584763
+        },
+        {
+            "time": 178.981583
+        },
+        {
+            "time": 179.1826
+        },
+        {
+            "time": 179.386032
+        },
+        {
+            "time": 179.9677
+        },
+        {
+            "time": 180.157028
+        },
+        {
+            "time": 180.3622
+        },
+        {
+            "time": 180.572861
+        },
+        {
+            "time": 180.761124
+        },
+        {
+            "time": 180.989182
+        },
+        {
+            "time": 181.742767
+        },
+        {
+            "time": 182.135223
+        },
+        {
+            "time": 182.341019
+        },
+        {
+            "time": 182.554489
+        },
+        {
+            "time": 182.918
+        },
+        {
+            "time": 183.125046
+        },
+        {
+            "time": 183.319138
+        },
+        {
+            "time": 183.5238
+        },
+        {
+            "time": 183.721649
+        },
+        {
+            "time": 183.918549
+        },
+        {
+            "time": 184.317154
+        },
+        {
+            "time": 184.5498
+        },
+        {
+            "time": 184.5498
+        },
+        {
+            "time": 184.694946
+        },
+        {
+            "time": 184.88826
+        }
+    ]
+}

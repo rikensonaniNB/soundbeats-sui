@@ -1,4 +1,4 @@
-using Suinet.Wallet;
+
 using UnityEngine;
 using System;
 

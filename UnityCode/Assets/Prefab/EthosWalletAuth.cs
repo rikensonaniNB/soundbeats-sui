@@ -58,9 +58,9 @@ public class EthosWalletAuth : MonoBehaviour
         //Debug.Log("Outout4 : " + request.result.GetType());
         //Debug.Log("Outout5 : " + request.downloadHandler.ToShortString());
 
-        EthosWalletAuthAPIKeyResponse response = JsonUtility.FromJson<EthosWalletAuthAPIKeyResponse>(request.downloadHandler.text);
-        Debug.Log("ID: " + response.id);
-        Debug.Log("Name: " + response.name);
+        //EthosWalletAuthAPIKeyResponse response = JsonUtility.FromJson<EthosWalletAuthAPIKeyResponse>(request.downloadHandler.text);
+        //Debug.Log("ID: " + response.id);
+        //Debug.Log("Name: " + response.name);
 
         Debug.Log($"Auth request successful");
 

@@ -23,6 +23,8 @@ public class GameManager : Singleton<GameManager>
     int tempTokenAmount = 0;
 
     [Header("UI")]
+
+    public GameObject homePanel;
     public Image levelProgress;
     [SerializeField] Text scoreText;
     [SerializeField] Animator scoreAnim;
@@ -43,7 +45,16 @@ public class GameManager : Singleton<GameManager>
 
     [SerializeField] GameObject quitScreen;
     [SerializeField] GameObject pauseButton;
-
+    [SerializeField] GameObject SongList;
+    [SerializeField] Button OpenSongListbtn;
+    public Button PlayBtn;
+    public GameObject ThresoldPanal;
+    public Slider ThresoldSlider;
+    public Text ThresoldValueTxt;
+    public float ThresoldValue;
+    public List<GameObject> SongListObj = new List<GameObject>();
+    public List<Song> SongLists = new List<Song>();
+    public int n;
     protected override void Awake()
     {
         base.Awake();
@@ -54,11 +65,10 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         scoreText.text = score.ToString();
-        gameStartText.SetActive(false);
+        gameStartText.SetActive(true);
         if (scoreAnim.isActiveAndEnabled)
             scoreAnim.SetTrigger("Up");
     }
-
 
     public Text ScoreWin;
 
@@ -155,17 +165,17 @@ public class GameManager : Singleton<GameManager>
         scoreTokens.text = score.ToString() + " Tokens";
 
         LevelGenerator.Instance.RemovePlatforms();
-        if (score > 0)
-        {
-            RequestTokenDto requestTokenDto = new RequestTokenDto
-            {
-                amount = score,
-                recipient = SuiWallet.ActiveWalletAddress
-            };
-            this.tempTokenAmount = requestTokenDto.amount; //TODO: we really should have the amount be part of the response DTO
-            NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
-        }
-        GoogleAnalytics.Instance.SendPlayerLost(score, this.GetGameDuration());
+        //if (score > 0)
+        //{
+        //    RequestTokenDto requestTokenDto = new RequestTokenDto
+        //    {
+        //        amount = score,
+        //        recipient = SuiWallet.ActiveWalletAddress
+        //    };
+        //    this.tempTokenAmount = requestTokenDto.amount; //TODO: we really should have the amount be part of the response DTO
+        //    NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
+        //}
+        //GoogleAnalytics.Instance.SendPlayerLost(score, this.GetGameDuration());
         score = 0;
     }
 
@@ -191,7 +201,57 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("Error on RequestPrivateToken " + Error);
     }
+    public void SelectSong(int Num)
+    {
+        n = Num;
+        OpenThresoldPanal();
+    }
+    public void OnCloseThresoldpanal()
+    {
+        if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Generate")
+        {
+            PlaySong();
+        }
+        else if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Finish")
+        {
+            ThresoldPanal.SetActive(false);
+            LevelGenerator.Instance.OpenFileAndPlaySongWithGameStart(LevelGenerator.Instance.currentSong.name + ".json");
+            foreach (Transform a in SetBox.instance.gameObject.transform)
+            {
+                Destroy(a.gameObject);
+            }
+            ThresoldPanal.GetComponent<Image>().enabled = true;
+            ThresoldPanal.transform.GetChild(0).localPosition = new Vector3(0, 0, 0);
+            ThresoldPanal.transform.GetChild(0).localScale = new Vector3(1f, 1f, 1f);
+            playsongs1.SetActive(true);
+            gameui.SetActive(true);
+            gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            playerObj.SetActive(true);
+            foreach (Transform b in playsongs.gameObject.transform)
+            {
+                b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
+    }
 
+    public GameObject playsongs, playsongs1, gameui, playerObj;
+    public void PlaySong()
+    {
+        SongListObj[n].GetComponent<SongHolder>().PlaySong();
+        SongListObj[n].GetComponent<SongHolder>().PlayButton.interactable = false;
+        homePanel.SetActive(false);
+        ThresoldPanal.GetComponent<Image>().enabled = false;
+        ThresoldPanal.transform.GetChild(0).localPosition = new Vector3(400, 0, 0);
+        ThresoldPanal.transform.GetChild(0).localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        playsongs1.SetActive(false);
+        gameui.SetActive(false);
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        playerObj.SetActive(false);
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        }
+    }
     void ShowLevelProgress()
     {
         songName.text = LevelGenerator.Instance.currentSong.name;
@@ -214,12 +274,12 @@ public class GameManager : Singleton<GameManager>
     {
         //Advertisements.Instance.ShowInterstitial();
         Debug.Log("Revive");
-        if (Advertisements.Instance.IsRewardVideoAvailable())
+        // if (Advertisements.Instance.IsRewardVideoAvailable())
         {
             player.Revive();
             revivePanel.SetActive(false);
             //playButton.SetActive(true);
-            Advertisements.Instance.ShowRewardedVideo(videocomplet);
+            //  Advertisements.Instance.ShowRewardedVideo(videocomplet);
         }
     }
 
@@ -240,8 +300,12 @@ public class GameManager : Singleton<GameManager>
         scoreText.text = "0";
         player.ResetPlayer();
         revivePanel.SetActive(false);
-        //playButton.SetActive(true);
-        LevelGenerator.Instance.StartWithSong();
+        playButton.SetActive(true);
+
+        // LevelGenerator.Instance.StartWithSong();
+        //SongHolder.Instance.PlaySong();
+
+
 
     }
     public void StartGame()
@@ -262,7 +326,38 @@ public class GameManager : Singleton<GameManager>
             SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
         }
         UIManager.Instance.ShowHUD(true);
-        GoogleAnalytics.Instance.SendGameStart(LevelGenerator.Instance.currentSong.name);
+        // GoogleAnalytics.Instance.SendGameStart(LevelGenerator.Instance.currentSong.name);
+    }
+    public void OpenSongSelectList()
+    {
+        if (!SongList.activeSelf)
+        {
+            SongList.SetActive(true);
+            OpenSongListbtn.transform.GetChild(0).GetComponent<Text>().text = "Close List";
+        }
+        else if (SongList.activeSelf)
+        {
+            SongList.SetActive(false);
+            OpenSongListbtn.transform.GetChild(0).GetComponent<Text>().text = "Open List";
+        }
+    }
+    public void OnvlaueChange()
+    {
+        ThresoldValue = ThresoldSlider.value;
+        ThresoldValueTxt.text = ThresoldSlider.value.ToString();
+        Debug.LogError("value:::::" + ThresoldValue);
+    }
+    public void OpenThresoldPanal()
+    {
+        ThresoldSlider.value = 0;
+        ThresoldSlider.maxValue = 2;
+        ThresoldSlider.minValue = 0;
+
+        ThresoldValueTxt.text = ThresoldSlider.value.ToString();
+        if (!ThresoldPanal.activeSelf)
+        {
+            ThresoldPanal.SetActive(true);
+        }
     }
 
     public void IncreaseGameSpeed()
@@ -292,19 +387,25 @@ public class GameManager : Singleton<GameManager>
     {
         reviveAnim.SetTrigger("No");
 
-        Advertisements.Instance.ShowInterstitial();
+        //  Advertisements.Instance.ShowInterstitial();
     }
 
     public void onClose()
     {
+        // SongHolder.Instance.rhythmdata = null;
+        LevelGenerator.Instance.currentSong = null;
+        Debug.Log("on close");
         Time.timeScale = 1;
         gameState = GameState.Menu;
         SoundManager.Instance.StopTrack();
         score = 0;
-        LevelGenerator.Instance.RemovePlatforms();
+        // LevelGenerator.Instance.RemovePlatforms();
         quitScreen.SetActive(false);
         pauseButton.SetActive(true);
         HidePopup();
+        LevelGenerator.Instance.RemovePlatforms();
+        LevelGenerator.Instance.myDataList.dataSave.Clear();
+        // SongHolder.Instance.rhythmdata = null;
         UIManager.Instance.ShowMainMenu();
     }
 
@@ -342,7 +443,7 @@ public class GameManager : Singleton<GameManager>
     public void Menu()
     {
         SceneManager.LoadScene(0);
-        Advertisements.Instance.ShowInterstitial();
+        //  Advertisements.Instance.ShowInterstitial();
     }
 
     public IEnumerator GameStartText()

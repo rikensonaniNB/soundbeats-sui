@@ -22,6 +22,7 @@ public class Patiyu : MonoBehaviour
             // Access the z-position of the GameObject
             float zPosition = obj.transform.position.z;
 
+
             positionSave positionItem = new positionSave();
             positionItem.zPositons = zPosition;
 

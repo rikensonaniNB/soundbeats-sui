@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     [Space]
     [SerializeField] Player player;
     [SerializeField] Pool platformPool;
+    //[SerializeField] Pool platformPoolBox;
     [SerializeField] Pool movingPlatformPool;
     [SerializeField] GameObject starPrefab;
     public int hitindex = 0;
@@ -29,18 +31,20 @@ public class LevelGenerator : Singleton<LevelGenerator>
 #pragma warning restore 0414
     float lastPlatformZ = 0;
     public List<GameObject> platformList = new List<GameObject>();
+    //public List<GameObject> platformListBox = new List<GameObject>();
     public List<int> countlist = new List<int>();
-
+    public GameObject FileNamePrefab;
+    public Transform FileNameparraent;
     //bool checkAnim = true;
     public int randomNum = 0;
 
     public GameObject WinPlace;
     //bool checkrun = true;
     public int count = 1;
-
+    public GameObject FilePanal;
 
     public int beatPerSong => (int)((currentSong.song.length / 60f) * currentSong.BPM);
-    public float distanceBetweenPlatforms => currentSong.song.length / beatPerSong * (player == null ? 10 : player.speed) /*+ hitindex*/;
+    //public float distanceBetweenPlatforms => currentSong.song.length / beatPerSong * (player == null ? 10 : player.speed) /*+ hitindex*/;
     public bool PathIsValid => platformList.Count > 2;
 
     float TurnStep
@@ -63,6 +67,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
         return platformList[id].transform;
     }
 
+    //public Transform GetSpecificPlatformBox(int idBox)
+    //{
+        //return platformListBox[idBox].transform;
+    //}
+
     private void Start()
     {
         Debug.Log("!!!!!!!!!!!!!!!!!" + myDataList);
@@ -70,7 +79,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         //{
         //    countlist.Add(Random.Range(1, 6));
         //}
-        Debug.Log("Log1" + distanceBetweenPlatforms);
+        // Debug.Log("Log1" + distanceBetweenPlatforms);
 
     }
     public int check = 0;
@@ -99,18 +108,29 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
 
             GameObject platform = platformList[2];
+            //GameObject platformBox = platformListBox[2];
             if (platformList[0].tag == "Moving")
+            {
                 movingPlatformPool.ReturnItem(platformList[0]);
+            }
             else
+            {
                 platformPool.ReturnItem(platformList[0]);
+                //platformPool.ReturnItem(platformListBox[0]);
+            }
             platformList.RemoveAt(0);
+            //platformListBox.RemoveAt(0);
 
             GameObject newPlatform = null;
+            //GameObject newPlatformBox = null;
             if (Random.Range(0f, 1f) <= movingPlatformChance && platformCount != beatPerSong - 1)
+            {
                 newPlatform = movingPlatformPool.GetItem;
+            }
             else
             {
                 newPlatform = platformPool.GetItem;
+                //newPlatformBox = platformPool.GetItem;
             }
 
             newPlatform.GetComponent<Animator>().SetTrigger("Spawn");
@@ -118,9 +138,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
             {
                 //nextPlatformIsStart = false;
                 newPlatform.name = "Start";
+                //newPlatformBox.name = "Start";
                 Reposition(WinPlace, platformCount);
                 //WinPlace.transform.position = newPlatform.transform.position;
                 platformList.Add(WinPlace);
+                //platformListBox.Add(WinPlace);
 
                 Debug.Log("winner");
                 //return WinPlace.transform;
@@ -128,7 +150,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
             }
 
             Reposition(newPlatform, platformCount);
+            //Reposition(newPlatformBox, platformCount);
             platformList.Add(newPlatform);
+            //platformListBox.Add(newPlatformBox);
             platformCount++;
             platformsPassed++;
 
@@ -144,24 +168,210 @@ public class LevelGenerator : Singleton<LevelGenerator>
     }
     #endregion
 
-    public void StartWithSong()
+    //public void StartWithSong()
+    //{
+    //    platformCount = 0;
+    //    platformsPassed = 0;
+    //    SetStarIDs();
+    //    player.MakeCharacterReady();
+    //    movingPlatformPool.SetMovingPlatform();
+
+    //    for (int i = 0; i < platformsDrawn; i++)
+    //    {
+    //        GameObject newPlatform = platformPool.GetItem;
+
+    //        Reposition(newPlatform, platformCount);
+    //        platformList.Add(newPlatform);
+    //        Debug.Log(newPlatform);
+
+    //        platformCount++;
+    //        platformsPassed++;
+    //    }
+
+    //    //for (int i = 0; i < myDataList.dataSave.Count-1; i++)
+    //    //{
+    //    //    GameObject myplateform = Instantiate(platformPool.GetItem);
+    //    //    myplateform.transform.position = new Vector3(0, myplateform.transform.position.y, (float)myDataList.dataSave[i].time*2);
+    //    //}
+
+    //}
+    public string[] fileNamess;
+    public void GetFileName()
     {
+
+        fileNamess = GetFileNamesInPersistentDataPath();
+
+        foreach (string fileName in fileNamess)
+        {
+            GameObject Obj = Instantiate(FileNamePrefab, FileNameparraent);
+            Obj.transform.GetChild(0).GetComponent<Text>().text = fileName;
+            Obj.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                OpenFileAndPlaySongWithGameStart(fileName);
+            });
+        }
+        FilePanal.SetActive(true);
+    }
+    public void CloseFilePanal()
+    {
+        FilePanal.SetActive(false);
+        foreach (Transform item in FileNameparraent)
+        {
+            Destroy(item.gameObject);
+        }
+    }
+
+    public void OpenFileAndPlaySongWithGameStart(string filename)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, filename);
+
+        if (File.Exists(filePath))
+        {
+            // Read the JSON file as a string
+            string json = File.ReadAllText(filePath);
+
+            // Deserialize the JSON string into an object
+            FileName data = JsonUtility.FromJson<FileName>(json);
+            myDataList.dataSave.Clear();
+            for (int i = 0; i < data.dataSave.Count; i++)
+            {
+                myDataList.dataSave.Add((float)data.dataSave[i]);
+            }
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            Debug.LogError("Filename" + fileNameWithoutExtension);
+            for (int i = 0; i < GameManager.Instance.SongLists.Count; i++)
+            {
+                if (GameManager.Instance.SongLists[i].name == fileNameWithoutExtension)
+                {
+                    currentSong = GameManager.Instance.SongLists[i];
+                    Debug.LogError(currentSong);
+                }
+            }
+            StartCoroutine(StartWithSong(this.gameObject, UIManager.Instance.menuUI));
+        }
+        else
+        {
+            Debug.LogError("File not found at path: " + filePath);
+        }
+    }
+    public string[] GetFileNamesInPersistentDataPath()
+    {
+        // Get the persistent data path
+        string persistentDataPath = Application.persistentDataPath;
+
+        // Get file names in the persistent data path
+        string[] fileNames = Directory.GetFiles(persistentDataPath);
+
+        // Return only the file names without the path
+        for (int i = 0; i < fileNames.Length; i++)
+        {
+            fileNames[i] = Path.GetFileName(fileNames[i]);
+        }
+
+        return fileNames;
+    }
+    public void OpenFolder()
+    {
+        // Get the persistent data path
+        string folderPath = Application.persistentDataPath;
+
+        // Open the folder in the file explorer
+        Application.OpenURL("file://" + folderPath);
+    }
+    public static char GetLastDigit(string input)
+    {
+        // Iterate over the characters of the input string from the end
+        for (int i = input.Length - 1; i >= 0; i--)
+        {
+            // Check if the current character is a digit
+            if (char.IsDigit(input[i]))
+            {
+                // Return the last digit found
+                return input[i];
+            }
+        }
+
+        // Return '\0' (null character) if no digit is found
+        return '\0';
+    }
+    public string fileName; // Name of the JSON file to be saved
+
+    // Call this method to save the float list to JSON
+    public void SaveFloatList()
+    {
+        // Convert the float list to JSON string
+        string jsonString = JsonUtility.ToJson(myDataList);
+        fileName = currentSong.name + ".json";
+        // Get the persistent data path
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        if (File.Exists(filePath))
+        {
+            //int n = GetLastDigit(fileName);
+            //if (n == 0)
+            //{
+            //    fileName = currentSong.name + "_Beat_" + (n + 1) + ".json";
+            //    filePath = Path.Combine(Application.persistentDataPath, fileName);
+            //    if (File.Exists(filePath))
+            //    {
+            //        fileName = currentSong.name + "_Beat_" + (n + 1) + ".json";
+            //        filePath = Path.Combine(Application.persistentDataPath, fileName);
+            //    }
+
+            //}
+            //else if(n>0)
+            //{
+            //    if (File.Exists(filePath))
+            //    {
+            //        fileName = currentSong.name + "_Beat_" + (n + 1) + ".json";
+            //        filePath = Path.Combine(Application.persistentDataPath, fileName);
+            //    }
+            //}
+            File.Delete(filePath);
+        }
+
+        // Write the JSON string to the file
+        File.WriteAllText(filePath, jsonString);
+
+        Debug.Log("Float list saved to: " + filePath);
+    }
+
+    public IEnumerator StartWithSong(GameObject go1, GameObject go2)
+    {
+        yield return new WaitForSeconds(1);
+
+        GameManager.Instance.ThresoldPanal.SetActive(false);
+        UIManager.Instance.gameUI.SetActive(true);
+        Debug.Log("wait is over");
         platformCount = 0;
         platformsPassed = 0;
         SetStarIDs();
         player.MakeCharacterReady();
         movingPlatformPool.SetMovingPlatform();
+
         for (int i = 0; i < platformsDrawn; i++)
         {
             GameObject newPlatform = platformPool.GetItem;
+            //GameObject newPlatformBox = platformPool.GetItem;
 
             Reposition(newPlatform, platformCount);
+            //Reposition(newPlatformBox, platformCount);
+
             platformList.Add(newPlatform);
+            //platformListBox.Add(newPlatformBox);
+
+            Debug.Log(newPlatform);
 
             platformCount++;
             platformsPassed++;
         }
 
+        //for (int i = 0; i < myDataList.dataSave.Count-1; i++)
+        //{
+        //    GameObject myplateform = Instantiate(platformPool.GetItem);
+        //    myplateform.transform.position = new Vector3(0, myplateform.transform.position.y, (float)myDataList.dataSave[i].time*2);
+        //}
+        // go1.SetActive(false);
+        go2.SetActive(false);
     }
 
     void SetStarIDs()
@@ -193,23 +403,29 @@ public class LevelGenerator : Singleton<LevelGenerator>
     [System.Serializable]
     public class DataSave
     {
-        public float zPositons;
+        //public double time;
+        public float time;
     }
 
     [System.Serializable]
     public class DataList
     {
-        public List<DataSave> dattaSave;
+        // public List<DataSave> dataSave=new List<DataSave>();
+        public List<float> dataSave = new List<float>();
     }
 
     public DataList myDataList = new DataList();
+    public DataList myDataListDEMO = new DataList();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    public int Distance;
     public void Reposition(GameObject platform, int id)
     {
         float posX = id > 3 ? Random.Range(-levelWidth, levelWidth) : 0;
+        float temp1 = (float)myDataList.dataSave[0] * Distance;
+        //Debug.LogError("temp after" + temp1);
 
+        lastPlatformZ = temp1;
         platform.transform.position = new Vector3(posX, platform.transform.position.y, lastPlatformZ);
         platform.transform.localRotation = Quaternion.Euler(new Vector3(0, /*Random.Range(0, 360)*/0, 0));
 
@@ -217,20 +433,19 @@ public class LevelGenerator : Singleton<LevelGenerator>
         {
 
             //lastPlatformZ += distanceBetweenPlatforms + 7;
-
-            float temp = myDataList.dattaSave[0].zPositons;
+            float temp = (float)myDataList.dataSave[0] * Distance;
 
             lastPlatformZ = temp;
-            myDataList.dattaSave.RemoveAt(0);
+            myDataList.dataSave.RemoveAt(0);
             Debug.Log("LAST PLATFORM Z - 1 :-" + lastPlatformZ);
         }
 
         else
         {
-            float temp = myDataList.dattaSave[0].zPositons;
+            float temp = (float)myDataList.dataSave[0] * Distance;
 
             lastPlatformZ = temp;
-            myDataList.dattaSave.RemoveAt(0);
+            myDataList.dataSave.RemoveAt(0);
             Debug.Log("LAST PLATFORM Z - 2 :-" + lastPlatformZ);
             //lastPlatformZ += distanceBetweenPlatforms - hitindex;
 
@@ -239,7 +454,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         if (CheckForStar())
         {
-            //GameObject star = Instantiate(starPrefab, platform.transform);
+            GameObject star = Instantiate(starPrefab, platform.transform);
         }
 
 
@@ -262,10 +477,14 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         for (int i = 0; i < beatPerSong; i++)
         {
-            Gizmos.DrawSphere(new Vector3(0, 0, distanceBetweenPlatforms * i), 0.5f);
+            //Gizmos.DrawSphere(new Vector3(0, 0, distanceBetweenPlatforms * i), 0.5f);
         }
     }
-
+    [System.Serializable]
+    public class FileName
+    {
+        public List<double> dataSave;
+    }
 
 
 }

@@ -76,7 +76,7 @@ public class callController : MonoBehaviour
         TimePanel.SetActive(false);
 
         Mainmenu.SetActive(true);
-        Advertisements.Instance.ShowInterstitial();
+       // Advertisements.Instance.ShowInterstitial();
 
         //print("5");
     }

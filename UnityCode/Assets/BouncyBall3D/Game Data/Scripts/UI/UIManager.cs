@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
    // public GameObject HUDPanel;
 
-    [SerializeField] GameObject menuUI;
-    [SerializeField] GameObject gameUI;
+    public GameObject menuUI;
+    public GameObject gameUI;
+    
  
    // [SerializeField] Text bestScoreText;
     //[SerializeField] Text ScoreText;
@@ -19,6 +21,8 @@ public class UIManager : Singleton<UIManager>
     public void ShowMainMenu()
     {
         menuUI.SetActive(true);
+
+        Debug.Log("+++++++++++"+LevelGenerator.Instance.currentSong);
         gameUI.SetActive(false);
     }
 

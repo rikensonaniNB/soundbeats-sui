@@ -6,6 +6,7 @@ public class Pool : MonoBehaviour
 {
     [SerializeField] int startAmount = 1;
     [SerializeField] GameObject itemPrefab;
+    //[SerializeField] GameObject itemPrefabBox;
 
     Queue<GameObject> poolQueue = new Queue<GameObject>();
 
@@ -33,9 +34,14 @@ public class Pool : MonoBehaviour
         for (int i = 0; i < amount; i++)
         {
             GameObject newItem = Instantiate(itemPrefab, transform);
+            //GameObject newItemBox = Instantiate(itemPrefabBox, transform);
             Debug.Log("***************************Platform***************************");
+
             newItem.SetActive(false);
+            //newItemBox.SetActive(false);
+
             poolQueue.Enqueue(newItem);
+            //poolQueue.Enqueue(newItemBox);
         }
     }
 
