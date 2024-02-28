@@ -215,9 +215,10 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     /// <summary>
-    /// Starts an auth session, which will return the message to be signed for verification, and a session ID. 
+    /// Verifies an EVM wallet signature of a message for a session ID. The session must have been started already, and have a valid session id 
+    /// that is not expired. 
     /// </summary>
-    /// <param name="evmWallet">User's EVM wallet address</param>
+    /// <param name="body">Contains the wallet address, message & signature to verify, and other parameters.</param>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
     public void VerifyAuthSession(AuthVerifyDto body, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
