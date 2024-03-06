@@ -11,7 +11,7 @@ public class SelectSong : MonoBehaviour
 
     public void init(string songname, string songdetail, Sprite image, Song _song)
     {
-        Name.text = $"<size=30><b>{songname}</b></size>\n{songdetail}";
+        Name.text = $"<size=16><b>{songname}</b></size>\n{songdetail}";
         ThumbnailImage.sprite = image;
     }
 
