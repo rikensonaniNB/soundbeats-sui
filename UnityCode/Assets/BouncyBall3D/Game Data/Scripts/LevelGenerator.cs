@@ -234,7 +234,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             FileName data = JsonUtility.FromJson<FileName>(json);
             myDataList.dataSave.Clear();
             for (int i = 0; i < data.dataSave.Count; i++)
-            {
+            {   
                 myDataList.dataSave.Add((float)data.dataSave[i]);
             }
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
@@ -339,7 +339,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         yield return new WaitForSeconds(1);
 
-        GameManager.Instance.ThresoldPanal.SetActive(false);
+        GameManager.Instance.ThresoldPanel.SetActive(false);
         UIManager.Instance.gameUI.SetActive(true);
         Debug.Log("wait is over");
         platformCount = 0;
@@ -415,7 +415,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     }
 
     public DataList myDataList = new DataList();
-    public DataList myDataListDEMO = new DataList();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public int Distance;

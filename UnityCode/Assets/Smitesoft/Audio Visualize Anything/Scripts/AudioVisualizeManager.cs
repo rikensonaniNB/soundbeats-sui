@@ -61,6 +61,7 @@ public class AudioVisualizeManager : MonoBehaviour
 
     [Range(0.01f, .1f)]
     [SerializeField] private float refreshTime = 1f;
+
     [Range(0f, 1f)]
     [SerializeField] private float PushMultiplierPartOne = 0f;
 
@@ -86,8 +87,15 @@ public class AudioVisualizeManager : MonoBehaviour
     private void Start()
     {
         visualizeManager = this;
+    }
 
-
+    private void Update()
+    {
+        refreshTime = GameManager.instance.RefreshTimeValue;
+        PushMultiplierPartOne = GameManager.instance.PushMultiplierPartOneValue;
+        PushMultiplierPartTwo = GameManager.instance.PushMultiplierPartTwoValue;
+        minOutput = GameManager.instance.MinOutputValue;
+        maxOutput= GameManager.instance.MaxOutputValue;
     }
     public void StartBeatDetect()
     {
@@ -366,7 +374,7 @@ public class AudioVisualizeManager : MonoBehaviour
 
             ///////////////////////////////////////// SET BOX /////////////////////////////////////////
             Debug.Log($"<color=green> CURRENT_PLAY_BACK_TIME : </color> " + BeatDetect.beatDetect.currentTime + $" <color=green> SECONDS </color>");
-            SetBox.instance.boxZPos = BeatDetect.beatDetect.currentTime*LevelGenerator.Instance.Distance;
+            SetBox.instance.boxZPos = BeatDetect.beatDetect.currentTime * LevelGenerator.Instance.Distance;
             SetBox.instance.SetBoxUseList();
 
         }

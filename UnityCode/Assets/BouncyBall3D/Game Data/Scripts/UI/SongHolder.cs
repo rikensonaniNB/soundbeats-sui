@@ -119,7 +119,7 @@ public class SongHolder : MonoBehaviour
     {
         Debug.Log("PlaySong " + song.name);
         PlayButton.interactable = false;
-        GameManager.Instance.ThresoldSlider.interactable = false;
+        //GameManager.Instance.ThresoldSlider.interactable = false;
         songgo = true;
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         //UIManager.Instance.CloseMenu();
