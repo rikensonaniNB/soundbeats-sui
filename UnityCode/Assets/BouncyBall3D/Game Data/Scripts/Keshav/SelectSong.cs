@@ -8,6 +8,7 @@ public class SelectSong : MonoBehaviour
     public Image ThumbnailImage;
     private Song _song;
     public Toggle toggle;
+    public SongDataSet _songDataSet;
 
     public void init(string songname, string songdetail, Sprite image, Song _song)
     {
@@ -20,6 +21,13 @@ public class SelectSong : MonoBehaviour
         if (toggle.isOn)
         {
             LevelGenerator.Instance.currentSong = _song;
+            foreach(SongData data in _songDataSet.Songs)
+            {
+                if (gameObject.name == data.openPlayPanel.name)
+                {
+                    data.openPlayPanel.SetActive(true);
+                }
+            }
         }
     }
 

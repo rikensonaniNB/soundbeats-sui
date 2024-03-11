@@ -12,11 +12,8 @@ public class GetLeaderboard : MonoBehaviour
     public GameObject prefabObj;
     public Transform parentObj;
 
-    public static GetLeaderboard _instance;
-
     void Start()
     {
-        _instance = this;
     }
 
     /// <summary>
@@ -24,9 +21,9 @@ public class GetLeaderboard : MonoBehaviour
     /// in the display table. 
     /// </summary>
     [ContextMenu("Get Leaderboard")]
-    public void GetLeaderboardAPI(String sprintId = "")
+    public void GetLeaderboardAPI()
     {
-        NetworkManager.Instance.GetLeaderboard(OnGetLeaderboardsSuccess, OnGetLeaderboardError, sprintId);
+        NetworkManager.Instance.GetLeaderboard(OnGetLeaderboardsSuccess, OnGetLeaderboardError);
     }
 
     /// <summary>
@@ -60,9 +57,9 @@ public class GetLeaderboard : MonoBehaviour
     /// Executes when the API call to get leaderboard scores succeeds. 
     /// </summary>
     /// <param name="response">API response object</param>
-    private void OnGetLeaderboardsSuccess(LeaderboardResponseDto response)
+    private void OnGetLeaderboardsSuccess(LeaderboardResponseDto response) 
     {
-        ClearList();
+        ClearList(); 
         DisplayList(response);
     }
 
@@ -70,7 +67,7 @@ public class GetLeaderboard : MonoBehaviour
     /// Executes when the API call to get leaderboard scores fails.
     /// </summary>
     /// <param name="error">Error message</param>
-    private void OnGetLeaderboardError(string error)
+    private void OnGetLeaderboardError(string error) 
     {
         //TODO: (MED) do on error? 
     }

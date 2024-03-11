@@ -16,4 +16,5 @@ public class SongData
     public string score;
     public int stars;
     public Song currentSong;
+    public GameObject openPlayPanel;
 }

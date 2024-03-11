@@ -8,17 +8,15 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using WalletConnectSharp.Common.Model.Errors;
-using WalletConnectSharp.Common.Utils;
-using WalletConnectSharp.Network.Models;
-using WalletConnectUnity.Core;
-using UnityEngine.Scripting;
-using WalletConnectUnity.Modal;
 
 public class UIController : MonoBehaviour
 {
     private const int SIGNING_MESSAGE_LENGTH = 32;
     private static string MessageToSign = "";
+
+    //call to request the front end Javascript code to sign a message 
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void CallSuiSignMessage(string msg);
 
     #region UI Components 
 
@@ -223,7 +221,7 @@ public class UIController : MonoBehaviour
                 dto.failureReason = "";
                 this.OnSuccessfulVerifySignature(dto);
 #else
-                OnPersonalSignButton();
+                CallSuiSignMessage(MessageToSign);
 #endif
             }
             catch (Exception e)
@@ -381,45 +379,6 @@ public class UIController : MonoBehaviour
 
     }
 
-    public void EVMSelect(bool value)
-    {
-
-    }
-
-    public void SUISelect(bool value)
-    {
-
-    }
-
-    public async void OnPersonalSignButton()
-    {
-        var session = WalletConnect.Instance.ActiveSession;
-        Debug.Log($"[WalletConnectModalSample] session: {session}");
-
-        var sessionNamespace = session.Namespaces;
-        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
-            .Address;
-
-        Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
-        Debug.Log($"[WalletConnectModalSample] address: {address}");
-
-        var data = new PersonalSign(MessageToSign, address);
-        Debug.Log($"[WalletConnectModalSample] data: {data}");
-        try
-        {
-            var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
-            Debug.Log($"[WalletConnectModalSample] result: {result}");
-
-            SignMessageCallback(result);
-            this.ShowError($"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
-        }
-        catch (WalletConnectException e)
-        {
-            this.ShowError($"Personal Sign Request Error: {e.Message}");
-            Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
-        }
-    }
-
     private void CreateNFT(string name, string imageUrl)
     {
         CreateNFTRequestDto createNFTRequest = new CreateNFTRequestDto();
@@ -471,7 +430,6 @@ public class UIController : MonoBehaviour
             //retrieve the wallet address and signature 
             string signature = args[0];
             string address = args[1];
-
 
             Debug.Log("signed message:" + signature);
             Debug.Log("wallet address:" + address);
@@ -803,19 +761,4 @@ public class UIController : MonoBehaviour
     }
 
     #endregion 
-}
-
-[RpcMethod("personal_sign")]
-[RpcRequestOptions(Clock.ONE_MINUTE, 99998)]
-public class PersonalSign : List<string>
-{
-    public PersonalSign(string hexUtf8, string account) : base(new[] { hexUtf8, account })
-    {
-
-    }
-
-    [Preserve]
-    public PersonalSign()
-    {
-    }
 }
