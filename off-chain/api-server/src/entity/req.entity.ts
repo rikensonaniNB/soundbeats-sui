@@ -142,28 +142,6 @@ export class GetLeaderboardSprintResponseDto {
 
 /// --- AUTH --- /// 
 
-//TODO: make type-agnostic (i.e. not EVM-specific)
-//TODO: need this? 
-export class RegisterAccountDto {
-    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
-    authId: string
-    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: 'evm' | 'sui'
-}
-
-//TODO: make type-agnostic (i.e. not EVM-specific)
-//TODO: need this? 
-export class RegisterAccountResponseDto {
-    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
-    authId: string
-    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: string
-    @ApiProperty({ description: 'SUI wallet address' })
-    suiWallet: string
-    @ApiProperty({ description: 'Success or failure of the operation' })
-    status: string
-}
-
 //TODO: need this? 
 export class GetAccountDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
@@ -180,47 +158,33 @@ export class GetAccountResponseDto {
     status: string
 }
 
-//TODO: need this? 
-export class PutAccountDto {
-    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
-    authId: string
-    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
-    authType: 'evm' | 'sui'
-    @ApiProperty({ description: 'SUI wallet address' })
-    suiWallet: string
-    @ApiProperty({ description: 'Success or failure of the operation' })
-    status: string
-}
-
-//TODO: need this? 
-export class PutAccountResponseDto {
-    @ApiProperty({ description: 'Success or failure of the operation' })
-    status: string
-}
-
-//TODO: descriptions
 export class StartAuthSessionDto {
     @ApiProperty({ description: 'EVM wallet address' })
     evmWallet: string
 }
 
-//TODO: descriptions
 export class StartAuthSessionResponseDto {
+    @ApiProperty({ description: 'The unique id of the created session' })
     sessionId: string
+    @ApiProperty({ description: 'A message for the client to sign as a challenge' })
     messageToSign: string
 }
 
-//TODO: descriptions
 export class AuthVerifyDto {
+    @ApiProperty({ description: 'Wallet address' })
     wallet: string
+    @ApiProperty({ description: 'Wallet type can be evm or sui' })
     walletType: 'sui' | 'evm'
+    @ApiProperty({ description: 'The action being taken; verify signature, or update account' })
     action: 'verify' | 'update'
+    @ApiProperty({ description: 'The unique id of this session' })
     sessionId: string
+    @ApiProperty({ description: 'The message that was signed by the client' })
     messageToSign: string
+    @ApiProperty({ description: 'The message signature as signed by caller' })
     signature: string
 }
 
-//TODO: descriptions
 export class AuthVerifyResponseDto {
     @ApiProperty({ description: 'Whether or not the signature was verified' })
     verified: boolean

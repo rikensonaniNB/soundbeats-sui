@@ -12,6 +12,7 @@ import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager'
 import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
+//import Web3 from 'web3';
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -31,9 +32,11 @@ export class SuiService {
     authManager: IAuthManager
     network: string
     logger: AppLogger
+    //web3: Web3
 
     constructor() {
         //derive keypair
+        //this.web3 = new Web3('');
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
         this.logger = new AppLogger('sui.service');
@@ -80,12 +83,6 @@ export class SuiService {
                 }
             });
         }
-        
-        this.test();
-    }
-    
-    async test(): Promise<void> {
-        console.log(await this.startAuthSession("0x112244556677889900112244556677889900"));
     }
 
     createWallet(): { address: string, privateKey: string } {
@@ -250,10 +247,13 @@ export class SuiService {
         sessionId: string,
         walletType: 'evm' | 'sui', 
         walletPubKey: string,
-        action: 'update' | 'verify', 
+        action: 'update' | 'verify',
         signature: string, 
         message: string): Promise<{ 
-            success: boolean, failureReason: string, wallet: string; network: string, verified: boolean
+            success: boolean, 
+            failureReason: string, 
+            wallet: string; network: string, 
+            verified: boolean
         }> {
         
         const output = {
@@ -300,9 +300,21 @@ export class SuiService {
         let suiWallet: string = walletType == 'sui' ? output.wallet : null; 
         this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
 
-        //TODO: update the auth record if the action is 'update'
-        if (action == 'update') {
-            this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
+        //update the auth record if the action is 'update'
+        if (action == 'update' && walletType == 'evm') {
+            //does the record exist? 
+            const authRecord: IAuthRecord = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
+            
+            //if exixsts, update it 
+            if (authRecord) {
+                if (authRecord.suiWallet != suiWallet) {
+                    await this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
+                }
+            }
+            //otherwise, register it 
+            else {
+                await this.registerAccountEvm(evmWallet); 
+            }
         }
         
         return output;
@@ -693,8 +705,13 @@ export class SuiService {
         return { address, verified };
     }
 
-    async _verifyEvmSignature(walletPubKey: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
-        return { address: '', verified: true };
+    async _verifyEvmSignature(expectedAddress: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
+        //const msgHash = this.web3.utils.soliditySha3(message);
+        //const signingAddress = await this.web3.eth.accounts.recover(msgHash, signature);
+
+        //const verified = signingAddress.toLowerCase() === expectedAddress.toLowerCase();
+        //return { address: signingAddress, verified: verified };
+        return { address: expectedAddress, verified: true }
     }
 
     async _verifySessionId(sessionId: string): Promise<boolean> {

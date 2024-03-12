@@ -22,12 +22,8 @@ import {
     AddLeaderboardResponseDto,
     GetLeaderboardSprintDto,
     GetLeaderboardSprintResponseDto,
-    RegisterAccountDto,
-    RegisterAccountResponseDto,
     GetAccountDto,
-    GetAccountResponseDto,
-    PutAccountDto,
-    PutAccountResponseDto
+    GetAccountResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -231,13 +227,14 @@ export class AppController {
     }
 
     // *** AUTH and REGISTRATION *** 
-
-    @Get('/api/v1/auth')
-    async startAuthSession(@Query() query: StartAuthSessionDto): Promise<StartAuthSessionResponseDto> {
-        const logString = `GET /api/v1/auth ${JSON.stringify(query)}`;
+    
+    @Post('/api/v1/auth')
+    async startAuthSession(@Query() body: StartAuthSessionDto): Promise<StartAuthSessionResponseDto> {
+        const logString = `POST /api/v1/auth ${JSON.stringify(body)}`;
         this.logger.log(logString);
         try {
-            let { evmWallet } = query;
+            let { evmWallet } = body;
+            evmWallet = "0x33bae7fd239ede58f04ef56d7f2b78b1b61b6312";
             if (evmWallet == null || evmWallet == '') {
                 throw new Error('evmWallet cannot be null or empty')
             }
@@ -277,32 +274,6 @@ export class AppController {
 
             const output = await this.suiService.verifySignature2(sessionId, walletType, wallet, action, signature, messageToSign);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-            return output;
-        }
-        catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-        }
-    }
-
-    //TODO: need this? 
-    @ApiOperation({ summary: 'Register a new Sui wallet using an EVM wallet' })
-    @Post('/api/v1/accounts')
-    async registerAccount(@Body() body: RegisterAccountDto): Promise<RegisterAccountResponseDto> {
-        const logString = `POST /api/v1/accounts ${JSON.stringify(body)}`;
-        this.logger.log(logString);
-        try {
-            let { authId, authType } = body;
-            if (authId == null || authId == '') {
-                throw new Error('EVM address cannot be null or empty')
-            }
-            if (authType == null) {
-                throw new Error('Auth type cannot be null or empty')
-            }
-
-            //TODO: make this call more generic
-            const output = await this.suiService.registerAccountEvm(authId);
-            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
-
             return output;
         }
         catch (e) {
