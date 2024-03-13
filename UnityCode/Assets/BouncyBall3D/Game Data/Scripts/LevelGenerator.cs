@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +32,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 #pragma warning restore 0414
     float lastPlatformZ = 0;
     public List<GameObject> platformList = new List<GameObject>();
-    //public List<GameObject> platformListBox = new List<GameObject>();
     public List<int> countlist = new List<int>();
     public GameObject FileNamePrefab;
     public Transform FileNameparraent;
@@ -41,7 +41,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public GameObject WinPlace;
     //bool checkrun = true;
     public int count = 1;
-    public GameObject FilePanel;
+    //public GameObject FilePanel;
 
     public int beatPerSong => (int)((currentSong.song.length / 60f) * currentSong.BPM);
     public float distanceBetweenPlatforms => currentSong.song.length / beatPerSong * (player == null ? 10 : player.speed) /*+ hitindex*/;
@@ -69,7 +69,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
     //public Transform GetSpecificPlatformBox(int idBox)
     //{
-        //return platformListBox[idBox].transform;
+    //return platformListBox[idBox].transform;
     //}
 
     private void Start()
@@ -198,23 +198,32 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public string[] fileNamess;
     public void GetFileName()
     {
-
+        UIController.instance.Mint_NFTScreen.SetActive(true);
         fileNamess = GetFileNamesInPersistentDataPath();
-
         foreach (string fileName in fileNamess)
         {
             GameObject Obj = Instantiate(FileNamePrefab, FileNameparraent);
-            Obj.transform.GetChild(0).GetComponent<Text>().text = fileName;
-            Obj.GetComponent<Button>().onClick.AddListener(() =>
+            Obj.name = fileName;
+            Obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileName;
+            Obj.GetComponent<Toggle>().onValueChanged.AddListener(delegate
             {
-                OpenFileAndPlaySongWithGameStart(fileName);
+                OpenJsonSongPlayPanel(fileName);
             });
         }
-        FilePanel.SetActive(true);
+    }
+    public GameObject jsonPlaySongPopup;
+    public void OpenJsonSongPlayPanel(string filenameJson)
+    {
+       
+        jsonPlaySongPopup.transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = filenameJson;
+        jsonPlaySongPopup.transform.GetChild(0).GetChild(2).GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OpenFileAndPlaySongWithGameStart(filenameJson);
+        });
+        jsonPlaySongPopup.SetActive(true);
     }
     public void CloseFilePanal()
     {
-        FilePanel.SetActive(false);
         foreach (Transform item in FileNameparraent)
         {
             Destroy(item.gameObject);
@@ -234,7 +243,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             FileName data = JsonUtility.FromJson<FileName>(json);
             myDataList.dataSave.Clear();
             for (int i = 0; i < data.dataSave.Count; i++)
-            {   
+            {
                 myDataList.dataSave.Add((float)data.dataSave[i]);
             }
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
@@ -344,7 +353,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         Debug.Log("wait is over");
         platformCount = 0;
         platformsPassed = 0;
-        SetStarIDs();
+        //SetStarIDs();
         player.MakeCharacterReady();
         movingPlatformPool.SetMovingPlatform();
 
