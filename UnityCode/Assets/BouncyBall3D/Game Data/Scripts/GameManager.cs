@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using UnityEditor;
-using System.Reflection;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -20,6 +18,7 @@ public class GameManager : Singleton<GameManager>
 
     public GameState gameState;
     public bool isSpeedupActive = false;
+
     public Player player;
     float songProgress = 0;
     public bool isPausePopupOpen = false;
@@ -27,7 +26,6 @@ public class GameManager : Singleton<GameManager>
     private int previousGameSpeed = 0;
 
     [Header("UI")]
-
     public Image levelProgress;
     [SerializeField] PowerupProgress powerupTimer;
     [SerializeField] Text scoreText;
@@ -52,28 +50,33 @@ public class GameManager : Singleton<GameManager>
     public Text ScoreWin;
     public LevelGenerator LevelGenerator;
 
-    [Header("<color=yellow>Changes")]
-    [Space(20)]
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public GameObject homePanel;
-    [SerializeField] GameObject SongList;
-    //[SerializeField] Button OpenSongListbtn;
+    [Space(25)]
+    [Header("          PRODUCER")]
+    [Space(25)]
+    public bool producer;
+    [Space]
+
     public Button PlayBtn;
-
-    public GameObject ThresoldPanel;
-    [Header("<color=yellow>Thresold")]
+    public GameObject producerManagerPopup;
+    [Header("Thresold")]
     [Space]
     public Slider ThresoldSlider;
     public Text ThresoldValueTxt;
     public float ThresoldValue;
 
-    [Header("<color=yellow>RefreshTime")]
+    [Header("RefreshTime")]
     [Space]
     public Slider RefreshTimeSlider;
     public Text RefreshTimeValueTxt;
     public float RefreshTimeValue;
 
-    [Header("<color=yellow>Output Multiplier")]
+    [Header("Output Multiplier")]
     [Space]
     public Slider PushMultiplierPartOneSlider;
     public Text PushMultiplierPartOneValueTxt;
@@ -83,7 +86,7 @@ public class GameManager : Singleton<GameManager>
     public Text PushMultiplierPartTwoValueTxt;
     public float PushMultiplierPartTwoValue;
 
-    [Header("<color=yellow>MinOutput_AND_MaxOutput")]
+    [Header("MinOutput_AND_MaxOutput")]
     [Space]
     public Slider MinOutputSlider;
     public Text MinOutputValueTxt;
@@ -96,8 +99,12 @@ public class GameManager : Singleton<GameManager>
     public List<GameObject> SongListObj = new List<GameObject>();
     public List<Song> SongLists = new List<Song>();
     public int n;
-    public GameObject playsongs, playsongs1, gameui, playerObj, wallet, homeSceen, selectCharacter;
+    public GameObject playsongs;
+    public GameObject platform;
+    public GameObject playerObj;
+    public GameObject selectCharacter;
     public static GameManager instance;
+
     protected override void Awake()
     {
         base.Awake();
@@ -106,15 +113,13 @@ public class GameManager : Singleton<GameManager>
         instance = this;
     }
 
-
     private void Start()
     {
         scoreText.text = score.ToString();
-        gameStartText.SetActive(true);
+        gameStartText.SetActive(false);
         if (scoreAnim.isActiveAndEnabled)
             scoreAnim.SetTrigger("Up");
     }
-
 
     public int GetGameDuration()
     {
@@ -199,8 +204,7 @@ public class GameManager : Singleton<GameManager>
         if (score > PlayerPrefsExtra.GetInt(LevelGenerator.Instance.currentSong.name))
         {
             PlayerPrefsExtra.SetInt(LevelGenerator.Instance.currentSong.name, score);
-        }
-        //Debug.Log(PlayerPrefsExtra.GetInt(songName.name));
+        }        //Debug.Log(PlayerPrefsExtra.GetInt(songName.name));
 
 
         PlayerPrefsExtra.Save();
@@ -210,17 +214,17 @@ public class GameManager : Singleton<GameManager>
         scoreTokens.text = score.ToString() + " Tokens";
 
         LevelGenerator.Instance.RemovePlatforms();
-        //if (score > 0)
-        //{
-        //    RequestTokenDto requestTokenDto = new RequestTokenDto
-        //    {
-        //        amount = score,
-        //        recipient = SuiWallet.ActiveWalletAddress
-        //    };
-        //    this.tempTokenAmount = requestTokenDto.amount; //TODO: we really should have the amount be part of the response DTO
-        //    NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
-        //}
-        //GoogleAnalytics.Instance.SendPlayerLost(score, this.GetGameDuration());
+        if (score > 0)
+        {
+            RequestTokenDto requestTokenDto = new RequestTokenDto
+            {
+                amount = score,
+                recipient = SuiWallet.ActiveWalletAddress
+            };
+            this.tempTokenAmount = requestTokenDto.amount; //TODO: we really should have the amount be part of the response DTO
+            NetworkManager.Instance.RequestToken(requestTokenDto, OnSuccessfulRequestPrivateToken, OnErrorRequestPrivateToken);
+        }
+        GoogleAnalytics.Instance.SendPlayerLost(score, this.GetGameDuration());
         score = 0;
     }
 
@@ -246,10 +250,206 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("Error on RequestPrivateToken " + Error);
     }
+
+    void ShowLevelProgress()
+    {
+        songName.text = LevelGenerator.Instance.currentSong.name;
+        songNameWin.text = LevelGenerator.Instance.currentSong.name;
+
+        levelScore.text = score.ToString();
+        for (int i = 0; i < 3; i++)
+        {
+            if (i < star)
+                stars[i].color = activeStars;
+            else
+                stars[i].color = inactiveStars;
+        }
+    }
+
+    void videocomplet(bool copmlet) { }
+
+    [ContextMenu("Revive")]
+    public void Revive()
+    {
+        //Advertisements.Instance.ShowInterstitial();
+        Debug.Log("Revive");
+        if (Advertisements.Instance.IsRewardVideoAvailable())
+        {
+            player.Revive();
+            revivePanel.SetActive(false);
+            //playButton.SetActive(true);
+            Advertisements.Instance.ShowRewardedVideo(videocomplet);
+        }
+    }
+
+    [ContextMenu("ReviveSucceed")]
+    public void ReviveSucceed(bool completed)
+    {
+        Debug.Log("ReviveSucceed");
+        if (completed)
+        {
+            player.Revive();
+            revivePanel.SetActive(false);
+            //playButton.SetActive(true);
+        }
+    }
+    public void HidePopup()
+    {
+        Debug.Log("HidePopup");
+        scoreText.text = "0";
+        player.ResetPlayer();
+        revivePanel.SetActive(false);
+        //playButton.SetActive(true);
+        LevelGenerator.Instance.StartWithSong();
+
+    }
+    public void StartGame()
+    {
+        this.gameStartTime = System.DateTime.Now;
+        Debug.Log("StartGame" + CurrentGameState);
+        if (CurrentGameState == GameState.Menu)
+        {
+            star = 0;
+            gameState = GameState.Gameplay;
+            player.StartMoving();
+            SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
+        }
+        else if (CurrentGameState == GameState.Lost)
+        {
+            gameState = GameState.Gameplay;
+            player.StartMoving();
+            SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
+        }
+        UIManager.Instance.ShowHUD(true);
+        GoogleAnalytics.Instance.SendGameStart(LevelGenerator.Instance.currentSong.name);
+    }
+
+    public void IncreaseGameSpeed()
+    {
+        if (gameSpeed < 5)
+            gameSpeed++;
+    }
+
+    public void IncreaseGameSpeedForNSec()
+    {
+        if (gameState == GameState.Gameplay)
+        {
+            previousGameSpeed = gameSpeed;
+            gameSpeed += 3;
+            powerupTimer.gameObject.SetActive(true);
+            Invoke("resetGameSpeedToPrevious", PowerUp.powerUpTimer);
+        }
+    }
+
+    public void resetGameSpeedToPrevious()
+    {
+        Debug.Log("Resetting to Previous state");
+        gameSpeed = previousGameSpeed;
+    }
+
+    public void AddScore(bool perfect)
+    {
+        if (perfect)
+            score += 10;
+        else
+            score += 5;
+
+        scoreText.text = score.ToString();
+        scoreAnim.SetTrigger("Up");
+    }
+    public void UpdateSongProgress(float value)
+    {
+        songProgress = value;
+        levelProgress.fillAmount = Mathf.Lerp(levelProgress.fillAmount, value, 0.1f);
+    }
+
+    public void NoThanks()
+    {
+        reviveAnim.SetTrigger("No");
+
+        Advertisements.Instance.ShowInterstitial();
+    }
+
+    public void onClose()
+    {
+        Time.timeScale = 1;
+        gameState = GameState.Menu;
+        SoundManager.Instance.StopTrack();
+        score = 0;
+        LevelGenerator.Instance.RemovePlatforms();
+        quitScreen.SetActive(false);
+        pauseButton.SetActive(true);
+        HidePopup();
+        UIManager.Instance.ShowMainMenu();
+    }
+
+    public void onNO()
+    {
+        quitScreen.SetActive(false);
+        Time.timeScale = 1;
+        SoundManager._Instance.ResumeMusic();
+        GameManager.Instance.gameState = GameState.Gameplay;
+        pauseButton.SetActive(true);
+        GameManager.Instance.isPausePopupOpen = false;
+    }
+
+    public void onPause()
+    {
+        GameManager.Instance.isPausePopupOpen = true;
+        pauseButton.SetActive(false);
+        quitScreen.SetActive(true);
+        GameManager.Instance.gameState = GameState.Pause;
+        Time.timeScale = 0;
+    }
+
+    public void OnSendingToWallet()
+    {
+        HidePopup();
+        UIManager.Instance.ShowNFTWallet();
+    }
+
+    public void OnSendingCharacterSelection()
+    {
+        HidePopup();
+        UIManager.Instance.ShowPlayerSelection();
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene(0);
+        Advertisements.Instance.ShowInterstitial();
+    }
+
+    public IEnumerator GameStartText()
+    {
+        gameStartText.SetActive(true);
+        yield return new WaitForSecondsRealtime(5);
+        //gameStartText.SetActive(false);
+    }
+
+    public void GameStartTextHide()
+    {
+        gameStartText.SetActive(false);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public void SelectSong(int Num)
     {
         n = Num;
         OpenThresoldPanal();
+        foreach (Transform platformPool in LevelGenerator.Instance.platformPool.transform)
+        {
+            Debug.Log(platformPool.name);
+        }
+        foreach (Transform movingPlatformPool in LevelGenerator.Instance.movingPlatformPool.transform)
+        {
+            Debug.Log(movingPlatformPool.name);
+        }
     }
 
     public void OpenThresoldPanal()
@@ -285,19 +485,21 @@ public class GameManager : Singleton<GameManager>
         MaxOutputSlider.maxValue = 4f;
 
 
-        if (!ThresoldPanel.activeSelf)
+        if (!producerManagerPopup.activeSelf)
         {
-            ThresoldPanel.SetActive(true);
+            producerManagerPopup.SetActive(true);
 
             ////////// Add Strat //////////
-            homePanel.SetActive(false);
-            playsongs1.SetActive(false);
-            gameui.SetActive(false);
+            UIController.instance.HomeScreen.SetActive(false);
+            UIController.instance.Mint_NFTScreen.SetActive(false);
+            platform.SetActive(false);
+            UIManager.Instance.gameUI.SetActive(false);
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
             playerObj.SetActive(false);
-            wallet.SetActive(false);
-            homeSceen.SetActive(false);
+            UIController.instance.SuiWalletScreen.SetActive(false);
+            UIController.instance.SelectCharacterScreen.SetActive(false);
             selectCharacter.SetActive(false);
+            PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
             foreach (Transform b in playsongs.gameObject.transform)
             {
                 b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
@@ -366,17 +568,15 @@ public class GameManager : Singleton<GameManager>
         }
         else if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Finish")
         {
-            ThresoldPanel.SetActive(false);
+            producerManagerPopup.SetActive(false);
             LevelGenerator.Instance.OpenFileAndPlaySongWithGameStart(LevelGenerator.Instance.currentSong.name + ".json");
             foreach (Transform a in SetBox.instance.gameObject.transform)
             {
                 Destroy(a.gameObject);
             }
-            //ThresoldPanel.GetComponent<Image>().enabled = true;
-            //ThresoldPanel.transform.GetChild(0).localPosition = new Vector3(0, 0, 0);
-            //ThresoldPanel.transform.GetChild(0).localScale = new Vector3(1f, 1f, 1f);
-            playsongs1.SetActive(true);
-            gameui.SetActive(true);
+            platform.SetActive(true);
+            UIController.instance.Mint_NFTScreen.SetActive(false);
+            UIManager.Instance.gameUI.SetActive(true);
             gameObject.transform.GetChild(0).gameObject.SetActive(true);
             playerObj.SetActive(true);
             foreach (Transform b in playsongs.gameObject.transform)
@@ -397,216 +597,15 @@ public class GameManager : Singleton<GameManager>
             Destroy(allboxs.gameObject);
         }
         ////////// RESTART SONG SAVE DATA AND PLAYING //////////
-        SongListObj[n].GetComponent<SongHolder>().PlaySong();
+        SongListObj[n].GetComponent<SongHolder>().PlaySongProducer();
     }
 
     public void PlaySong()
     {
-        Debug.Log("Song name:"+songName);
-        SongListObj[n].GetComponent<SongHolder>().PlaySong();
+        Debug.Log("Song name:" + songName);
+        SongListObj[n].GetComponent<SongHolder>().PlaySongProducer();
         SongListObj[n].GetComponent<SongHolder>().PlayButton.interactable = false;
     }
-    void ShowLevelProgress()
-    {
-        songName.text = LevelGenerator.Instance.currentSong.name;
-        songNameWin.text = LevelGenerator.Instance.currentSong.name;
-
-        levelScore.text = score.ToString();
-        for (int i = 0; i < 3; i++)
-        {
-            if (i < star)
-                stars[i].color = activeStars;
-            else
-                stars[i].color = inactiveStars;
-        }
-    }
-
-    void videocomplet(bool copmlet) { }
-
-    [ContextMenu("Revive")]
-    public void Revive()
-    {
-        //Advertisements.Instance.ShowInterstitial();
-        Debug.Log("Revive");
-        // if (Advertisements.Instance.IsRewardVideoAvailable())
-        {
-            player.Revive();
-            revivePanel.SetActive(false);
-            //playButton.SetActive(true);
-            //  Advertisements.Instance.ShowRewardedVideo(videocomplet);
-        }
-    }
-
-    [ContextMenu("ReviveSucceed")]
-    public void ReviveSucceed(bool completed)
-    {
-        Debug.Log("ReviveSucceed");
-        if (completed)
-        {
-            player.Revive();
-            revivePanel.SetActive(false);
-            //playButton.SetActive(true);
-        }
-    }
-    public void HidePopup()
-    {
-        Debug.Log("HidePopup");
-        scoreText.text = "0";
-        player.ResetPlayer();
-        revivePanel.SetActive(false);
-        playButton.SetActive(true);
-
-        // LevelGenerator.Instance.StartWithSong();
-        //SongHolder.Instance.PlaySong();
 
 
-
-    }
-    public void StartGame()
-    {
-        this.gameStartTime = System.DateTime.Now;
-        Debug.Log("StartGame" + CurrentGameState);
-        if (CurrentGameState == GameState.Menu)
-        {
-            star = 0;
-            gameState = GameState.Gameplay;
-            player.StartMoving();
-            SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
-        }
-        else if (CurrentGameState == GameState.Lost)
-        {
-            gameState = GameState.Gameplay;
-            player.StartMoving();
-            SoundManager.Instance.PlayMusicFromBeat(player.platformHitCount);
-        }
-        UIManager.Instance.ShowHUD(true);
-        // GoogleAnalytics.Instance.SendGameStart(LevelGenerator.Instance.currentSong.name);
-    }
-    //public void OpenSongSelectList()
-    //{
-    //    if (!SongList.activeSelf)
-    //    {
-    //        SongList.SetActive(true);
-    //        OpenSongListbtn.transform.GetChild(0).GetComponent<Text>().text = "Close List";
-    //    }
-    //    else if (SongList.activeSelf)
-    //    {
-    //        SongList.SetActive(false);
-    //        OpenSongListbtn.transform.GetChild(0).GetComponent<Text>().text = "Open List";
-    //    }
-    //}
-
-    public void IncreaseGameSpeed()
-    {
-        if (gameSpeed < 5)
-            gameSpeed++;
-    }
-
-
-    public void IncreaseGameSpeedForNSec()
-    {
-        if (gameState == GameState.Gameplay)
-        {
-            previousGameSpeed = gameSpeed;
-            gameSpeed += 3;
-            powerupTimer.gameObject.SetActive(true);
-            Invoke("resetGameSpeedToPrevious", PowerUp.powerUpTimer);
-        }
-    }
-
-    public void resetGameSpeedToPrevious()
-    {
-        Debug.Log("Resetting to Previous state");
-        gameSpeed = previousGameSpeed;
-    }
-    public void AddScore(bool perfect)
-    {
-        if (perfect)
-            score += 10;
-        else
-            score += 5;
-
-        scoreText.text = score.ToString();
-        scoreAnim.SetTrigger("Up");
-    }
-    public void UpdateSongProgress(float value)
-    {
-        songProgress = value;
-        levelProgress.fillAmount = Mathf.Lerp(levelProgress.fillAmount, value, 0.1f);
-    }
-
-    public void NoThanks()
-    {
-        reviveAnim.SetTrigger("No");
-
-        //Advertisements.Instance.ShowInterstitial();
-    }
-
-    public void onClose()
-    {
-        // SongHolder.Instance.rhythmdata = null;
-        LevelGenerator.Instance.currentSong = null;
-        Debug.Log("on close");
-        Time.timeScale = 1;
-        gameState = GameState.Menu;
-        SoundManager.Instance.StopTrack();
-        score = 0;
-        // LevelGenerator.Instance.RemovePlatforms();
-        quitScreen.SetActive(false);
-        pauseButton.SetActive(true);
-        HidePopup();
-        LevelGenerator.Instance.RemovePlatforms();
-        LevelGenerator.Instance.myDataList.dataSave.Clear();
-        // SongHolder.Instance.rhythmdata = null;
-        UIManager.Instance.ShowMainMenu();
-    }
-
-    public void onNO()
-    {
-        quitScreen.SetActive(false);
-        Time.timeScale = 1;
-        SoundManager._Instance.ResumeMusic();
-        gameState = GameState.Gameplay;
-        pauseButton.SetActive(true);
-        isPausePopupOpen = false;
-    }
-
-    public void onPause()
-    {
-        isPausePopupOpen = true;
-        pauseButton.SetActive(false);
-        quitScreen.SetActive(true);
-        gameState = GameState.Pause;
-        Time.timeScale = 0;
-    }
-
-    public void OnSendingToWallet()
-    {
-        HidePopup();
-        UIManager.Instance.ShowNFTWallet();
-    }
-
-    public void OnSendingCharacterSelection()
-    {
-        HidePopup();
-        UIManager.Instance.ShowPlayerSelection();
-    }
-
-    public void Menu()
-    {
-        SceneManager.LoadScene(0);
-        //  Advertisements.Instance.ShowInterstitial();
-    }
-
-    public IEnumerator GameStartText()
-    {
-        gameStartText.SetActive(true);
-        yield return new WaitForSecondsRealtime(5);
-        //gameStartText.SetActive(false);
-    }
-
-    public void GameStartTextHide()
-    {
-        gameStartText.SetActive(false);
-    }
 }

@@ -19,6 +19,8 @@ public class ServerConfig
     public const string API_GET_PRIVATE_TOKEN_BALANCE = "api/v1/token?wallet=";
     public const string API_GET_BEATS_NFTS = "api/v1/nfts?wallet=";
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
+    public const string API_POST_AUTH_SESSION = "api/v1/auth";
+    public const string API_POST_VERIFY = "api/v1/verify";
 
     //devnet urls
     public const string API_DOMAIN_DEVNET = "dev-api.soundbeats.io";
@@ -30,7 +32,7 @@ public class ServerConfig
     public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
 
     //URL of Leaderboard and NFT
-    public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
+    public const string API_POST_LEADERBOARD = "api/v1/leaderboard?sprint=current";
     public const string API_GET_LEADERBOARD = "api/v1/leaderboard";
 
     public static string GetServerDomain()
@@ -47,6 +49,8 @@ public class ServerConfig
 public class NetworkManager : Singleton<NetworkManager>
 {
     #region API Methods
+
+    #region Tokens & NFTs 
 
     /// <summary>
     /// Calls the API to mint an NFT to a user.
@@ -127,6 +131,8 @@ public class NetworkManager : Singleton<NetworkManager>
         );
     }
 
+    #endregion
+
     /// <summary>
     /// Calls the API to verify a signature passed in from the Javascript front end (from the user's wallet). 
     /// </summary>
@@ -140,6 +146,8 @@ public class NetworkManager : Singleton<NetworkManager>
         ), callbackOnSuccess, callbackOnFail, "get");
     }
 
+    #region Leaderboards
+
     /// <summary>
     /// Sends the latest score for the given user to the leaderboard. 
     /// </summary>
@@ -152,7 +160,7 @@ public class NetworkManager : Singleton<NetworkManager>
         CreateLeaderboardDto body = new CreateLeaderboardDto();
         body.wallet = wallet;
         body.score = score;
-
+        body.sprintId = "current";
         SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
     }
 
@@ -174,17 +182,55 @@ public class NetworkManager : Singleton<NetworkManager>
     /// </summary>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
-    public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    public void GetLeaderboard(UnityAction<LeaderboardResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail, String sprintId = "")
     {
-        Debug.Log(ServerConfig.API_GET_LEADERBOARD);
+        Debug.Log(ServerConfig.API_GET_LEADERBOARD + sprintId);
 
         SendRequest(
-            ServerConfig.FormatServerUrl(ServerConfig.API_GET_LEADERBOARD),
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_LEADERBOARD + sprintId),
             callbackOnSuccess,
             callbackOnFail,
             "get"
         );
     }
+
+    #endregion
+
+    #region EVM Auth & Login
+
+    /// <summary>
+    /// Starts an auth session, which will return the message to be signed for verification, and a session ID. 
+    /// </summary>
+    /// <param name="evmWallet">User's EVM wallet address</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void StartAuthSession(string evmWallet, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        StartAuthSessionDto body = new StartAuthSessionDto();
+        body.evmWallet = evmWallet;
+        var json = JsonConvert.SerializeObject(body);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, "post", dictionary);
+    }
+
+    /// <summary>
+    /// Verifies an EVM wallet signature of a message for a session ID. The session must have been started already, and have a valid session id 
+    /// that is not expired. 
+    /// </summary>
+    /// <param name="body">Contains the wallet address, message & signature to verify, and other parameters.</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void VerifyAuthSession(AuthVerifyDto body, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        var json = JsonConvert.SerializeObject(body);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, "post", dictionary);
+    }
+
+
+    #endregion 
 
     #endregion
 
@@ -426,6 +472,7 @@ public class CreateLeaderboardDto
 {
     public string wallet;
     public int score;
+    public string sprintId;
 }
 
 [Serializable]
@@ -439,6 +486,38 @@ public class LeaderboardScoreDto
 public class LeaderboardResponseDto
 {
     public LeaderboardScoreDto[] scores;
+}
+
+[Serializable]
+public class AuthVerifyDto
+{
+    public string wallet;
+    public string walletType; // 'evm' or 'sui' 
+    public string action; // 'update' or 'verify' 
+    public string sessionId;
+    public string messageToSign;
+    public string signature;
+}
+
+[Serializable]
+public class AuthVerifyResponseDto
+{
+    public bool verified;
+    public string wallet;
+    public string failureReason;
+}
+
+[Serializable]
+public class StartAuthSessionDto
+{
+    public string evmWallet;
+}
+
+[Serializable]
+public class StartAuthSessionResponseDto
+{
+    public string sessionId;
+    public string messageToSign;
 }
 
 #endregion

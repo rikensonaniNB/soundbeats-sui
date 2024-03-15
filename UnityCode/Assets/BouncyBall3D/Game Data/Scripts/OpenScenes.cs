@@ -40,7 +40,7 @@ public class OpenScenes : MonoBehaviour
     //}
     public void ShowAds()
     {
-       // Advertisements.Instance.ShowInterstitial();
+        Advertisements.Instance.ShowInterstitial();
         print("ShowInter");
     }
 

@@ -43,9 +43,9 @@ public class selectCharacter : MonoBehaviour
     void videocomplet(bool complet) { }
     public void unlockPlayer(string name)
     {
-        if (false/*Advertisements.Instance.IsRewardVideoAvailable()*/)
+        if (Advertisements.Instance.IsRewardVideoAvailable())
         {
-           // Advertisements.Instance.ShowRewardedVideo(videocomplet);
+            Advertisements.Instance.ShowRewardedVideo(videocomplet);
             for (int i = 0; i <= buttons.Length - 1; i++)
             {
                 if (name == buttons[i].name)

@@ -7,15 +7,11 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public List<GameObject> platformList = new List<GameObject>();
-
-    public GameObject Analyzer, Visualise, PlayerObj;
-    
     public float speed = 10;
     public float Speed => speed * (GameManager.Instance == null ? 1 : GameManager.Instance.GameSpeed);
     public int platformHitCount = 1;
     public Text Text_Name;
-    //public LevelGenerator LevelGenerator;
+    public LevelGenerator LevelGenerator;
 
     public Animator marshmello_Animator;
 
@@ -62,11 +58,8 @@ public class Player : MonoBehaviour
     public bool detectSwipeAfterRelease = false;
     public float SWIPE_THRESHOLD = 20f;
 
-    public static Player instance;
-
     void Awake()
     {
-        instance = this;
         //int check= PlayerPrefs.GetInt("Selected_player");
         //if (PlayerPrefs.GetInt("Selected_player") == null)
         //PlayerPrefs.DeleteKey("Selected_player");
@@ -99,7 +92,7 @@ public class Player : MonoBehaviour
         Debug.Log("MakeCharacterReady :==>  " + UserData.SelectedNftIndex);
 
         //ResetPlayer();
-      //  StartCoroutine(GameManager.Instance.GameStartText());
+        StartCoroutine(GameManager.Instance.GameStartText());
         jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
@@ -128,9 +121,9 @@ public class Player : MonoBehaviour
         Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
 
         var obj = transform;
-        obj.position = new Vector3(0f, .5f, 0f);
+        obj.position = new Vector3(0f, 0.3900146f, 0f);
         obj.rotation = Quaternion.identity;
-        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = /*Vector3.zero;*/new Vector3(0f, .5f, 0f); 
+        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = Vector3.zero;
         Selected_character[UserData.SelectedNftIndex].gameObject.transform.rotation = Quaternion.identity;
     }
 
@@ -199,24 +192,18 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 HandleInputActions();
-
             }
         }
 
         if (canMove)
         {
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //Analyzer.SetActive(true);
-            //Visualise.SetActive(true);
-            //PlayerObj.SetActive(true);
             Movement();
             Jumping();
             VelocityScale();
 
             if (check == true)
             {
-                Debug.Log("Isgrounded");
+
 
                 if (index % 2 == 0)
                 {
@@ -437,7 +424,6 @@ public class Player : MonoBehaviour
         if (platformA == null)
         {
             platformA = LevelGenerator.Instance.GetSpecificPlatform(0);
-            //platformA = LevelGenerator.Instance.GetSpecificPlatformBox(0);
             //Debug.Log("platA");
             return;
         }
@@ -445,7 +431,6 @@ public class Player : MonoBehaviour
         if (platformB == null)
         {
             platformB = LevelGenerator.Instance.GetSpecificPlatform(1);
-            //platformB = LevelGenerator.Instance.GetSpecificPlatformBox(1);
             //Debug.Log("platB");
 
             return;
@@ -479,8 +464,7 @@ public class Player : MonoBehaviour
     }
     void CheckPlatform()
     {
-        Debug.Log("CheckPlatform");
-        if (Physics.CheckSphere(jumpingPart.position, 1.5f, platformLayer))
+        if (Physics.CheckSphere(jumpingPart.position, 0.5f, platformLayer))
         {
             //randomNumber = UnityEngine.Random.Range(1, 3);
 
@@ -498,19 +482,21 @@ public class Player : MonoBehaviour
                 Show_WinPanel();
                 return;
             }
-
-
-
             hitEffect.transform.position = platformB.position;
             hitEffect.Play();
-
-            Debug.Log("Hit plateform");
 
             float distanceToCenter = Vector3.Distance(jumpingPart.position, platformB.position + Vector3.up * 0.3f);
             bool perfect = distanceToCenter < 0.6f;
             platformB.GetComponent<Platform>().Hit(perfect);
             platformA = platformB;
-            platformB = LevelGenerator.Instance.GetNextPlatform;
+            if (GameManager.instance.producer == true)
+            {
+                platformB = LevelGenerator.Instance.GetNextPlatformProducer;
+            }
+            if (GameManager.instance.producer == false)
+            {
+                platformB = LevelGenerator.Instance.GetNextPlatform;
+            }
             distance = Vector3.Distance(platformA.position, platformB.position);
             platformHitCount++;
 
@@ -529,7 +515,7 @@ public class Player : MonoBehaviour
 
     void StopMoving()
     {
-        Debug.Log("StopMoving");
+        //Debug.Log("StopMoving");
         if (canMove)
         {
             canMove = false;
@@ -541,7 +527,7 @@ public class Player : MonoBehaviour
     [ContextMenu("Revive")]
     public void Revive()
     {
-        Debug.Log("Revive");
+        //Debug.Log("Revive");
         canMove = false;
         //jumpingPartRB.isKinematic = true;
 

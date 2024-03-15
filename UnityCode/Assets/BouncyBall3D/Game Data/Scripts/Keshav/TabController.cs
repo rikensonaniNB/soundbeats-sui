@@ -17,7 +17,7 @@ public class TabController : MonoBehaviour
     {
         if (value)
         {
-            //GetLeaderboard._instance.GetLeaderboardAPI();
+            GetLeaderboard._instance.GetLeaderboardAPI();
         }
     }
 
@@ -25,7 +25,7 @@ public class TabController : MonoBehaviour
     {
         if (value)
         {
-            //GetLeaderboard._instance.GetLeaderboardAPI("?sprint=current");
+            GetLeaderboard._instance.GetLeaderboardAPI("?sprint=current");
         }
     }
 
