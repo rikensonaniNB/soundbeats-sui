@@ -14,6 +14,12 @@ public class UIController : MonoBehaviour
     private const int SIGNING_MESSAGE_LENGTH = 32;
     private static string MessageToSign = "";
 
+    public static UIController instance;
+    private void Awake()
+    {
+        instance = this;
+    }
+
     //call to request the front end Javascript code to sign a message 
     [System.Runtime.InteropServices.DllImport("__Internal")]
     private static extern void CallSuiSignMessage(string msg);

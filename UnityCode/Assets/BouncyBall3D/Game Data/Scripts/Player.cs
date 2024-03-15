@@ -510,7 +510,14 @@ public class Player : MonoBehaviour
             bool perfect = distanceToCenter < 0.6f;
             platformB.GetComponent<Platform>().Hit(perfect);
             platformA = platformB;
-            platformB = LevelGenerator.Instance.GetNextPlatform;
+            if (GameManager.instance.producer == true)
+            {
+                platformB = LevelGenerator.Instance.GetNextPlatformProducer;
+            }
+            if (GameManager.instance.producer == false)
+            {
+                platformB = LevelGenerator.Instance.GetNextPlatform;
+            }
             distance = Vector3.Distance(platformA.position, platformB.position);
             platformHitCount++;
 

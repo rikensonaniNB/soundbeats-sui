@@ -114,11 +114,10 @@ public class SongHolder : MonoBehaviour
         icon.sprite = Icon_image;
         
     }*/
-    float f;
-    float f1;
-    public void PlaySong()
+    public void PlaySongProducer()
     {
-        Advertisements.Instance.ShowInterstitial();
+        GameManager.instance.producer = true;
+
         Debug.Log("PlaySong " + song.name);
         PlayButton.interactable = false;
         //GameManager.Instance.ThresoldSlider.interactable = false;
@@ -126,46 +125,79 @@ public class SongHolder : MonoBehaviour
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         //UIManager.Instance.CloseMenu();
         LevelGenerator.Instance.currentSong = song;
-        Debug.Log("currentSong"+LevelGenerator.Instance.currentSong.name);
+        Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
         AudioVisualizeManager.visualizeManager.audioSource.clip = song.song;
         AudioVisualizeManager.visualizeManager.audioSource.Play();
         AudioVisualizeManager.visualizeManager.StartBeatDetect();
         Debug.Log("count=" + LevelGenerator.Instance.myDataList.dataSave.Count);
 
-        int sountTimeInIntValue = (int)song.song.length;
-        Debug.Log($"<color=red> AUDIO_Length : </color> " + sountTimeInIntValue);
-        StartCoroutine(waitforsavedata(sountTimeInIntValue));
-        //if (UserData.SelectedNftIndex == 0)
-        //{
-        //    player.GetComponent<Player>().Selected_character[0].SetActive(true);
-        //    player.GetComponent<Player>().Selected_character[1].SetActive(false);
-        //    player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        //}
-        //else if (UserData.SelectedNftIndex == 1)
-        //{
-        //    player.GetComponent<Player>().Selected_character[0].SetActive(false);
-        //    player.GetComponent<Player>().Selected_character[1].SetActive(true);
-        //    player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        //}
-        //else if (UserData.SelectedNftIndex == 2)
-        //{
-        //    player.GetComponent<Player>().Selected_character[0].SetActive(false);
-        //    player.GetComponent<Player>().Selected_character[1].SetActive(false);
-        //    player.GetComponent<Player>().Selected_character[2].SetActive(true);
-        //}
-
-
+        //int sountTimeInIntValue = (int)song.song.length;
+        StartCoroutine(waitforsavedata(song.song));
+        if (UserData.SelectedNftIndex == 0)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(true);
+            player.GetComponent<Player>().Selected_character[1].SetActive(false);
+            player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        }
+        else if (UserData.SelectedNftIndex == 1)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(false);
+            player.GetComponent<Player>().Selected_character[1].SetActive(true);
+            player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        }
+        else if (UserData.SelectedNftIndex == 2)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(false);
+            player.GetComponent<Player>().Selected_character[1].SetActive(false);
+            player.GetComponent<Player>().Selected_character[2].SetActive(true);
+        }
     }
-    public IEnumerator waitforsavedata(int clipTime)
+    public IEnumerator waitforsavedata(AudioClip clipTime)
     {
         Debug.Log("StartCorutine");
-        yield return new WaitForSeconds(clipTime);
+        yield return new WaitForSeconds(clipTime.length);
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Finish";
         LevelGenerator.Instance.SaveFloatList();
         GameManager.Instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
         GameManager.Instance.PlayBtn.interactable = false;
-        Debug.Log("22222 DATA : "+ GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.gameObject.name);
+        Debug.Log("22222 DATA : " + GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.gameObject.name);
         GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;
+    }
+
+
+    public void PlaySong()
+    {
+        GameManager.instance.producer = false;
+        Debug.Log("PlaySong " + song.name);
+
+        //GoogleAnalytics.Instance.SendSelectedSong(song.name);
+        UIManager.Instance.CloseMenu();
+
+        if (UserData.SelectedNftIndex == 0)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(true);
+            player.GetComponent<Player>().Selected_character[1].SetActive(false);
+            player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        }
+        else if (UserData.SelectedNftIndex == 1)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(false);
+            player.GetComponent<Player>().Selected_character[1].SetActive(true);
+            player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        }
+        else if (UserData.SelectedNftIndex == 2)
+        {
+            player.GetComponent<Player>().Selected_character[0].SetActive(false);
+            player.GetComponent<Player>().Selected_character[1].SetActive(false);
+            player.GetComponent<Player>().Selected_character[2].SetActive(true);
+        }
+
+
+        LevelGenerator.Instance.currentSong = song;
+        LevelGenerator.Instance.StartWithSong();
+        Advertisements.Instance.ShowInterstitial();
+        this.gameObject.SetActive(false);
+
     }
 }
 
