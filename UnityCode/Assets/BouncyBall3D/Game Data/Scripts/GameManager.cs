@@ -508,6 +508,12 @@ public class GameManager : Singleton<GameManager>
             b.gameObject.transform.gameObject.SetActive(true);
 
         }
+        AudioVisualizeManager.instance.audioSource.enabled = false;
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            b.gameObject.transform.gameObject.SetActive(false);
+        }
     }
 
     public void ProducerQuitNo()
@@ -520,8 +526,6 @@ public class GameManager : Singleton<GameManager>
     }
     public void SelectSong(int Num)
     {
-        n = Num;
-        OpenThresoldPanal();
         foreach (Transform platformPool in LevelGenerator.Instance.platformPool.transform)
         {
             Debug.Log(platformPool.name);
@@ -530,6 +534,9 @@ public class GameManager : Singleton<GameManager>
         {
             Debug.Log(movingPlatformPool.name);
         }
+        
+        n = Num;
+        OpenThresoldPanal();
     }
 
     public void OpenThresoldPanal()
@@ -567,6 +574,7 @@ public class GameManager : Singleton<GameManager>
 
         if (!producerManagerPopup.activeSelf)
         {
+            AudioVisualizeManager.instance.audioSource.enabled = true;
             producerManagerPopup.SetActive(true);
             producerCloseBtn.SetActive(true);
             LevelGenerator.Instance.RemovePlatforms();

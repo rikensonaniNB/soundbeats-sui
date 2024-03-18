@@ -28,6 +28,11 @@ public class AudioVisualizeManager : MonoBehaviour
 
     [Header("Beat Setings")]
     [SerializeField] private bool beat;
+    public static AudioVisualizeManager instance;
+    private void Awake()
+    {
+        instance = this;
+    }
 
     public enum InvokeMode
     {
