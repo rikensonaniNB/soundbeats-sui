@@ -467,7 +467,57 @@ public class GameManager : Singleton<GameManager>
     //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public GameObject producerCloseBtn;
+    public GameObject producerQuitScreen;
+    public void closeBtnProducer()
+    {
+        Time.timeScale = 0;
+        producerCloseBtn.SetActive(false);
+        producerQuitScreen.SetActive(true);
+    }
 
+    public void onCloseProducer()
+    {
+        LevelGenerator.Instance.currentSong = null;
+        platform.SetActive(true);
+        Debug.Log("on close");
+        Time.timeScale = 1;
+        gameState = GameState.Menu;
+        SoundManager.Instance.StopTrack();
+        score = 0;
+        LevelGenerator.Instance.RemovePlatforms();
+        quitScreen.SetActive(false);
+        pauseButton.SetActive(true);
+        HidePopup();
+        LevelGenerator.Instance.myDataList.dataSave.Clear();
+        UIManager.Instance.ShowMainMenu();
+        producerManagerPopup.SetActive(false);
+        producerQuitScreen.SetActive(false);
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.Mint_NFTScreen.SetActive(false);
+        UIManager.Instance.gameUI.SetActive(false);
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        playerObj.SetActive(true);
+        UIController.instance.SuiWalletScreen.SetActive(false);
+        UIController.instance.SelectCharacterScreen.SetActive(false);
+        selectCharacter.SetActive(true);
+        PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            b.gameObject.transform.gameObject.SetActive(true);
+
+        }
+    }
+
+    public void ProducerQuitNo()
+    {
+        Time.timeScale = 1;
+        SoundManager._Instance.ResumeMusic();
+        gameState = GameState.Gameplay;
+        producerCloseBtn.SetActive(true);
+        producerQuitScreen.SetActive(false);
+    }
     public void SelectSong(int Num)
     {
         n = Num;
@@ -518,7 +568,8 @@ public class GameManager : Singleton<GameManager>
         if (!producerManagerPopup.activeSelf)
         {
             producerManagerPopup.SetActive(true);
-
+            producerCloseBtn.SetActive(true);
+            LevelGenerator.Instance.RemovePlatforms();
             ////////// Add Strat //////////
             UIController.instance.HomeScreen.SetActive(false);
             UIController.instance.Mint_NFTScreen.SetActive(false);
