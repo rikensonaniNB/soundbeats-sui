@@ -418,7 +418,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         // Convert the float list to JSON string
         string jsonString = JsonUtility.ToJson(myDataList);
-        fileName = currentSong.name + "_Beat" + ".json";
+        fileName = currentSong.name + ".json";
         // Get the persistent data path
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
         if (File.Exists(filePath))
