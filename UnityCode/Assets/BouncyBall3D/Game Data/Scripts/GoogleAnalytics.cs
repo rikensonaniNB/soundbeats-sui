@@ -5,10 +5,6 @@ using UnityEngine.Networking;
 
 public class GoogleAnalytics : Singleton<GoogleAnalytics>
 {
-    //call to request the front end Javascript code to send a GA tag (google analytics)
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void CallSendGTag(string category, string action, string label, int value);
-
     private const string TrackingID = "G-ZC639JTDEW";
 
     public void SendError(string errorMessage, string action = "")
@@ -61,5 +57,10 @@ public class GoogleAnalytics : Singleton<GoogleAnalytics>
         {
             Debug.Log(e.Message);
         }
+    }
+
+    public void CallSendGTag(string category, string action, string label, int value = 0)
+    {
+
     }
 }

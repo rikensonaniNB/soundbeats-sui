@@ -20,10 +20,6 @@ public class UIController : MonoBehaviour
         instance = this;
     }
 
-    //call to request the front end Javascript code to sign a message 
-    [System.Runtime.InteropServices.DllImport("__Internal")]
-    private static extern void CallSuiSignMessage(string msg);
-
     #region UI Components 
 
     public Button NewWalletButton;
@@ -276,7 +272,6 @@ public class UIController : MonoBehaviour
             try
             {
                 MessageToSign = GenerateRandomMessage();
-
 #if FAKE_SIGNIN
                 //SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
                 VerifySignatureResponseDto dto = new VerifySignatureResponseDto();
@@ -285,7 +280,8 @@ public class UIController : MonoBehaviour
                 dto.failureReason = "";
                 this.OnSuccessfulVerifySignature(dto);
 #else
-                CallSuiSignMessage(MessageToSign);
+                //CallSuiSignMessage(MessageToSign);
+               print(MessageToSign);
 #endif
             }
             catch (Exception e)
