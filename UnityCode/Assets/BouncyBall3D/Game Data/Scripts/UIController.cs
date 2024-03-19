@@ -8,6 +8,12 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using WalletConnectSharp.Common.Model.Errors;
+using WalletConnectSharp.Common.Utils;
+using WalletConnectSharp.Network.Models;
+using WalletConnectUnity.Core;
+using UnityEngine.Scripting;
+using WalletConnectUnity.Modal;
 
 public class UIController : MonoBehaviour
 {
@@ -282,6 +288,7 @@ public class UIController : MonoBehaviour
 #else
                 //CallSuiSignMessage(MessageToSign);
                print(MessageToSign);
+               OnPersonalSignButton();
 #endif
             }
             catch (Exception e)
@@ -472,6 +479,48 @@ public class UIController : MonoBehaviour
 
     }
 
+    public void EVMSelect(bool value)
+    {
+
+    }
+
+    public void SUISelect(bool value)
+    {
+
+    }
+
+    public async void OnPersonalSignButton()
+    {
+        var session = WalletConnect.Instance.ActiveSession;
+        Debug.Log($"[WalletConnectModalSample] session: {session}");
+
+        var sessionNamespace = session.Namespaces;
+        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
+            .Address;
+
+        Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
+        Debug.Log($"[WalletConnectModalSample] address: {address}");
+
+        NetworkManager.Instance.StartAuthSession("evm", null, OnErrorStartAuthSession);
+
+        var data = new PersonalSign(MessageToSign, address);
+        Debug.Log($"[WalletConnectModalSample] data: {data}");
+        try
+        {
+            var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+            Debug.Log($"[WalletConnectModalSample] result: {result}");
+
+            SignMessageCallback(result);
+            this.ShowError($"Received response.\nThis app cannot validate signatures yet.\n\nResponse: {result}");
+        }
+        catch (WalletConnectException e)
+        {
+            this.ShowError($"Personal Sign Request Error: {e.Message}");
+            Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
+        }
+    }
+
+
     private void CreateNFT(string name, string imageUrl)
     {
         CreateNFTRequestDto createNFTRequest = new CreateNFTRequestDto();
@@ -528,14 +577,25 @@ public class UIController : MonoBehaviour
             Debug.Log("wallet address:" + address);
 
             //prepare a request to verify the signature
-            VerifySignatureDto request = new VerifySignatureDto();
-            request.address = address;
+            AuthVerifyDto request = new AuthVerifyDto();
+            request.wallet = "";
+            request.walletType = "evm";
+            request.action = "verify";
+            request.sessionId = address;
+            request.messageToSign = "";
             request.signature = System.Web.HttpUtility.UrlEncode(signature);
-            request.message = MessageToSign;
 
-            //call to verify signature
-            NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
-            //this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
+            NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifyAuthSession, OnErrorVerifySignature);
+
+            ////prepare a request to verify the signature
+            //VerifySignatureDto request = new VerifySignatureDto();
+            //request.address = address;
+            //request.signature = System.Web.HttpUtility.UrlEncode(signature);
+            //request.message = MessageToSign;
+
+            ////call to verify signature
+            //NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
+            ////this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
         }
     }
 
@@ -814,10 +874,37 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void OnSuccessfulVerifyAuthSession(StartAuthSessionResponseDto startAuthSessionResponseDto)
+    {
+        //set active wallet address 
+        if (startAuthSessionResponseDto.sessionId != "")
+        {
+#if FAKE_SIGNIN
+            startAuthSessionResponseDto.sessionId = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+#endif
+
+            SuiWallet.ActiveWalletAddress = startAuthSessionResponseDto.sessionId;
+
+            //get user owned NFTs
+            NetworkManager.Instance.GetUserOwnedBeatsNfts(startAuthSessionResponseDto.sessionId, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
+        }
+        else
+        {
+            ErrorScreen.SetActive(true);
+            txtError_ErrorScreen.text = startAuthSessionResponseDto.sessionId + ", " + startAuthSessionResponseDto.messageToSign;
+        }
+    }
+
     private void OnErrorVerifySignature(string error)
     {
         this.ShowError(error);
         GoogleAnalytics.Instance.SendError(error, "verifySignature");
+    }
+
+    private void OnErrorStartAuthSession(string error)
+    {
+        this.ShowError(error);
+        GoogleAnalytics.Instance.SendError(error, "StartAuthSession");
     }
 
     private void OnSuccessfulCreateNFT(CreateNFTResponseDto createNFTResponseDto)
@@ -854,4 +941,20 @@ public class UIController : MonoBehaviour
     }
 
     #endregion 
+}
+
+
+[RpcMethod("personal_sign")]
+[RpcRequestOptions(Clock.ONE_MINUTE, 99998)]
+public class PersonalSign : List<string>
+{
+    public PersonalSign(string hexUtf8, string account) : base(new[] { hexUtf8, account })
+    {
+
+    }
+
+    [Preserve]
+    public PersonalSign()
+    {
+    }
 }
