@@ -114,6 +114,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject producerCamera;
     public bool songPlaying = false;
     public GameObject holdPopUp;
+    public GameObject congrats;
     public static GameManager instance;
     protected override void Awake()
     {
@@ -474,6 +475,37 @@ public class GameManager : Singleton<GameManager>
     //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void okBtn()
+    {
+        producerManagerPopup.SetActive(false);
+        platform.SetActive(true);
+        pauseButton.SetActive(false);
+        gameState = GameState.Menu;
+        UIManager.Instance.ShowMainMenu();
+        producerManagerPopup.SetActive(false);
+        producerQuitScreen.SetActive(false);
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.Mint_NFTScreen.SetActive(false);
+        UIManager.Instance.gameUI.SetActive(false);
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        playerObj.SetActive(true);
+        UIController.instance.SuiWalletScreen.SetActive(false);
+        UIController.instance.SelectCharacterScreen.SetActive(false);
+        selectCharacter.SetActive(true);
+        congrats.SetActive(false);
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            b.gameObject.transform.gameObject.SetActive(true);
+
+        }
+        AudioVisualizeManager.instance.audioSource.enabled = false;
+        foreach (Transform allboxs in SetBox.instance.gameObject.transform)
+        {
+            Destroy(allboxs.gameObject);
+        }
+    }
 
     public void CloseNftPopUp()
     {

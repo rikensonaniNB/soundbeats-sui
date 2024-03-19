@@ -152,13 +152,13 @@ public class SongHolder : MonoBehaviour
     {
         Debug.Log("StartCorutine");
         yield return new WaitForSeconds(clipTime.length);
+        GameManager.instance.congrats.SetActive(true);
         GameManager.instance.songPlaying = false;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Finish";
         LevelGenerator.Instance.SaveFloatList();
         GameManager.Instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
         SetBox.instance.camerabool = false;
         GameManager.Instance.PlayBtn.interactable = false;
-        Debug.Log("22222 DATA : " + GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.gameObject.name);
         GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;
     }
 
