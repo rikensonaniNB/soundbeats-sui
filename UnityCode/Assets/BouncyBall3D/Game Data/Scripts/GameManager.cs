@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEditor;
 using System.Reflection;
+using Unity.VisualScripting;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -518,6 +519,10 @@ public class GameManager : Singleton<GameManager>
             b.gameObject.transform.GetChild(0).gameObject.SetActive(true);
             b.gameObject.transform.gameObject.SetActive(false);
         }
+        foreach (Transform allboxs in SetBox.instance.gameObject.transform)
+        {
+            Destroy(allboxs.gameObject);
+        }
     }
 
     public void ProducerQuitNo()
@@ -540,6 +545,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         n = Num;
+
         OpenThresoldPanal();
     }
 
@@ -600,6 +606,9 @@ public class GameManager : Singleton<GameManager>
                 b.gameObject.transform.gameObject.SetActive(true);
 
             }
+            mainCamera.SetActive(true);
+            producerCamera.SetActive(false);
+            songPlaying = false;
             ////////// End //////////
         }
     }
@@ -665,6 +674,7 @@ public class GameManager : Singleton<GameManager>
             else
             {
                 PlaySong();
+                SetBox.instance.SpawnWhiteBalls();
             }
         }
         else if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Finish")
@@ -693,8 +703,8 @@ public class GameManager : Singleton<GameManager>
     public void RegenerateBtn()
     {
         Debug.Log($"<color=green> REGENRATE </color>");
-        LevelGenerator.Instance.myDataList.dataSave.Clear();
         AudioVisualizeManager.visualizeManager.audioSource.Stop();
+        LevelGenerator.Instance.myDataList.dataSave.Clear();
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
         {
             Destroy(allboxs.gameObject);

@@ -11,6 +11,7 @@ public class SetBox : MonoBehaviour
     public float lastPos;
     public bool camerabool;
     public GameObject whiteBallObj;
+    public GameObject whiteBallParent;
     public static SetBox instance;
     private void Awake()
     {
@@ -29,11 +30,15 @@ public class SetBox : MonoBehaviour
         Instantiate(boxs[randomBox], setBoxPos, Quaternion.identity, gameObject.transform);
 
     }
-    private void Start()
+    public void SpawnWhiteBalls()
     {
+        foreach (Transform t in whiteBallParent.transform)
+        {
+            Destroy(t.gameObject);
+        }
         for (int i = 0; i < 500; i++)
         {
-            Instantiate(whiteBallObj, new Vector3(0, -1, i * 10), Quaternion.identity, gameObject.transform);
+            Instantiate(whiteBallObj, new Vector3(0, -1, i * 10), Quaternion.identity, whiteBallParent.transform);
         }
     }
     private void Update()

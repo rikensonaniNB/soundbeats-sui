@@ -195,6 +195,12 @@ public class SongHolder : MonoBehaviour
         LevelGenerator.Instance.StartWithSong();
         Advertisements.Instance.ShowInterstitial();
         this.gameObject.SetActive(false);
+        GameManager.instance.mainCamera.SetActive(true);
+        GameManager.instance.producerCamera.SetActive(false);
+        foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
+        {
+            allwhiteBalls.gameObject.SetActive(false);
+        }
 
     }
 }
