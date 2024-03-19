@@ -119,11 +119,8 @@ public class SongHolder : MonoBehaviour
         GameManager.instance.producer = true;
 
         Debug.Log("PlaySong " + song.name);
-        PlayButton.interactable = false;
-        //GameManager.Instance.ThresoldSlider.interactable = false;
+        PlayButton.interactable = true;
         songgo = true;
-        //GoogleAnalytics.Instance.SendSelectedSong(song.name);
-        //UIManager.Instance.CloseMenu();
         LevelGenerator.Instance.currentSong = song;
         Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
         AudioVisualizeManager.visualizeManager.audioSource.clip = song.song;
@@ -131,7 +128,6 @@ public class SongHolder : MonoBehaviour
         AudioVisualizeManager.visualizeManager.StartBeatDetect();
         Debug.Log("count=" + LevelGenerator.Instance.myDataList.dataSave.Count);
 
-        //int sountTimeInIntValue = (int)song.song.length;
         StartCoroutine(waitforsavedata(song.song));
         if (UserData.SelectedNftIndex == 0)
         {
@@ -156,9 +152,11 @@ public class SongHolder : MonoBehaviour
     {
         Debug.Log("StartCorutine");
         yield return new WaitForSeconds(clipTime.length);
+        GameManager.instance.songPlaying = false;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Finish";
         LevelGenerator.Instance.SaveFloatList();
         GameManager.Instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
+        SetBox.instance.camerabool = false;
         GameManager.Instance.PlayBtn.interactable = false;
         Debug.Log("22222 DATA : " + GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.gameObject.name);
         GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;

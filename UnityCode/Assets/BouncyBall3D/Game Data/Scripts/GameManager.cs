@@ -107,7 +107,13 @@ public class GameManager : Singleton<GameManager>
     public GameObject platform;
     public GameObject playerObj;
     public GameObject selectCharacter;
-    public static GameManager instance; 
+    public GameObject producerCloseBtn;
+    public GameObject producerQuitScreen;
+    public GameObject mainCamera;
+    public GameObject producerCamera;
+    public bool songPlaying = false;
+    public GameObject holdPopUp;
+    public static GameManager instance;
     protected override void Awake()
     {
         base.Awake();
@@ -256,7 +262,7 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("Error on RequestPrivateToken " + Error);
     }
- 
+
 
     void ShowLevelProgress()
     {
@@ -467,8 +473,6 @@ public class GameManager : Singleton<GameManager>
     //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public GameObject producerCloseBtn;
-    public GameObject producerQuitScreen;
     public void closeBtnProducer()
     {
         Time.timeScale = 0;
@@ -534,7 +538,7 @@ public class GameManager : Singleton<GameManager>
         {
             Debug.Log(movingPlatformPool.name);
         }
-        
+
         n = Num;
         OpenThresoldPanal();
     }
@@ -580,7 +584,8 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.Instance.RemovePlatforms();
             ////////// Add Strat //////////
             UIController.instance.HomeScreen.SetActive(false);
-            UIController.instance.Mint_NFTScreen.SetActive(false);
+            //UIController.instance.Mint_NFTScreen.SetActive(false);
+            producerObj.SetActive(false);
             platform.SetActive(false);
             UIManager.Instance.gameUI.SetActive(false);
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
@@ -598,7 +603,7 @@ public class GameManager : Singleton<GameManager>
             ////////// End //////////
         }
     }
-
+    public GameObject producerObj;
 
     public void ResetPopManager()
     {
@@ -653,7 +658,14 @@ public class GameManager : Singleton<GameManager>
     {
         if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Generate")
         {
-            PlaySong();
+            if (songPlaying == true)
+            {
+                ShowPlayingPopUp();
+            }
+            else
+            {
+                PlaySong();
+            }
         }
         else if (PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text == "Finish")
         {
@@ -673,6 +685,8 @@ public class GameManager : Singleton<GameManager>
                 b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
                 b.gameObject.transform.gameObject.SetActive(true);
             }
+            mainCamera.SetActive(true);
+            producerCamera.SetActive(false);
         }
     }
 
@@ -693,7 +707,17 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("Song name:" + songName);
         SongListObj[n].GetComponent<SongHolder>().PlaySongProducer();
-        SongListObj[n].GetComponent<SongHolder>().PlayButton.interactable = false;
+        SongListObj[n].GetComponent<SongHolder>().PlayButton.interactable = true;
+        SetBox.instance.camerabool = true;
+        mainCamera.SetActive(false);
+        producerCamera.SetActive(true);
+        songPlaying = true;
+    }
+
+    public void ShowPlayingPopUp()
+    {
+        Debug.Log("Show_Hold_PopUp");
+        holdPopUp.SetActive(true);
     }
 
 }

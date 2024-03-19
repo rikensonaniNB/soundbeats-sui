@@ -33,7 +33,10 @@ public class AudioVisualizeManager : MonoBehaviour
     {
         instance = this;
     }
-
+    private void Update()
+    {
+        SetBox.instance.cameraZPos = audioSource.time;
+    }
     public enum InvokeMode
     {
         PlayOnStart,
@@ -92,7 +95,7 @@ public class AudioVisualizeManager : MonoBehaviour
     {
         visualizeManager = this;
 
-       
+
     }
     public void StartBeatDetect()
     {
@@ -368,8 +371,10 @@ public class AudioVisualizeManager : MonoBehaviour
             LevelGenerator.Instance.myDataList.dataSave.Add(BeatDetect.beatDetect.currentTime);
 
             Debug.Log($"<color=green> CURRENT_PLAY_BACK_TIME : </color> " + BeatDetect.beatDetect.currentTime + $" <color=green> SECONDS </color>");
-            SetBox.instance.boxZPos=BeatDetect.beatDetect.currentTime*LevelGenerator.Instance.Distance;
+            SetBox.instance.boxZPos = BeatDetect.beatDetect.currentTime * LevelGenerator.Instance.Distance;
             SetBox.instance.SetBoxUseList();
+            SetBox.instance.cameraZPos = audioSource.time;
+            SetBox.instance.lastPos = audioSource.clip.length;
         }
     }
 

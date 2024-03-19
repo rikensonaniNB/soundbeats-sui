@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,7 +38,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public GameObject WinPlace;
     //bool checkrun = true;
     public int count = 1;
-    public GameObject FilePanel;
 
     [Header("PRODUCER")]
     public string fileName;
@@ -310,6 +310,25 @@ public class LevelGenerator : Singleton<LevelGenerator>
         }
     }
 
+    public string[] fileNamess;
+    public GameObject FileNamePrefab;
+    public Transform FileNameparraent;
+    public void GetFileName()
+    {
+
+        fileNamess = GetFileNamesInPersistentDataPath();
+
+        foreach (string fileName in fileNamess)
+        {
+            GameObject Obj = Instantiate(FileNamePrefab, FileNameparraent);
+            Obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileName;
+            Obj.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                OpenFileAndPlaySongWithGameStart(fileName);
+            });
+        }
+    }
+
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
         string filePath = Path.Combine(Application.persistentDataPath, filename);
@@ -393,7 +412,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         // Convert the float list to JSON string
         string jsonString = JsonUtility.ToJson(myDataList);
-        fileName = currentSong.name + ".json";
+        fileName = currentSong.name + "_Beat" + ".json";
         // Get the persistent data path
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
         if (File.Exists(filePath))
@@ -416,7 +435,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         Debug.Log("wait is over");
         platformCount = 0;
         platformsPassed = 0;
-        //SetStarIDs();
+        SetStarIDs();
         player.MakeCharacterReady();
         movingPlatformPool.SetMovingPlatform();
 
