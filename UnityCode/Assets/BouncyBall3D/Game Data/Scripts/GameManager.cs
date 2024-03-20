@@ -111,7 +111,10 @@ public class GameManager : Singleton<GameManager>
     public GameObject producerCloseBtn;
     public GameObject producerQuitScreen;
     public GameObject mainCamera;
+    public Material mainCameraMat;
     public GameObject producerCamera;
+    public Material producerCameraMat;
+    public GameObject sky;
     public bool songPlaying = false;
     public GameObject holdPopUp;
     public GameObject congrats;
@@ -648,6 +651,8 @@ public class GameManager : Singleton<GameManager>
 
             }
             mainCamera.SetActive(true);
+            sky.SetActive(true);
+            RenderSettings.skybox = mainCameraMat;
             producerCamera.SetActive(false);
             songPlaying = false;
             ////////// End //////////
@@ -737,6 +742,8 @@ public class GameManager : Singleton<GameManager>
                 b.gameObject.transform.gameObject.SetActive(true);
             }
             mainCamera.SetActive(true);
+            sky.SetActive(true);
+            RenderSettings.skybox = mainCameraMat;
             producerCamera.SetActive(false);
         }
     }
@@ -762,6 +769,8 @@ public class GameManager : Singleton<GameManager>
         SetBox.instance.camerabool = true;
         mainCamera.SetActive(false);
         producerCamera.SetActive(true);
+        sky.SetActive(false);
+        RenderSettings.skybox = producerCameraMat;
         songPlaying = true;
     }
 

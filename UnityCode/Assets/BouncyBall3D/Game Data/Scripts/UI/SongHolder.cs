@@ -196,6 +196,8 @@ public class SongHolder : MonoBehaviour
         Advertisements.Instance.ShowInterstitial();
         this.gameObject.SetActive(false);
         GameManager.instance.mainCamera.SetActive(true);
+        GameManager.instance.sky.SetActive(true);
+        RenderSettings.skybox = GameManager.instance.mainCameraMat;
         GameManager.instance.producerCamera.SetActive(false);
         foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
         {

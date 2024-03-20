@@ -332,6 +332,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
         GameManager.instance.mainCamera.SetActive(true);
+        GameManager.instance.sky.SetActive(true);
+        RenderSettings.skybox = GameManager.instance.mainCameraMat;
         GameManager.instance.producerCamera.SetActive(false);
         foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
         {
