@@ -1,12 +1,14 @@
 using System;
+using System.Diagnostics;
 
 public class UserData
 {
-    private static string[] _nftNames = { "Anna", "Melloow", "Taral" };
+    private static string[] _nftNames = { "Alien", "Neon", "Robot", "Rainbow" };
     private static System.Collections.Generic.Dictionary<string, bool> _nfts = new System.Collections.Generic.Dictionary<string, bool>() {
-        { "Anna", false},
-        { "Melloow", false },
-        { "Taral", false }
+        { "Alien", true},
+        { "Neon", false },
+        { "Robot", false },
+        { "Rainbow", false }
     };
 
     public static string WalletAddress

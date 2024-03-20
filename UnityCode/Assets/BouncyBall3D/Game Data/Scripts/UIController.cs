@@ -37,6 +37,7 @@ public class UIController : MonoBehaviour
     public Button Mint_Button_Alien;
     public Button Mint_Button_Neon;
     public Button Mint_Button_Robot;
+    public Button Mint_Button_Rainbow;
 
     public Button Mint_SuccessfulScreen_Close;
     public Button PlayButton;
@@ -46,6 +47,8 @@ public class UIController : MonoBehaviour
     public Button MintNFTScreen_Button_Alien;
     public Button MintNFTScreen_Button_Neon;
     public Button MintNFTScreen_Button_Robot;
+    public Button MintNFTScreen_Button_Rainbow;
+
     public Button MintNFTScreen_Button_Close;
     public Button ClaimTokens_Button;
     public Button Close_WalletScreen;
@@ -86,6 +89,7 @@ public class UIController : MonoBehaviour
     public Sprite Character_Alien;
     public Sprite Character_Neon;
     public Sprite Character_Robot;
+    public Sprite Character_Rainbow;
 
     public TextMeshProUGUI txtAddressNFT_WalletScreen;
     public TextMeshProUGUI txtScore_WalletScreen;
@@ -102,6 +106,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI Mint_Text_Alien;
     public TextMeshProUGUI Mint_Text_Neon;
     public TextMeshProUGUI Mint_Text_Robot;
+    public TextMeshProUGUI Mint_Text_Rainbow;
 
     public TextMeshProUGUI MintNFTScreen_Text_Anna;
     public TextMeshProUGUI MintNFTScreen_Text_Mellow;
@@ -109,6 +114,7 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI MintNFTScreen_Text_Alien;
     public TextMeshProUGUI MintNFTScreen_Text_Neon;
     public TextMeshProUGUI MintNFTScreen_Text_Robot;
+    public TextMeshProUGUI MintNFTScreen_Text_Rainbow;
 
     public TMP_InputField MnemonicsInputField;
     //public GameObject ImportWalletScreen; (no longer used)
@@ -181,60 +187,62 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private NftUiElements NftUiElements_Anna = new NftUiElements();
-    private NftUiElements NftUiElements_Marshmallow = new NftUiElements();
-    private NftUiElements NftUiElements_Taral = new NftUiElements();
+    //private NftUiElements NftUiElements_Anna = new NftUiElements();
+    //private NftUiElements NftUiElements_Marshmallow = new NftUiElements();
+    //private NftUiElements NftUiElements_Taral = new NftUiElements();
     private NftUiElements NftUiElements_Alien = new NftUiElements();
     private NftUiElements NftUiElements_Neon = new NftUiElements();
     private NftUiElements NftUiElements_Robot = new NftUiElements();
+    private NftUiElements NftUiElements_Rainbow = new NftUiElements();
 
     private List<NftUiElements> NftUiList = new List<NftUiElements>();
 
     private void Start()
     {
-        this.NftUiList.Add(NftUiElements_Anna);
-        this.NftUiList.Add(NftUiElements_Marshmallow);
-        this.NftUiList.Add(NftUiElements_Taral);
+        //this.NftUiList.Add(NftUiElements_Anna);
+        //this.NftUiList.Add(NftUiElements_Marshmallow);
+        //this.NftUiList.Add(NftUiElements_Taral);
         this.NftUiList.Add(NftUiElements_Alien);
         this.NftUiList.Add(NftUiElements_Neon);
         this.NftUiList.Add(NftUiElements_Robot);
+        this.NftUiList.Add(NftUiElements_Rainbow);
 
         ActiveAddressText.text = SuiWallet.ActiveWalletAddress;
         NewWalletButton.gameObject.SetActive(false);
 
-        //group Anna elements together
-        NftUiElements_Anna.MintNftScreenText = MintNFTScreen_Text_Anna;
-        NftUiElements_Anna.MintText = Mint_Text_Anna;
-        NftUiElements_Anna.MintButton = Mint_Button_Anna;
-        NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
-        NftUiElements_Anna.CharacterSprite = Character_Anna;
-        NftUiElements_Anna.Name = "Anna";
-        NftUiElements_Anna.ImageUrl = GameData.NftImageUrlBase + "Anna.png";
-        NftUiElements_Anna.SelectedSprite = sprite_Green;
-        NftUiElements_Anna.UnselectedSprite = sprite_Pink;
+        ////group Anna elements together
+        //NftUiElements_Anna.MintNftScreenText = MintNFTScreen_Text_Anna;
+        //NftUiElements_Anna.MintText = Mint_Text_Anna;
+        //NftUiElements_Anna.MintButton = Mint_Button_Anna;
+        //NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
+        //NftUiElements_Anna.CharacterSprite = Character_Anna;
+        //NftUiElements_Anna.Name = "Anna";
+        //NftUiElements_Anna.ImageUrl = GameData.NftImageUrlBase + "Anna.png";
+        //NftUiElements_Anna.SelectedSprite = sprite_Green;
+        //NftUiElements_Anna.UnselectedSprite = sprite_Pink;
 
-        //group Marshmallow elements together
-        NftUiElements_Marshmallow.MintNftScreenText = MintNFTScreen_Text_Mellow;
-        NftUiElements_Marshmallow.MintText = Mint_Text_Mellow;
-        NftUiElements_Marshmallow.MintButton = Mint_Button_Marshmallow;
-        NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
-        NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
-        NftUiElements_Marshmallow.Name = "Melloow";
-        NftUiElements_Marshmallow.ImageUrl = GameData.NftImageUrlBase + "Melloow.png";
-        NftUiElements_Marshmallow.SelectedSprite = sprite_Green;
-        NftUiElements_Marshmallow.UnselectedSprite = sprite_Pink;
+        ////group Marshmallow elements together
+        //NftUiElements_Marshmallow.MintNftScreenText = MintNFTScreen_Text_Mellow;
+        //NftUiElements_Marshmallow.MintText = Mint_Text_Mellow;
+        //NftUiElements_Marshmallow.MintButton = Mint_Button_Marshmallow;
+        //NftUiElements_Marshmallow.MintNftScreenButton = MintNFTScreen_Button_Marshmallow;
+        //NftUiElements_Marshmallow.CharacterSprite = Character_Melloow;
+        //NftUiElements_Marshmallow.Name = "Melloow";
+        //NftUiElements_Marshmallow.ImageUrl = GameData.NftImageUrlBase + "Melloow.png";
+        //NftUiElements_Marshmallow.SelectedSprite = sprite_Green;
+        //NftUiElements_Marshmallow.UnselectedSprite = sprite_Pink;
 
-        //group Taral elements together
-        NftUiElements_Taral.MintNftScreenText = MintNFTScreen_Text_Taral;
-        NftUiElements_Taral.MintText = Mint_Text_Taral;
-        NftUiElements_Taral.MintButton = Mint_Button_Taral;
-        NftUiElements_Taral.MintNftScreenButton = MintNFTScreen_Button_Taral;
-        NftUiElements_Taral.CharacterSprite = Character_Taral;
-        NftUiElements_Taral.Locked = true;
-        NftUiElements_Taral.Name = "Taral";
-        NftUiElements_Taral.ImageUrl = GameData.NftImageUrlBase + "Taral.png";
-        NftUiElements_Taral.SelectedSprite = sprite_Green;
-        NftUiElements_Taral.UnselectedSprite = sprite_Pink;
+        ////group Taral elements together
+        //NftUiElements_Taral.MintNftScreenText = MintNFTScreen_Text_Taral;
+        //NftUiElements_Taral.MintText = Mint_Text_Taral;
+        //NftUiElements_Taral.MintButton = Mint_Button_Taral;
+        //NftUiElements_Taral.MintNftScreenButton = MintNFTScreen_Button_Taral;
+        //NftUiElements_Taral.CharacterSprite = Character_Taral;
+        //NftUiElements_Taral.Locked = true;
+        //NftUiElements_Taral.Name = "Taral";
+        //NftUiElements_Taral.ImageUrl = GameData.NftImageUrlBase + "Taral.png";
+        //NftUiElements_Taral.SelectedSprite = sprite_Green;
+        //NftUiElements_Taral.UnselectedSprite = sprite_Pink;
 
         //group Alien elements together
         NftUiElements_Alien.MintNftScreenText = MintNFTScreen_Text_Alien;
@@ -242,7 +250,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Alien.MintButton = Mint_Button_Alien;
         NftUiElements_Alien.MintNftScreenButton = MintNFTScreen_Button_Alien;
         NftUiElements_Alien.CharacterSprite = Character_Alien;
-        NftUiElements_Alien.Locked = true;
+        NftUiElements_Alien.Locked = false;
         NftUiElements_Alien.Name = "Alien";
         NftUiElements_Alien.ImageUrl = GameData.NftImageUrlBase + "Alien.png";
         NftUiElements_Alien.SelectedSprite = sprite_Green;
@@ -254,7 +262,7 @@ public class UIController : MonoBehaviour
         NftUiElements_Neon.MintButton = Mint_Button_Neon;
         NftUiElements_Neon.MintNftScreenButton = MintNFTScreen_Button_Neon;
         NftUiElements_Neon.CharacterSprite = Character_Neon;
-        NftUiElements_Neon.Locked = true;
+        NftUiElements_Neon.Locked = false;
         NftUiElements_Neon.Name = "Neon";
         NftUiElements_Neon.ImageUrl = GameData.NftImageUrlBase + "Neon.png";
         NftUiElements_Neon.SelectedSprite = sprite_Green;
@@ -266,11 +274,23 @@ public class UIController : MonoBehaviour
         NftUiElements_Robot.MintButton = Mint_Button_Robot;
         NftUiElements_Robot.MintNftScreenButton = MintNFTScreen_Button_Robot;
         NftUiElements_Robot.CharacterSprite = Character_Robot;
-        NftUiElements_Robot.Locked = true;
+        NftUiElements_Robot.Locked = false;
         NftUiElements_Robot.Name = "Robot";
         NftUiElements_Robot.ImageUrl = GameData.NftImageUrlBase + "Robot.png";
         NftUiElements_Robot.SelectedSprite = sprite_Green;
         NftUiElements_Robot.UnselectedSprite = sprite_Pink;
+
+        //group Rainbow elements together
+        NftUiElements_Rainbow.MintNftScreenText = MintNFTScreen_Text_Rainbow;
+        NftUiElements_Rainbow.MintText = Mint_Text_Rainbow;
+        NftUiElements_Rainbow.MintButton = Mint_Button_Rainbow;
+        NftUiElements_Rainbow.MintNftScreenButton = MintNFTScreen_Button_Rainbow;
+        NftUiElements_Rainbow.CharacterSprite = Character_Rainbow;
+        NftUiElements_Rainbow.Locked = false;
+        NftUiElements_Rainbow.Name = "Rainbow";
+        NftUiElements_Rainbow.ImageUrl = GameData.NftImageUrlBase + "Rainbow.png";
+        NftUiElements_Rainbow.SelectedSprite = sprite_Green;
+        NftUiElements_Rainbow.UnselectedSprite = sprite_Pink;
 
         //Connect Wallet (click connect button)
         ConnectWalletButton.onClick.AddListener(() =>
@@ -364,20 +384,27 @@ public class UIController : MonoBehaviour
         //Mint Alien 
         Mint_Button_Alien.onClick.AddListener(() =>
         {
-            MintButtonClick(3);
+            MintButtonClick(0);
         });
 
         //Mint Neon
         Mint_Button_Neon.onClick.AddListener(() =>
         {
-            MintButtonClick(4);
+            MintButtonClick(1);
         });
 
         //Mint Robot
         Mint_Button_Robot.onClick.AddListener(() =>
         {
-            MintButtonClick(5);
+            MintButtonClick(2);
         });
+
+        //Mint Rainbow
+        Mint_Button_Rainbow.onClick.AddListener(() =>
+        {
+            MintButtonClick(3);
+        });
+
 
         // Mint successful screen
         Mint_SuccessfulScreen_Close.onClick.AddListener(() =>
@@ -407,17 +434,22 @@ public class UIController : MonoBehaviour
 
         MintNFTScreen_Button_Alien.onClick.AddListener(() =>
         {
-            MintNftScreenButtonClick(3);
+            MintNftScreenButtonClick(0);
         });
 
         MintNFTScreen_Button_Neon.onClick.AddListener(() =>
         {
-            MintNftScreenButtonClick(4);
+            MintNftScreenButtonClick(1);
         });
 
         MintNFTScreen_Button_Robot.onClick.AddListener(() =>
         {
-            MintNftScreenButtonClick(5);
+            MintNftScreenButtonClick(2);
+        });
+
+        MintNFTScreen_Button_Rainbow.onClick.AddListener(() =>
+        {
+            MintNftScreenButtonClick(3);
         });
 
         MintNFTScreen_Button_Close.onClick.AddListener(() =>
@@ -766,6 +798,9 @@ public class UIController : MonoBehaviour
     private void SetSelectedNft(int index)
     {
         print(index);
+        print(UserData.SelectedNftIndex);
+        print(UserData.SelectedNftName);
+        print(UserData.HasSelectedNft);
         if (UserData.OwnsNft(index))
         {
             UserData.SelectedNftIndex = index;
@@ -783,6 +818,7 @@ public class UIController : MonoBehaviour
         for (int n = 0; n < this.NftUiList.Count; n++)
         {
             var item = this.NftUiList[n];
+            Debug.Log(item.Name + " - " + n);
             if (UserData.SelectedNftIndex == n)
             {
                 item.SetSelected(true);
