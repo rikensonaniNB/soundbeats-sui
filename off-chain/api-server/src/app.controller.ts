@@ -229,14 +229,13 @@ export class AppController {
     // *** AUTH and REGISTRATION *** 
     
     @Post('/api/v1/auth')
-    async startAuthSession(@Query() body: StartAuthSessionDto): Promise<StartAuthSessionResponseDto> {
+    async startAuthSession(@Body() body: StartAuthSessionDto): Promise<StartAuthSessionResponseDto> {
         const logString = `POST /api/v1/auth ${JSON.stringify(body)}`;
         this.logger.log(logString);
         try {
             let { evmWallet } = body;
-            evmWallet = "0x33bae7fd239ede58f04ef56d7f2b78b1b61b6312";
             if (evmWallet == null || evmWallet == '') {
-                throw new Error('evmWallet cannot be null or empty')
+                throw new Error('evmWallet cannot be null or empty');
             }
 
             return await this.suiService.startAuthSession(evmWallet);

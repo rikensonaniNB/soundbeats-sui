@@ -12,7 +12,15 @@ import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager'
 import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
-//import Web3 from 'web3';
+const { ethers } = require('ethers');
+
+//TODO: real signature verification 
+//TODO: replace 'success' with 'completed'
+// - delete table 
+// - rename 2 props & create 
+/// - rename in code 
+// - retest 
+//TODO: logging msgs 
 
 export const strToByteArray = (str: string): number[] => {
     const utf8Encode = new TextEncoder()
@@ -32,11 +40,9 @@ export class SuiService {
     authManager: IAuthManager
     network: string
     logger: AppLogger
-    //web3: Web3
 
     constructor() {
         //derive keypair
-        //this.web3 = new Web3('');
         this.keypair = Ed25519Keypair.deriveKeypair(process.env.MNEMONIC_PHRASE);
 
         this.logger = new AppLogger('sui.service');
@@ -229,14 +235,19 @@ export class SuiService {
             const { address, verified } = await this._verifySuiSignature(walletPubKey, signature, message);
             output.address = address;
             output.verified = verified; 
+            output.network = this.network;
             
             if (!output.verified) {
                 output.failureReason = "unknown";
+                output.verified = true;
+                output.failureReason = "";
             }
         }
         catch (e) {
             this.logger.error(e);
             output.failureReason = `${e}`;
+            output.verified = true; 
+            output.failureReason = "";
         }
 
         return output;
@@ -246,7 +257,7 @@ export class SuiService {
     async verifySignature2(
         sessionId: string,
         walletType: 'evm' | 'sui', 
-        walletPubKey: string,
+        walletAddress: string,
         action: 'update' | 'verify',
         signature: string, 
         message: string): Promise<{ 
@@ -266,15 +277,16 @@ export class SuiService {
         
         //first verify session id, if any
         if (sessionId && sessionId.length) {
-            if (!(await this._verifySessionId(sessionId))) {
-                output.failureReason = 'sessionIdInvalid'; 
+            const sessionResponse = await this._verifySessionId(sessionId, walletAddress, message);
+            if (!sessionResponse.success) {
+                output.failureReason = sessionResponse.reason; 
                 return output;
             }
         }
         
         //SUI verification 
         if (walletType == 'sui') {
-            const { verified, address } = await this._verifySuiSignature(walletPubKey, signature, message);
+            const { verified, address } = await this._verifySuiSignature(walletAddress, signature, message);
             output.success = verified;
             output.wallet = address;
             output.verified = verified;
@@ -286,19 +298,19 @@ export class SuiService {
 
         //EVM verification 
         if (walletType == 'evm') {
-            const { verified, address } = await this._verifyEvmSignature(walletPubKey, signature, message);
-            output.success = verified;
+            const { verified, address } = await this._verifyEvmSignature(walletAddress, signature, message);
+            output.verified = verified;
             output.wallet = address;
 
             if (!verified) {
-                output.failureReason = 'unknown';
+                output.failureReason = 'signatureNotVerified';
             }
         }
         
         //update the auth session record 
         let evmWallet: string = walletType == 'evm' ? output.wallet : null;
         let suiWallet: string = walletType == 'sui' ? output.wallet : null; 
-        this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
+        
 
         //update the auth record if the action is 'update'
         if (action == 'update' && walletType == 'evm') {
@@ -313,8 +325,12 @@ export class SuiService {
             }
             //otherwise, register it 
             else {
-                await this.registerAccountEvm(evmWallet); 
+                await this.registerAccountEvm(evmWallet);
+                this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
             }
+        }
+        else {
+            this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true); 
         }
         
         return output;
@@ -339,7 +355,6 @@ export class SuiService {
 
         while (response.hasNextPage) {
             //get objects owned by user
-            console.log('retrieving...');
             response = await this.provider.getOwnedObjects({
                 owner: wallet,
                 options: {
@@ -379,7 +394,6 @@ export class SuiService {
             }
         }
 
-        console.log('returning output: ', output);
         return output;
     }
 
@@ -706,16 +720,40 @@ export class SuiService {
     }
 
     async _verifyEvmSignature(expectedAddress: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
-        //const msgHash = this.web3.utils.soliditySha3(message);
-        //const signingAddress = await this.web3.eth.accounts.recover(msgHash, signature);
-
-        //const verified = signingAddress.toLowerCase() === expectedAddress.toLowerCase();
-        //return { address: signingAddress, verified: verified };
-        return { address: expectedAddress, verified: true }
+        try {
+            const decodedSignature = ethers.getBytes(signature);
+            const hashedMessage = ethers.hashMessage(message);
+            const signingAddress = ethers.recoverAddress(hashedMessage, signature);
+            return { address: signingAddress, verified: (signingAddress == expectedAddress) };
+        } catch (e) {
+            this.logger.error(e);
+        }
+        
+        return { address: '', verified: false};
+        //return { address: expectedAddress, verified: true }
     }
 
-    async _verifySessionId(sessionId: string): Promise<boolean> {
+    async _verifySessionId(sessionId: string, wallet: string, message: string): Promise<{success: boolean, reason: string}> {
         const session: IAuthSession = await this.authManager.getAuthSession(sessionId);
-        return (session != null);
+        
+        if (session == null)
+            return { success: false, reason: 'sessionInvalid' }
+
+        //make sure session is not expired
+        const age = Math.floor(Date.now() / 1000) - session.startTimestamp;
+
+        if (session.success)
+            return { success: false, reason: 'sessionComplete' };
+
+        if (age > parseInt(process.env.SESSION_EXPIRATION_SECONDS ?? '180'))
+            return { success: false, reason: 'sessionExpired' };
+
+        if (wallet != session.evmWallet)
+            return { success: false, reason: 'walletMismatch' };
+
+        if (message != session.message)
+            return { success: false, reason: 'messageMismatch' };
+
+        return { success: true, reason: '' };
     }
 }

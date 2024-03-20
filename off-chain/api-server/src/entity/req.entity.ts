@@ -193,4 +193,3 @@ export class AuthVerifyResponseDto {
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
     failureReason: string
 }
-

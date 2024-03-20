@@ -158,10 +158,10 @@ export class AuthManagerDynamoDb implements IAuthManager {
             Item: {
                 //TODO: rename to sessionId
                 clientToken: { 'S': session.sessionId },
-                message: { 'S': session.message },
+                message: { 'S': session.message ?? ''  },
                 success: { 'S': session.success ? "T" : "F"},
-                suiWallet: { 'S': session.suiWallet },
-                evmWallet: { 'S': session.evmWallet },
+                suiWallet: { 'S': session.suiWallet ?? ''  },
+                evmWallet: { 'S': session.evmWallet ?? ''  },
                 startTimestamp: { 'N': session.startTimestamp.toString() },
                 updateTimestamp: { 'N': unixTimestamp().toString() }
             }
@@ -182,7 +182,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         const record = await this.dynamoDb.getItem({
             TableName: process.env.DBTABLE_NAME_AUTH_SESSION,
             Key: {
-                'clientToken': { S: sessionId }
+                "clientToken": { "S": sessionId }
             }
         });
         
@@ -234,7 +234,10 @@ export class AuthManagerDynamoDb implements IAuthManager {
     _generateRandomBigInt(bitLength: number): BigInt {
         const byteLength = bitLength / 8;
         const randomBytes = new Uint8Array(byteLength);
-        crypto.getRandomValues(randomBytes); 
+        //crypto.getRandomValues(randomBytes); 
+        for(let n=0; n<randomBytes.length; n++) {
+            randomBytes[n] = Math.random() * 255;
+        }
         let hexString = '0x';
         randomBytes.forEach(byte => {
             hexString += byte.toString(16).padStart(2, '0');
