@@ -183,6 +183,8 @@ export class AuthVerifyDto {
     messageToSign: string
     @ApiProperty({ description: 'The message signature as signed by caller' })
     signature: string
+    @ApiProperty({ description: 'A unique user-chosen username' })
+    username: string
 }
 
 export class AuthVerifyResponseDto {
@@ -192,4 +194,6 @@ export class AuthVerifyResponseDto {
     wallet: string
     @ApiProperty({ description: 'General reason for failure to verify (if not verified)' })
     failureReason: string
+    @ApiProperty({ description: 'Sui wallet address (if any)' })
+    suiWallet: string
 }

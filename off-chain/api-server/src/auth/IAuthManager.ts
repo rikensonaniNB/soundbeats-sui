@@ -3,6 +3,7 @@ export interface IAuthRecord {
     authId: string;
     authType: 'evm' | 'sui';
     suiWallet: string;
+    username: string;
     extraData: any;
 }
 
@@ -22,9 +23,11 @@ export interface IAuthManager {
      * 
      * @param authId 
      * @param authType 
+     * @param suiWallet 
+     * @param username 
      * @param extraData 
      */
-    register(authId: string, authType: 'evm' | 'sui', suiWallet: string, extraData: any): Promise<boolean>;
+    register(authId: string, authType: 'evm' | 'sui', suiWallet: string, username: string, extraData: any): Promise<boolean>;
 
     /**
      * Returns true if an auth record with the given id and type are in the database.
@@ -33,6 +36,13 @@ export interface IAuthManager {
      * @param authType 
      */
     exists(authId: string, authType: 'evm' | 'sui') : Promise<boolean>; 
+
+    /**
+     * Returns true if an auth record with the given username exists in the database.
+     * 
+     * @param username 
+     */
+    usernameExists(username: string): Promise<boolean>; 
 
     /**
      * Gets the record identified by the auth id and auth type. 

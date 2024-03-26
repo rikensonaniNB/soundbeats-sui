@@ -14,7 +14,13 @@ export class AuthManagerDynamoDb implements IAuthManager {
         this.dynamoDb = new DynamoDbAccess();
     }
 
-    async register(authId: string, authType: 'evm' | 'sui', suiWallet: string, extraData: any = null): Promise<boolean> {
+    async register(
+        authId: string, 
+        authType: 'evm' | 'sui', 
+        suiWallet: string, 
+        username: string, 
+        extraData: any = null
+    ): Promise<boolean> {
 
         //make sure it doesn't already exist
         const existing = await this._dataAccess_getAuthRecord(authId, authType);
@@ -28,7 +34,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         }
 
         //write it to the database
-        const result = await this._dataAccess_putAuthRecord(authId, authType, suiWallet, extraData);
+        const result = await this._dataAccess_putAuthRecord(authId, authType, suiWallet, username, extraData);
 
         return result.success;
     }
@@ -46,7 +52,8 @@ export class AuthManagerDynamoDb implements IAuthManager {
                 authId: existing.data.authId.S,
                 authType: existing.data.authType.S,
                 extraData: null, 
-                suiWallet: existing.data.suiWallet.S
+                suiWallet: existing.data.suiWallet.S,
+                username: existing.data.username.S ?? ''
             }
             
             if (existing.data.extraData && existing.data.extraData.S && existing.data.extraData.S.length > 0) {
@@ -88,6 +95,11 @@ export class AuthManagerDynamoDb implements IAuthManager {
     async getAuthSession(sessionId: string): Promise<IAuthSession> {
         const session = await this._dataAccess_getAuthSession(sessionId); 
         return session;
+    }
+
+    //TODO: (HIGH) implement this, and add an index to username column in DB 
+    async usernameExists(username: string): Promise<boolean> {
+        return false;
     }
     
     async startAuthSession(evmWallet: string): Promise<{ sessionId: string, messageToSign: string }> {
@@ -146,7 +158,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         
         //update the data
         record.authId = suiAddress;
-        const response = await this._dataAccess_putAuthRecord(authId, authType, suiAddress); 
+        const response = await this._dataAccess_putAuthRecord(authId, authType, suiAddress, record.username); 
         return response.success;
     }
 
@@ -203,12 +215,18 @@ export class AuthManagerDynamoDb implements IAuthManager {
         return output;
     }
 
-    async _dataAccess_putAuthRecord(authId: string, authType: 'evm' | 'sui', suiWallet: string, extraData: any = null): Promise<IDynamoResult> {
+    async _dataAccess_putAuthRecord(
+        authId: string, 
+        authType: 'evm' | 'sui', 
+        suiWallet: string, 
+        username: string, 
+        extraData: any = null): Promise<IDynamoResult> {
         //get the core data items 
         const data: any = {
             authId: { 'S': authId },
             authType: { 'S': authType },
-            suiWallet: { 'S': suiWallet }
+            suiWallet: { 'S': suiWallet },
+            username: { 'S': username }
         };
         
         //add extra data if any

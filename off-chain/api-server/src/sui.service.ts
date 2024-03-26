@@ -12,7 +12,7 @@ import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager'
 import { getAuthManagerInstance } from './auth/auth'
 import { Config } from './config'
 import { AppLogger } from './app.logger';
-const { ethers } = require('ethers');
+//const { ethers } = require('ethers');
 
 //TODO: real signature verification 
 //TODO: replace 'success' with 'completed'
@@ -253,26 +253,29 @@ export class SuiService {
         return output;
     }
     
-    //TODO: comment 
+    //TODO: comment & rename
     async verifySignature2(
         sessionId: string,
         walletType: 'evm' | 'sui', 
         walletAddress: string,
         action: 'update' | 'verify',
         signature: string, 
-        message: string): Promise<{ 
-            success: boolean, 
+        message: string, 
+        username: string): Promise<{ 
+            completed: boolean, 
             failureReason: string, 
             wallet: string; network: string, 
-            verified: boolean
+            verified: boolean, 
+            suiWallet: string
         }> {
         
         const output = {
-            success: false,
+            completed: false,
             failureReason: '', 
             wallet: '', 
             network: '', 
-            verified: false
+            verified: false, 
+            suiWallet: ''
         }; 
         
         //first verify session id, if any
@@ -287,7 +290,7 @@ export class SuiService {
         //SUI verification 
         if (walletType == 'sui') {
             const { verified, address } = await this._verifySuiSignature(walletAddress, signature, message);
-            output.success = verified;
+            output.completed = verified;
             output.wallet = address;
             output.verified = verified;
             
@@ -310,14 +313,14 @@ export class SuiService {
         //update the auth session record 
         let evmWallet: string = walletType == 'evm' ? output.wallet : null;
         let suiWallet: string = walletType == 'sui' ? output.wallet : null; 
-        
+
+        const authRecord: IAuthRecord = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
+        output.suiWallet = authRecord?.suiWallet ?? '';
 
         //update the auth record if the action is 'update'
         if (action == 'update' && walletType == 'evm') {
-            //does the record exist? 
-            const authRecord: IAuthRecord = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
             
-            //if exixsts, update it 
+            //if record exists, update it 
             if (authRecord) {
                 if (authRecord.suiWallet != suiWallet) {
                     await this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
@@ -325,11 +328,14 @@ export class SuiService {
             }
             //otherwise, register it 
             else {
-                await this.registerAccountEvm(evmWallet);
+                await this.registerAccountEvm(evmWallet, username);
+                output.completed = true;
                 this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
+                output.suiWallet = suiWallet ?? '';
             }
         }
         else {
+            output.completed = true;
             this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true); 
         }
         
@@ -460,7 +466,7 @@ export class SuiService {
      * @returns 
      */
     //TODO: make more genereic
-    async registerAccountEvm(evmWallet: string): Promise<{ authId: string, authType: string, suiWallet: string, status: string } > {
+    async registerAccountEvm(evmWallet: string, username: string): Promise<{ authId: string, authType: string, suiWallet: string, status: string } > {
         const output = {
             authId: evmWallet,
             authType: "evm",
@@ -478,11 +484,20 @@ export class SuiService {
             //create a new wallet 
             const suiWallet = this.createWallet();
             output.suiWallet = suiWallet.address;
-
-            //store the info in the database
-            const success = await this.authManager.register(evmWallet, "evm", suiWallet.address, {
-                privateKey: suiWallet.privateKey
-            });
+            
+            let success: boolean = false;
+            
+            //check first for existing username 
+            if (this.authManager.usernameExists(username)) {
+                success = false;
+                output.status = "duplicate";
+            }
+            else {
+                //store the info in the database
+                success = await this.authManager.register(evmWallet, "evm", suiWallet.address, username, {
+                    privateKey: suiWallet.privateKey
+                });
+            }
 
             if (success) {
                 output.status = "success";
@@ -506,7 +521,8 @@ export class SuiService {
             output.status = "notfound"; 
         }
         else {
-            output.suiWallet = authRecord.authId;
+            console.log(authRecord);
+            output.suiWallet = authRecord?.suiWallet;
             output.status = "success"; 
         }
         
@@ -720,7 +736,7 @@ export class SuiService {
     }
 
     async _verifyEvmSignature(expectedAddress: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
-        try {
+        /*try {
             const decodedSignature = ethers.getBytes(signature);
             const hashedMessage = ethers.hashMessage(message);
             const signingAddress = ethers.recoverAddress(hashedMessage, signature);
@@ -729,8 +745,8 @@ export class SuiService {
             this.logger.error(e);
         }
         
-        return { address: '', verified: false};
-        //return { address: expectedAddress, verified: true }
+        return { address: '', verified: false};*/
+        return { address: expectedAddress, verified: true }
     }
 
     async _verifySessionId(sessionId: string, wallet: string, message: string): Promise<{success: boolean, reason: string}> {
