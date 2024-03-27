@@ -5,6 +5,8 @@ using UnityEngine.Events;
 using UnityEngine.Networking;
 using System;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
+using System.Text;
 
 /// <summary>
 /// This class store server config keys and urls.
@@ -23,13 +25,13 @@ public class ServerConfig
     public const string API_POST_VERIFY = "api/v1/verify";
 
     //devnet urls
-    public const string API_DOMAIN_DEVNET = "dev-api.soundbeats.io";
+    public const string API_DOMAIN_DEVNET = "http://54.95.68.79:3000";
 
     //testnet urls 
-    public const string API_DOMAIN_TESTNET = "test-api.soundbeats.io";
+    public const string API_DOMAIN_TESTNET = "http://54.95.68.79:3000";
 
     //mainnet urls 
-    public const string API_DOMAIN_MAINNET = "api.soundbeats.io";
+    public const string API_DOMAIN_MAINNET = "http://54.95.68.79:3000";
 
     //URL of Leaderboard and NFT
     public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
@@ -203,9 +205,8 @@ public class NetworkManager : Singleton<NetworkManager>
         StartAuthSessionDto body = new StartAuthSessionDto();
         body.evmWallet = evmWallet;
         var json = JsonConvert.SerializeObject(body);
-        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        print(json);
+        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, "post", null, json);
     }
 
     /// <summary>
@@ -217,9 +218,8 @@ public class NetworkManager : Singleton<NetworkManager>
     public void VerifyAuthSession(AuthVerifyDto body, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
-        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, "post", null, json);
     }
 
 
@@ -234,17 +234,17 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
     /// <typeparam name="T">Data Model Type.</typeparam>
-    private void SendRequest<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, string reqType, Dictionary<string, string> body = null)
+    private void SendRequest<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, string reqType, Dictionary<string, string> body = null, string jsonReqData = null)
     {
         print(reqType + " - " + url);
         if (reqType == "post")
         {
-            Debug.Log("Post: " + body);
-            StartCoroutine(RequestCoroutine_Post(url, callbackOnSuccess, callbackOnFail, body));
+            Debug.Log("Post: " + body.ToSafeString());
+            StartCoroutine(RequestCoroutine_Post(url, callbackOnSuccess, callbackOnFail, body, jsonReqData));
         }
         else if (reqType == "postToken")
         {
-            Debug.Log("Post Token: " + body);
+            Debug.Log("Post Token: " + body.ToSafeString());
             StartCoroutine(RequestTokenCoroutine_Post(url, callbackOnSuccess, callbackOnFail, body));
         }
         else
@@ -287,16 +287,25 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
     /// <typeparam name="T">Data Model Type.</typeparam>
-    private IEnumerator RequestCoroutine_Post<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, Dictionary<string, string> body)
+    private IEnumerator RequestCoroutine_Post<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, Dictionary<string, string> body, string jsonReqData)
     {
         WWWForm form = new WWWForm();
 
-        foreach (KeyValuePair<string, string> post_arg in body)
+        if (body != null)
         {
-            Debug.Log("key   " + post_arg.Key + "   value  " + post_arg.Value);
-            form.AddField(post_arg.Key, post_arg.Value);
+            foreach (KeyValuePair<string, string> post_arg in body)
+            {
+                //Debug.Log("key  " + post_arg.Key + "  value " + post_arg.Value);
+                form.AddField(post_arg.Key, post_arg.Value);
+            }
+            body.Clear();
         }
-        body.Clear();
+
+        if (jsonReqData != null)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(jsonReqData);
+            form.AddBinaryData("body", byteArray);
+        }
 
         using (var request = UnityWebRequest.Post(url, form))
         {

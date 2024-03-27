@@ -3,9 +3,10 @@ using System.Diagnostics;
 
 public class UserData
 {
-    private static string[] _nftNames = { "Alien", "Neon", "Robot", "Rainbow" };
+    private static string[] _nftNames = { "Anna", "Alien", "Neon", "Robot", "Rainbow" };
     private static System.Collections.Generic.Dictionary<string, bool> _nfts = new System.Collections.Generic.Dictionary<string, bool>() {
-        { "Alien", true},
+        { "Anna", true},
+        { "Alien", false},
         { "Neon", false },
         { "Robot", false },
         { "Rainbow", false }
@@ -14,6 +15,30 @@ public class UserData
     public static string WalletAddress
     {
         get { return SuiWallet.ActiveWalletAddress; }
+    }
+
+    public static string UserName
+    {
+        get
+        {
+            return PlayerPrefsExtra.GetString("LoggedInUserName");
+        }
+        set
+        {
+            PlayerPrefsExtra.SetString("LoggedInUserName", value);
+        }
+    }
+
+    public static string sessionID
+    {
+        get
+        {
+            return PlayerPrefsExtra.GetString("AuthsessionID");
+        }
+        set
+        {
+            PlayerPrefsExtra.SetString("AuthsessionID", value);
+        }
     }
 
     public static int TokenBalance

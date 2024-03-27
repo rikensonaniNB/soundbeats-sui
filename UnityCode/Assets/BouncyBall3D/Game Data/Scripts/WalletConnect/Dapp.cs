@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using WalletConnectSharp.Sign.Models;
@@ -18,6 +19,7 @@ namespace WalletConnectUnity.Modal.Sample
 
         [Space, SerializeField] private GameObject _dappButtons;
         [SerializeField] private GameObject _networkList;
+        [SerializeField] private GameObject _userName;
 
         private readonly HashSet<Chain> _selectedChains = new();
 
@@ -52,7 +54,9 @@ namespace WalletConnectUnity.Modal.Sample
                         return;
 
                     Debug.Log($"[WalletConnectModalSample] Session connected. Topic: {@struct.Topic}");
-                    EnableDappButtons();
+                    UIController.instance.OnPersonalSignButton();
+                    _userName.SetActive(true);
+                    _networkList.SetActive(false);
                 };
 
                 // Invoked after wallet disconnected
