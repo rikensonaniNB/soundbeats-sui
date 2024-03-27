@@ -1,16 +1,16 @@
 import {
     RawSigner, // use keypair
-} from '@mysten/sui.js'
-import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client'
-import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519'
-import { TransactionBlock } from '@mysten/sui.js/transactions'
-import { Keypair, Signer } from '@mysten/sui.js/cryptography'
-import { Injectable } from '@nestjs/common'
-import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard'
-import { getLeaderboardInstance } from './leaderboard/leaderboard'
-import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager'
-import { getAuthManagerInstance } from './auth/auth'
-import { Config } from './config'
+} from '@mysten/sui.js';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+import { Ed25519Keypair, Ed25519PublicKey } from '@mysten/sui.js/keypairs/ed25519';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { Keypair, Signer } from '@mysten/sui.js/cryptography';
+import { Injectable } from '@nestjs/common';
+import { ILeaderboard, ISprint } from './leaderboard/ILeaderboard';
+import { getLeaderboardInstance } from './leaderboard/leaderboard';
+import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager';
+import { getAuthManagerInstance } from './auth/auth';
+import { Config } from './config';
 import { AppLogger } from './app.logger';
 //const { ethers } = require('ethers');
 

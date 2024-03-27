@@ -1,4 +1,9 @@
-import { BadRequestException, Body, Controller, Get, InternalServerErrorException, Post, Put, Query } from '@nestjs/common'
+import {
+    Body, Controller, Get, Post, Put, Query,
+    BadRequestException, 
+    UnauthorizedException,
+    InternalServerErrorException, 
+    } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 import { AppService } from './app.service'
 import {
@@ -295,12 +300,19 @@ export class AppController {
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             
             status = output.failureReason;
-            if (output.verified)
+            if (output.verified) {
                 return output; 
+            }
         }
         catch (e) {
             this.logger.error(`error in ${logString}: ${e}`);
             throw new InternalServerErrorException();
+        }
+
+        console.log(status); 
+        console.log(['sessionInvalid', 'sessionIdInvalid', 'sessionComplete', 'sessionExpired', 'walletMismatch', 'messageMismatch'].indexOf(status))
+        if (['sessionInvalid', 'sessionIdInvalid', 'sessionComplete', 'sessionExpired', 'walletMismatch', 'messageMismatch'].indexOf(status) >= 0) {
+            throw new UnauthorizedException(status);
         }
         
         throw new BadRequestException(status);
