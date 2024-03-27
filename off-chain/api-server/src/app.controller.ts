@@ -1,5 +1,5 @@
 import {
-    Body, Controller, Get, Post, Put, Query,
+    Body, Controller, Get, Post, Put, Query, HttpCode,
     BadRequestException, 
     UnauthorizedException,
     InternalServerErrorException, 
@@ -52,6 +52,7 @@ export class AppController {
 
     @ApiOperation({ summary: 'Create NFT' })
     @Post('/api/v1/nfts')
+    @HttpCode(200)
     async mintNft(@Body() body: MintNftDto): Promise<MintNftResponseDto> {
         const logString = `POST /api/v1/nfts ${JSON.stringify(body)}`;
         this.logger.log(logString);
@@ -76,6 +77,7 @@ export class AppController {
 
     @ApiOperation({ summary: 'Request private token' })
     @Post('/api/v1/token')
+    @HttpCode(200)
     async mintToken(@Body() body: MintTokenDto): Promise<MintTokenResponseDto> {
         const logString = `POST /api/v1/token ${JSON.stringify(body)}`;
         this.logger.log(logString);
@@ -200,6 +202,7 @@ export class AppController {
 
     @ApiOperation({ summary: 'Add to a user score on the leaderboard' })
     @Post('/api/v1/leaderboard')
+    @HttpCode(200)
     async addLeaderboardScore(@Body() body: AddLeaderboardDto): Promise<AddLeaderboardResponseDto> {
         const logString = `POST /api/v1/leaderboard ${JSON.stringify(body)}`;
         this.logger.log(logString);
@@ -245,8 +248,10 @@ export class AppController {
     }
 
     // *** AUTH and REGISTRATION *** 
-    
+
+    @ApiOperation({ summary: 'Start an auth session' })
     @Post('/api/v1/auth')
+    @HttpCode(200)
     async startAuthSession(@Body() body: StartAuthSessionDto): Promise<StartAuthSessionResponseDto> {
         const logString = `POST /api/v1/auth ${JSON.stringify(body)}`;
         this.logger.log(logString);
@@ -267,6 +272,7 @@ export class AppController {
     //TODO: (HIGH) enforce max lengths for input params 
     @ApiOperation({ summary: 'Verify a signed message' })
     @Post('/api/v1/verify')
+    @HttpCode(200)
     async verifyAuthSession(@Body() body: AuthVerifyDto): Promise<AuthVerifyResponseDto> {
         const logString = `POST /api/v1/verify ${JSON.stringify(body)}`;
         this.logger.log(logString);
