@@ -499,8 +499,8 @@ public class GameManager : Singleton<GameManager>
         congrats.SetActive(false);
         foreach (Transform b in playsongs.gameObject.transform)
         {
-            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-            b.gameObject.transform.gameObject.SetActive(true);
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            b.gameObject.transform.gameObject.SetActive(false);
 
         }
         AudioVisualizeManager.instance.audioSource.enabled = false;
