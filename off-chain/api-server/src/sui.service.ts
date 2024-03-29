@@ -84,7 +84,8 @@ export class SuiService {
 
                     this.logger.log('detected packageId: ' + this.packageId);
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
-                    this.logger.log('detected nftOwnerCap: ' + this.beatsNftOwnerCap);
+                    this.logger.log('detected beatsNftOwnerCap: ' + this.beatsNftOwnerCap);
+                    this.logger.log('detected beatmapsNftOwnerCap: ' + this.beatMapsNftOwnerCap);
                 }
             });
         }
@@ -174,19 +175,26 @@ export class SuiService {
         title: string,
         artist: string,
         beatmapJson: string,
+        imageUrl: string,
         quantity: number,
     ): Promise<{ signature: string; addresses: string[]; network: string }> {
 
         //mint nft to recipient 
         const tx = new TransactionBlock();
+        
+        const metadata = {
+            beatmap: beatmapJson,
+            username: username, 
+            title: title, 
+            artist: artist
+        }
+        
         tx.moveCall({
             target: `${this.packageId}::beatmaps_nft::mint`,
             arguments: [
                 tx.pure(this.beatMapsNftOwnerCap),
-                tx.pure(username),
-                tx.pure(title),
-                tx.pure(artist),
-                tx.pure(beatmapJson),
+                tx.pure(JSON.stringify(metadata)),
+                tx.pure(imageUrl),
                 tx.pure(recipient),
                 tx.pure(quantity)
             ],
@@ -451,16 +459,17 @@ export class SuiService {
         for (let i = 0; i < nfts.length; i++) {
             const nft = nfts[i];
             if (nft.data.content['fields'] &&
-                nft.data.content['fields']['username'] &&
-                nft.data.content['fields']['title'] &&
-                nft.data.content['fields']['artist'] &&
-                nft.data.content['fields']['beatmapJson']
+                nft.data.content['fields']['metadata']
             ) {
+                let metadata: any = {};
+                try {
+                    metadata = JSON.parse(nft.data.content['fields']['metadata']);
+                } catch{}
                 output.nfts.push({
-                    username: nft.data.content['fields']['username'],
-                    title: nft.data.content['fields']['title'],
-                    artist: nft.data.content['fields']['artist'],
-                    beatmapJson: nft.data.content['fields']['beatmapJson'],
+                    username: metadata.username ?? '',
+                    artist: metadata.artist ?? '',
+                    title: metadata.title ?? '',
+                    beatmapJson: metadata.beatmap ?? '',
                 });
             }
         }
@@ -663,7 +672,7 @@ export class SuiService {
 
         //for each NFT owned
         beatMapsNftBalances.nfts.forEach(async nft => {
-            await this.mintBeatmapsNfts(dest, nft.username, nft.title, nft.artist, nft.beatmapJson, 1);
+            await this.mintBeatmapsNfts(dest, nft.username, nft.title, nft.artist, nft.beatmapJson, nft.imageUrl, 1);
         });
     }
 

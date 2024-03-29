@@ -27,6 +27,8 @@ export class MintBeatmapsNftDto {
     artist: string
     @ApiProperty({ description: 'Beatmap json' })
     beatmapJson: string
+    @ApiProperty({ description: 'NFT image url' })
+    imageUrl: string
     @ApiProperty({ description: 'Number of NFT to be minted' })
     quantity?: number = 1
 }

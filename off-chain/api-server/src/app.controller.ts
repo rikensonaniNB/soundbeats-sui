@@ -90,7 +90,7 @@ export class AppController {
     async mintBeatmapsNfts(@Body() body: MintBeatmapsNftDto): Promise<MintNftResponseDto> {
         const logString = `POST /api/v1/nfts/beatmaps ${JSON.stringify(body)}`;
         this.logger.log(logString);
-        let { recipient, username, title, artist, beatmapJson, quantity } = body;
+        let { recipient, username, title, artist, beatmapJson, imageUrl, quantity } = body;
         if (body.username == null || body.username == '') {
             throw new BadRequestException('name cannot be null or empty');
         }
@@ -106,10 +106,13 @@ export class AppController {
         if (beatmapJson == null || beatmapJson == '') {
             throw new BadRequestException('beatmapJson cannot be null or empty');
         }
+        if (imageUrl == null || imageUrl == '') {
+            throw new BadRequestException('imageUrl cannot be null or empty');
+        }
 
         try {
             //TODO: do we still need NFT name? 
-            const output = await this.suiService.mintBeatmapsNfts(recipient, username, title, artist, beatmapJson, quantity ?? 1);
+            const output = await this.suiService.mintBeatmapsNfts(recipient, username, title, artist, beatmapJson, imageUrl, quantity ?? 1);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }
