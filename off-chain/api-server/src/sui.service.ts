@@ -34,8 +34,8 @@ export class SuiService {
     keypair: Keypair
     packageId: string
     treasuryCap: string
-    nftOwnerCap: string
-    coinCap: string
+    beatsNftOwnerCap: string
+    beatMapsNftOwnerCap: string
     leaderboard: ILeaderboard
     authManager: IAuthManager
     network: string
@@ -49,6 +49,7 @@ export class SuiService {
 
         //create connect to the correct environment
         this.network = Config.suiNetwork;
+        this.logger.log(`network: ${this.network}`);
         this.provider = this._createRpcProvider(this.network);
         this.signer = new RawSigner(this.keypair, this.provider);
 
@@ -59,13 +60,12 @@ export class SuiService {
         //get initial addresses from config setting 
         this.packageId = Config.packageId;
         this.treasuryCap = Config.treasuryCap;
-        this.nftOwnerCap = Config.nftOwnerCap;
-        this.coinCap = Config.coinCap;
+        this.beatsNftOwnerCap = Config.nftOwnerCap;
 
         this.logger.log('packageId: ' + this.packageId);
         this.logger.log('treasuryCap: ' + this.treasuryCap);
-        this.logger.log('nftOwnerCap: ' + this.nftOwnerCap);
-        this.logger.log('coinCap: ' + this.coinCap);
+        this.logger.log('beatsNftOwnerCap: ' + this.beatsNftOwnerCap);
+        this.logger.log('beatMapsNftOwnerCap: ' + this.beatMapsNftOwnerCap);
 
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
@@ -79,13 +79,12 @@ export class SuiService {
                 if (response && response.packageId && response.treasuryCap) {
                     this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
-                    this.nftOwnerCap = response.nftOwnerCap;
-                    this.coinCap = response.coinCap
+                    this.beatsNftOwnerCap = response.beatsNftOwnerCap;
+                    this.beatMapsNftOwnerCap = response.beatMapsNftOwnerCap;
 
                     this.logger.log('detected packageId: ' + this.packageId);
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
-                    this.logger.log('detected nftOwnerCap: ' + this.nftOwnerCap);
-                    this.logger.log('detected coinCap: ' + this.coinCap);
+                    this.logger.log('detected nftOwnerCap: ' + this.beatsNftOwnerCap);
                 }
             });
         }
@@ -126,7 +125,7 @@ export class SuiService {
         tx.moveCall({
             target: `${this.packageId}::beats_nft::mint`,
             arguments: [
-                tx.pure(this.nftOwnerCap),
+                tx.pure(this.beatsNftOwnerCap),
                 tx.pure(name),
                 tx.pure(description),
                 tx.pure(imageUrl),
@@ -183,7 +182,7 @@ export class SuiService {
         tx.moveCall({
             target: `${this.packageId}::beatmaps_nft::mint`,
             arguments: [
-                tx.pure(this.nftOwnerCap),
+                tx.pure(this.beatMapsNftOwnerCap),
                 tx.pure(username),
                 tx.pure(title),
                 tx.pure(artist),
@@ -409,59 +408,62 @@ export class SuiService {
      * @param nftType
      * @returns GetBeatsNftsResponseDto
      */
-    async getUserNFTs(wallet: string, nftType: string = 'BEATS_NFT'): 
-        Promise<{ nfts: { name: string, url: string }[]; network: string }> 
-    {
+    async getBeatsNfts(wallet: string):
+        Promise<{ nfts: any[]; network: string }> {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
-        //get objects owned by user
-        let response: any = {
-            hasNextPage: true,
-            data: [],
-            nextCursor: null
-        };
+        const nfts = await this._getUserNFTs(wallet); 
 
-        while (response.hasNextPage) {
-            //get objects owned by user
-            response = await this.provider.getOwnedObjects({
-                owner: wallet,
-                options: {
-                    showType: true,
-                    showContent: true,
-                },
-                limit: 50,
-                cursor: response.nextCursor
-            });
+        //get list of unique names for all NFTs owned
+        for (let i = 0; i < nfts.length; i++) {
+            const nft = nfts[i];
+            if (nft.data.content['fields'] &&
+                nft.data.content['fields']['name'] &&
+                nft.data.content['fields']['url']
+            ) {
+                const nftName = nft.data.content['fields']['name'];
+                const nftUrl = nft.data.content['fields']['url'];
 
-            console.log(response);
-
-            if (response && response.data && response.data.length) {
-
-                //get objects which are the named NFTs
-                const beatsNfts = response.data.filter(o => {
-                    return o.data.type.startsWith(this.packageId) &&
-                        o.data?.type?.endsWith(`::${nftType}::>`);
-                });
-
-                //get list of unique names for all NFTs owned
-                for (let i = 0; i < beatsNfts.length; i++) {
-                    const nft = beatsNfts[i];
-                    if (nft.data.content['fields'] &&
-                        nft.data.content['fields']['name'] &&
-                        nft.data.content['fields']['url']
-                    ) {
-                        const nftName = nft.data.content['fields']['name'];
-                        const nftUrl = nft.data.content['fields']['url'];
-
-                        //only add if name is unique
-                        if (!output.nfts.some(nft => nft.name == nftName)) {
-                            output.nfts.push({ name: nftName, url: nftUrl });
-                        }
-                    }
+                //only add if name is unique
+                if (!output.nfts.some(nft => nft.name == nftName)) {
+                    output.nfts.push({ name: nftName, url: nftUrl });
                 }
             }
         }
+        return output;
+    }
 
+    /**
+     * Examines all instances of BEATMAPS NFTs owned by the given wallet address, and returns a list 
+     * of the unique NFT types owned by the address.  
+     * 
+     * @param wallet 
+     * @param nftType
+     * @returns GetBeatsNftsResponseDto
+     */
+    async getBeatmapsNfts(wallet: string):
+        Promise<{ nfts: any[]; network: string }> {
+        const output: { nfts: { username: string, title: string, artist: string, beatmapJson: string }[]; network: string } = { nfts: [], network: this.network };
+
+        const nfts = await this._getUserNFTs(wallet, "BEATMAPS_NFT");
+
+        //get list of unique names for all NFTs owned
+        for (let i = 0; i < nfts.length; i++) {
+            const nft = nfts[i];
+            if (nft.data.content['fields'] &&
+                nft.data.content['fields']['username'] &&
+                nft.data.content['fields']['title'] &&
+                nft.data.content['fields']['artist'] &&
+                nft.data.content['fields']['beatmapJson']
+            ) {
+                output.nfts.push({
+                    username: nft.data.content['fields']['username'],
+                    title: nft.data.content['fields']['title'],
+                    artist: nft.data.content['fields']['artist'],
+                    beatmapJson: nft.data.content['fields']['beatmapJson'],
+                });
+            }
+        }
         return output;
     }
 
@@ -583,7 +585,6 @@ export class SuiService {
             output.status = "notfound"; 
         }
         else {
-            console.log(authRecord);
             output.suiWallet = authRecord?.suiWallet;
             output.status = "success"; 
         }
@@ -648,16 +649,21 @@ export class SuiService {
         
         //TODO: check that the address of the keypair matches the stored address
         
-        const tokenType = `${this.packageId}::beats::BEATS`;
         const tokenBalance = await this.getTokenBalance(walletAddr);
-        const nftBalances = await this.getUserNFTs(walletAddr);
+        const beatsNftBalances = await this.getBeatsNfts(walletAddr);
+        const beatMapsNftBalances = await this.getBeatmapsNfts(walletAddr);
         
         //mint equal number of token to new address
         await this.mintTokens(dest, tokenBalance.balance);
-        
+
         //for each NFT owned
-        nftBalances.nfts.forEach(async nft => {
+        beatsNftBalances.nfts.forEach(async nft => {
             await this.mintBeatsNfts(dest, nft.name, "Soundbeats NFT", nft.url, 1);
+        });
+
+        //for each NFT owned
+        beatMapsNftBalances.nfts.forEach(async nft => {
+            await this.mintBeatmapsNfts(dest, nft.username, nft.title, nft.artist, nft.beatmapJson, 1);
         });
     }
 
@@ -669,7 +675,7 @@ export class SuiService {
      * @returns A package id and treasury cap id
      */
     async _detectTokenInfo(wallet: string, packageId: string = null)
-        : Promise<{ packageId: string, treasuryCap: string, nftOwnerCap: string, coinCap: string } | null> {
+        : Promise<{ packageId: string, treasuryCap: string, beatsNftOwnerCap: string, beatMapsNftOwnerCap: string } | null> {
         let output = null;
 
         //get owned objects
@@ -684,14 +690,12 @@ export class SuiService {
 
         for (let i in objects.data) {
             const obj = objects.data[i]
-            console.log(obj)
         }
-        console.log(objects.data.length);
 
         //parse the objects
         if (objects && objects.data && objects.data.length) {
             const tCaps = objects.data.filter(o => {
-                return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ? packageId : ""}`) &&
+                return o.data.type.startsWith(`0x2::coin::TreasuryCap<${packageId ?? ""}`) &&
                     o.data?.type?.endsWith("::beats::BEATS>")
             });
 
@@ -709,13 +713,22 @@ export class SuiService {
 
                 if (packageId && packageId.length) {
 
-                    //get nft owner object
-                    let nftObj = null;
-                    const nftOwners = objects.data.filter(o => {
+                    //get BEATS nft owner object
+                    let beatsNftObj = null;
+                    const beatsNftOwners = objects.data.filter(o => {
                         return o.data.type == `${packageId}::beats_nft::BeatsOwnerCap<${packageId}::beats_nft::BEATS_NFT>`;
                     });
-                    if (nftOwners && nftOwners.length) {
-                        nftObj = nftOwners[nftOwners.length - 1];
+                    if (beatsNftOwners && beatsNftOwners.length) {
+                        beatsNftObj = beatsNftOwners[beatsNftOwners.length - 1];
+                    }
+
+                    //get BEATMAPS nft owner object
+                    let beatMapsNftObj = null;
+                    const beatMapsNftOwners = objects.data.filter(o => {
+                        return o.data.type == `${packageId}::beatmaps_nft::BeatmapsOwnerCap<${packageId}::beatmaps_nft::BEATMAPS_NFT>`;
+                    });
+                    if (beatMapsNftOwners && beatMapsNftOwners.length) {
+                        beatMapsNftObj = beatMapsNftOwners[beatMapsNftOwners.length - 1];
                     }
 
                     //get coin cap object 
@@ -732,8 +745,8 @@ export class SuiService {
                         output = {
                             packageId: packageId,
                             treasuryCap: beatsObj.data?.objectId,
-                            nftOwnerCap: nftObj?.data?.objectId,
-                            coinCap: coinObj?.data?.objectId
+                            beatsNftOwnerCap: beatsNftObj?.data?.objectId,
+                            beatMapsNftOwnerCap: beatMapsNftObj?.data?.objectId
                         };
                     }
                 }
@@ -782,12 +795,6 @@ export class SuiService {
 
     async _verifySuiSignature(walletPubKey: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
 
-        console.log(walletPubKey);
-        console.log(signature);
-
-        console.log(walletPubKey);
-        console.log(signature);
-
         const publicKey = new Ed25519PublicKey(walletPubKey)
         const msgBytes = new TextEncoder().encode(message);
 
@@ -833,5 +840,44 @@ export class SuiService {
             return { success: false, reason: 'messageMismatch' };
 
         return { success: true, reason: '' };
+    }
+
+    async _getUserNFTs(wallet: string, nftType: string = 'BEATS_NFT'):
+        Promise<any[]> {
+        let output: any[] = [];
+
+        //get objects owned by user
+        let response: any = {
+            hasNextPage: true,
+            data: [],
+            nextCursor: null
+        };
+
+        while (response.hasNextPage) {
+            //get objects owned by user
+            response = await this.provider.getOwnedObjects({
+                owner: wallet,
+                options: {
+                    showType: true,
+                    showContent: true,
+                },
+                limit: 50,
+                cursor: response.nextCursor
+            });
+
+            if (response && response.data && response.data.length) {
+
+                //get objects which are the named NFTs
+                const beatsNfts = response.data.filter(o => {
+                    return o.data?.type?.startsWith(this.packageId) &&
+                        o.data?.type?.endsWith(`::${nftType.toLowerCase()}::${nftType.toUpperCase()}>`);
+                });
+                
+                if (beatsNfts?.length)
+                    output = beatsNfts;
+            }
+        }
+
+        return output;
     }
 }

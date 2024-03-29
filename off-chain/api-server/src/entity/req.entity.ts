@@ -17,8 +17,6 @@ export class MintBeatsNftDto {
 }
 
 export class MintBeatmapsNftDto {
-    @ApiProperty({ description: 'Name of the NFT' })
-    name: string
     @ApiProperty({ description: 'The address of the recipient' })
     recipient: string
     @ApiProperty({ description: 'Username of the beatmap creator' })
@@ -77,9 +75,21 @@ export class BeatsNftDto {
     url: string
 }
 
+export class BeatmapsNftDto {
+    username: string
+    title: string
+    artist: string
+    beatmapJson: string
+}
+
 export class GetBeatsNftsResponseDto extends ResponseDtoBase {
-    @ApiProperty({ description: 'The unique names of NFTs owned' })
+    @ApiProperty({ description: 'The unique BEATS NFTs owned' })
     nfts: BeatsNftDto[]
+}
+
+export class GetBeatmapsNftsResponseDto extends ResponseDtoBase {
+    @ApiProperty({ description: 'The BEATMAPS NFTs owned' })
+    nfts: BeatmapsNftDto[]
 }
 
 export class VerifySignatureDto {

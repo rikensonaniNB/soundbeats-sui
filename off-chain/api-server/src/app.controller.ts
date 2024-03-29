@@ -14,6 +14,7 @@ import {
     GetTokenBalanceResponseDto,
     GetBeatsNftsDto,
     GetBeatsNftsResponseDto,
+    GetBeatmapsNftsResponseDto,
     MintTokenDto,
     MintTokenResponseDto,
     VerifySignatureDto,
@@ -51,14 +52,14 @@ export class AppController {
 
     // *** NFTS and TOKENS *** 
 
-    @ApiOperation({ summary: 'Create NFT' })
+    @ApiOperation({ summary: 'Mint NFT' })
     @Post('/api/v1/nfts')
     @HttpCode(200)
     async mintNfts(@Body() body: MintBeatsNftDto): Promise<MintNftResponseDto> {
         return this.mintBeatsNfts(body);
     }
 
-    @ApiOperation({ summary: 'Create BEATS NFT' })
+    @ApiOperation({ summary: 'Mint BEATS NFT' })
     @Post('/api/v1/nfts/beats')
     @HttpCode(200)
     async mintBeatsNfts(@Body() body: MintBeatsNftDto): Promise<MintNftResponseDto> {
@@ -83,13 +84,13 @@ export class AppController {
         }
     }
 
-    @ApiOperation({ summary: 'Create BEATMAPS NFT' })
+    @ApiOperation({ summary: 'Mint BEATMAPS NFT' })
     @Post('/api/v1/nfts/beatmaps')
     @HttpCode(200)
     async mintBeatmapsNfts(@Body() body: MintBeatmapsNftDto): Promise<MintNftResponseDto> {
         const logString = `POST /api/v1/nfts/beatmaps ${JSON.stringify(body)}`;
         this.logger.log(logString);
-        let { name, recipient, username, title, artist, beatmapJson, quantity } = body;
+        let { recipient, username, title, artist, beatmapJson, quantity } = body;
         if (body.username == null || body.username == '') {
             throw new BadRequestException('name cannot be null or empty');
         }
@@ -135,7 +136,7 @@ export class AppController {
         }
 
         try {
-            const output = await this.suiService.getUserNFTs(wallet, "BEATS_NFT");
+            const output = await this.suiService.getBeatsNfts(wallet);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }
@@ -147,7 +148,7 @@ export class AppController {
 
     @ApiOperation({ summary: 'Get list of user-owned BEATMAPS NFTs' })
     @Get('/api/v1/nfts/beatmaps')
-    async getBeatmapsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatsNftsResponseDto> {
+    async getBeatmapsNfts(@Query() query: GetBeatsNftsDto): Promise<GetBeatmapsNftsResponseDto> {
         const logString = `GET /api/v1/nfts/beatmaps ${JSON.stringify(query)}`;
         this.logger.log(logString);
         const { wallet } = query;
@@ -156,7 +157,7 @@ export class AppController {
         }
 
         try {
-            const output = await this.suiService.getUserNFTs(wallet, "BEATMAPS_NFT");
+            const output = await this.suiService.getBeatmapsNfts(wallet);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }
