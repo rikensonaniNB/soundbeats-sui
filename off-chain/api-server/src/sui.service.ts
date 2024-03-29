@@ -600,6 +600,12 @@ export class SuiService {
         
         return output; 
     }
+    
+    //TODO: implement 
+    //TODO: comment 
+    async checkUsernameExists(username: string): Promise<boolean> {
+        return false;
+    }
 
     //TODO: comment header
     /**

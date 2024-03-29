@@ -171,6 +171,16 @@ export class GetLeaderboardSprintResponseDto {
 
 /// --- AUTH --- /// 
 
+export class CheckUsernameDto {
+    @ApiProperty({ description: 'Username to check' })
+    username: string
+}
+
+export class CheckUsernameResponseDto {
+    @ApiProperty({ description: 'Username exists or not' })
+    exists: boolean
+}
+
 //TODO: need this? 
 export class GetAccountDto {
     @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })

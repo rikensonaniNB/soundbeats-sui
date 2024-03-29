@@ -30,7 +30,9 @@ import {
     GetLeaderboardSprintDto,
     GetLeaderboardSprintResponseDto,
     GetAccountDto,
-    GetAccountResponseDto
+    GetAccountResponseDto, 
+    CheckUsernameDto, 
+    CheckUsernameResponseDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -234,6 +236,30 @@ export class AppController {
         
         try {
             const output = await this.suiService.verifySignature(address, signature, message);
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            return output;
+        }
+        catch (e) {
+            this.logger.error(`error in ${logString}: ${e}`);
+            throw new InternalServerErrorException();
+        }
+    }
+    
+    @ApiOperation({ summary: 'Check if a username exists or is taken' })
+    @Get('/api/v1/username')
+    async checkUsername(@Query() query: CheckUsernameDto) {
+        const logString = `GET /api/v1/username ${JSON.stringify(query)}`;
+        this.logger.log(logString);
+        let { username } = query;
+        if (username == null || username == '') {
+            throw new BadRequestException('username cannot be null or empty')
+        }
+
+        try {
+            const exists: boolean = await this.suiService.checkUsernameExists(username);
+            const output: CheckUsernameResponseDto = {
+                exists
+            }; 
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }
