@@ -101,6 +101,7 @@ export class SuiService {
         }
     }
 
+    //TODO: refactor mintBeatsNfts and mintBeatmapsNfts into one method
     /**
      * Mints NFTs with the given properties in the given quantity to the specified 
      * recipient wallet address. 
@@ -112,7 +113,7 @@ export class SuiService {
      * @param quantity 
      * @returns MintNftResponseDto
      */
-    async mintNfts(
+    async mintBeatsNfts(
         recipient: string,
         name: string,
         description: string,
@@ -129,6 +130,64 @@ export class SuiService {
                 tx.pure(name),
                 tx.pure(description),
                 tx.pure(imageUrl),
+                tx.pure(recipient),
+                tx.pure(quantity)
+            ],
+        });
+
+        //execute tx 
+        const result = await this.signer.signAndExecuteTransactionBlock({
+            transactionBlock: tx,
+            options: {
+                showEffects: true,
+                showEvents: true,
+                showBalanceChanges: true,
+                showObjectChanges: true,
+                showInput: true
+            }
+        });
+
+        //check results 
+        if (result.effects == null) {
+            throw new Error('Fail')
+        }
+
+        const signature = result.effects.transactionDigest
+        const addresses = result.effects.created?.map((obj) => obj.reference.objectId) ?? []
+
+        return { signature, addresses, network: this.network }
+    }
+
+    /**
+     * Mints NFTs with the given properties in the given quantity to the specified 
+     * recipient wallet address. 
+     * 
+     * @param recipient 
+     * @param title 
+     * @param username 
+     * @param beatmapJson 
+     * @param quantity 
+     * @returns MintNftResponseDto
+     */
+    async mintBeatmapsNfts(
+        recipient: string,
+        username: string,
+        title: string,
+        artist: string,
+        beatmapJson: string,
+        quantity: number,
+    ): Promise<{ signature: string; addresses: string[]; network: string }> {
+
+        //mint nft to recipient 
+        const tx = new TransactionBlock();
+        tx.moveCall({
+            target: `${this.packageId}::beatmaps_nft::mint`,
+            arguments: [
+                tx.pure(this.nftOwnerCap),
+                tx.pure(username),
+                tx.pure(title),
+                tx.pure(artist),
+                tx.pure(beatmapJson),
                 tx.pure(recipient),
                 tx.pure(quantity)
             ],
@@ -347,9 +406,12 @@ export class SuiService {
      * of the unique NFT types owned by the address.  
      * 
      * @param wallet 
+     * @param nftType
      * @returns GetBeatsNftsResponseDto
      */
-    async getUserNFTs(wallet: string): Promise<{ nfts: { name: string, url: string }[]; network: string }> {
+    async getUserNFTs(wallet: string, nftType: string = 'BEATS_NFT'): 
+        Promise<{ nfts: { name: string, url: string }[]; network: string }> 
+    {
         const output: { nfts: { name: string, url: string }[]; network: string } = { nfts: [], network: this.network };
 
         //get objects owned by user
@@ -375,13 +437,13 @@ export class SuiService {
 
             if (response && response.data && response.data.length) {
 
-                //get objects which are BEATS NFTs
+                //get objects which are the named NFTs
                 const beatsNfts = response.data.filter(o => {
                     return o.data.type.startsWith(this.packageId) &&
-                        o.data?.type?.endsWith("::beats_nft::BEATS_NFT>");
+                        o.data?.type?.endsWith(`::${nftType}::>`);
                 });
 
-                //get list of unique names for all BEATS NFTs owned
+                //get list of unique names for all NFTs owned
                 for (let i = 0; i < beatsNfts.length; i++) {
                     const nft = beatsNfts[i];
                     if (nft.data.content['fields'] &&
@@ -595,7 +657,7 @@ export class SuiService {
         
         //for each NFT owned
         nftBalances.nfts.forEach(async nft => {
-            await this.mintNfts(dest, nft.name, "Soundbeats NFT", nft.url, 1);
+            await this.mintBeatsNfts(dest, nft.name, "Soundbeats NFT", nft.url, 1);
         });
     }
 

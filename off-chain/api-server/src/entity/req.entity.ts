@@ -5,13 +5,30 @@ class ResponseDtoBase {
     network: string
 }
 
-export class MintNftDto {
+export class MintBeatsNftDto {
     @ApiProperty({ description: 'Name of the NFT' })
     name: string
     @ApiProperty({ description: 'The address of the recipient' })
     recipient: string
     @ApiProperty({ description: 'URL of the NFT image' })
     imageUrl: string
+    @ApiProperty({ description: 'Number of NFT to be minted' })
+    quantity?: number = 1
+}
+
+export class MintBeatmapsNftDto {
+    @ApiProperty({ description: 'Name of the NFT' })
+    name: string
+    @ApiProperty({ description: 'The address of the recipient' })
+    recipient: string
+    @ApiProperty({ description: 'Username of the beatmap creator' })
+    username: string
+    @ApiProperty({ description: 'Song title or beatmap title' })
+    title: string
+    @ApiProperty({ description: 'Song artist' })
+    artist: string
+    @ApiProperty({ description: 'Beatmap json' })
+    beatmapJson: string
     @ApiProperty({ description: 'Number of NFT to be minted' })
     quantity?: number = 1
 }
