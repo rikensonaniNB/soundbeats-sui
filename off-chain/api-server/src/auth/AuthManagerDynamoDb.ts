@@ -2,6 +2,9 @@ import { Config } from '../config';
 import { IAuthRecord, IAuthManager, IAuthSession } from './IAuthManager';
 import { IDynamoResult } from '../dataAccess/IDynamoResult';
 import { DynamoDbAccess } from '../dataAccess/DynamoDbAccess';
+import { resourceLimits } from 'worker_threads';
+
+const GSI_USERNAME_NAME = "GSI_USERNAME";
 
 function unixTimestamp(): number {
     return Math.floor(Date.now()/1000);
@@ -53,7 +56,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
                 authType: existing.data.authType.S,
                 extraData: null, 
                 suiWallet: existing.data.suiWallet.S,
-                username: existing.data.username.S ?? ''
+                username: existing.data.username?.S ?? ''
             }
             
             if (existing.data.extraData && existing.data.extraData.S && existing.data.extraData.S.length > 0) {
@@ -88,8 +91,8 @@ export class AuthManagerDynamoDb implements IAuthManager {
             throw new Error(`Auth record ${authId}/${authType} not found.`);
         }
         
-        //updatet the database
-        await this._dataAccess_putAuthRecord(authId, authType, suiWallet, record.extraData);
+        //update the database
+        await this._dataAccess_putAuthRecord(authId, authType, suiWallet, record.username, record.extraData);
     }
 
     async getAuthSession(sessionId: string): Promise<IAuthSession> {
@@ -97,8 +100,25 @@ export class AuthManagerDynamoDb implements IAuthManager {
         return session;
     }
 
-    //TODO: (HIGH) implement this, and add an index to username column in DB 
     async usernameExists(username: string): Promise<boolean> {
+        const params = {
+            TableName: Config.authTableName,
+            IndexName: GSI_USERNAME_NAME,
+            KeyConditionExpression: "username = :username_val",
+            ExpressionAttributeValues: {
+                ":username_val": { 'S': username }
+            }
+        };
+
+        //run the query to get records by username
+        const result = await this.dynamoDb.query(params);
+        
+        //return true if any records 
+        if (result.success) {
+            if (result.data && result.data.length) 
+                return true;
+        }
+
         return false;
     }
     

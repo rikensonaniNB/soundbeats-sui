@@ -532,13 +532,12 @@ export class SuiService {
     }
     
     //TODO: comment header
-    //TODO: http status codes would be good 
+    //TODO: make more genereic
     /**
      * 
      * @param evmWallet 
      * @returns 
      */
-    //TODO: make more genereic
     async registerAccountEvm(evmWallet: string, username: string): Promise<{ authId: string, authType: string, suiWallet: string, status: string } > {
         const output = {
             authId: evmWallet,
@@ -561,7 +560,7 @@ export class SuiService {
             let success: boolean = false;
             
             //check first for existing username 
-            if (this.authManager.usernameExists(username)) {
+            if (await this.authManager.usernameExists(username)) {
                 success = false;
                 output.status = "duplicate";
             }
@@ -601,10 +600,14 @@ export class SuiService {
         return output; 
     }
     
-    //TODO: implement 
-    //TODO: comment 
+    /**
+     * Returns true if the username is already taken (in the database) by a user.
+     * 
+     * @param username The username in question
+     * @returns boolean
+     */
     async checkUsernameExists(username: string): Promise<boolean> {
-        return false;
+        return await this.authManager.usernameExists(username);
     }
 
     //TODO: comment header

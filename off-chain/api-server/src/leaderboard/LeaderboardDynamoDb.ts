@@ -5,7 +5,6 @@ import { DynamoDbAccess } from '../dataAccess/DynamoDbAccess';
 
 const DEFAULT_SPRINT_KEY = "default";
 const GSI_SPRINT_NAME = "GSI_SPRINT";
-const GSI_SCORE_NAME = "GSI_SCORE"; 
 const GSI_ACTIVE_NAME = "GSI_ACTIVE";
 const DEFAULT_SPRINT_LENGTH = 86400 * 14; 
 
