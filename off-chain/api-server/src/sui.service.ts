@@ -32,10 +32,9 @@ export class SuiService {
     signer: RawSigner
     provider: SuiClient
     keypair: Keypair
-    packageId: string
     treasuryCap: string
     beatsNftOwnerCap: string
-    beatMapsNftOwnerCap: string
+    beatmapsNftOwnerCap: string
     leaderboard: ILeaderboard
     authManager: IAuthManager
     network: string
@@ -58,20 +57,23 @@ export class SuiService {
         this.authManager = getAuthManagerInstance();
 
         //get initial addresses from config setting 
-        this.packageId = Config.packageId;
         this.treasuryCap = Config.treasuryCap;
-        this.beatsNftOwnerCap = Config.nftOwnerCap;
+        this.beatsNftOwnerCap = Config.beatsNftOwnerCap;
+        this.beatmapsNftOwnerCap = Config.beatmapsNftOwnerCap;
 
-        this.logger.log('packageId: ' + this.packageId);
+        this.logger.log('BEATS token package id: ' + Config.beatsCoinPackageId);
+        this.logger.log('BEATS NFT package id: ' + Config.beatsNftPackageId);
+        this.logger.log('BEATMAPS NFT package id: ' + Config.beatmapsNftPackageId);
         this.logger.log('treasuryCap: ' + this.treasuryCap);
         this.logger.log('beatsNftOwnerCap: ' + this.beatsNftOwnerCap);
-        this.logger.log('beatMapsNftOwnerCap: ' + this.beatMapsNftOwnerCap);
+        this.logger.log('beatmapsNftOwnerCap: ' + this.beatmapsNftOwnerCap);
 
         //get admin address 
         const suiAddress = this.keypair.getPublicKey().toSuiAddress();
         this.logger.log('admin address: ' + suiAddress);
 
         //detect token info from blockchain 
+        /*
         if (Config.detectPackageInfo) {
             this.logger.log('detecting package data ...');
             this._detectTokenInfo(suiAddress, this.packageId).then(async (response) => {
@@ -80,15 +82,16 @@ export class SuiService {
                     this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
                     this.beatsNftOwnerCap = response.beatsNftOwnerCap;
-                    this.beatMapsNftOwnerCap = response.beatMapsNftOwnerCap;
+                    this.beatmapsNftOwnerCap = response.beatmapsNftOwnerCap;
 
                     this.logger.log('detected packageId: ' + this.packageId);
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
                     this.logger.log('detected beatsNftOwnerCap: ' + this.beatsNftOwnerCap);
-                    this.logger.log('detected beatmapsNftOwnerCap: ' + this.beatMapsNftOwnerCap);
+                    this.logger.log('detected beatmapsNftOwnerCap: ' + this.beatmapsNftOwnerCap);
                 }
             });
         }
+        */
     }
 
     createWallet(): { address: string, privateKey: string } {
@@ -124,7 +127,7 @@ export class SuiService {
         //mint nft to recipient 
         const tx = new TransactionBlock();
         tx.moveCall({
-            target: `${this.packageId}::beats_nft::mint`,
+            target: `${Config.beatsNftPackageId}::beats_nft::mint`,
             arguments: [
                 tx.pure(this.beatsNftOwnerCap),
                 tx.pure(name),
@@ -190,9 +193,9 @@ export class SuiService {
         }
         
         tx.moveCall({
-            target: `${this.packageId}::beatmaps_nft::mint`,
+            target: `${Config.beatmapsNftPackageId}::beatmaps_nft::mint`,
             arguments: [
-                tx.pure(this.beatMapsNftOwnerCap),
+                tx.pure(this.beatmapsNftOwnerCap),
                 tx.pure(JSON.stringify(metadata)),
                 tx.pure(imageUrl),
                 tx.pure(recipient),
@@ -235,7 +238,7 @@ export class SuiService {
         //mint token to recipient
         const tx = new TransactionBlock();
         tx.moveCall({
-            target: `${this.packageId}::beats::mint`,
+            target: `${Config.beatsCoinPackageId}::beats::mint`,
             arguments: [
                 tx.pure(this.treasuryCap),
                 tx.pure(amount),
@@ -271,7 +274,7 @@ export class SuiService {
      */
     async getTokenBalance(wallet: string): Promise<{ balance: number; network: string }> {
 
-        const tokenType = `${this.packageId}::beats::BEATS`;
+        const tokenType = `${Config.beatsCoinPackageId}::beats::BEATS`;
         const result = await this.provider.getBalance({
             owner: wallet,
             coinType: tokenType
@@ -669,7 +672,7 @@ export class SuiService {
         
         const tokenBalance = await this.getTokenBalance(walletAddr);
         const beatsNftBalances = await this.getBeatsNfts(walletAddr);
-        const beatMapsNftBalances = await this.getBeatmapsNfts(walletAddr);
+        const beatmapsNftBalances = await this.getBeatmapsNfts(walletAddr);
         
         //mint equal number of token to new address
         await this.mintTokens(dest, tokenBalance.balance);
@@ -680,7 +683,7 @@ export class SuiService {
         });
 
         //for each NFT owned
-        beatMapsNftBalances.nfts.forEach(async nft => {
+        beatmapsNftBalances.nfts.forEach(async nft => {
             await this.mintBeatmapsNfts(dest, nft.username, nft.title, nft.artist, nft.beatmapJson, nft.imageUrl, 1);
         });
     }
@@ -693,7 +696,7 @@ export class SuiService {
      * @returns A package id and treasury cap id
      */
     async _detectTokenInfo(wallet: string, packageId: string = null)
-        : Promise<{ packageId: string, treasuryCap: string, beatsNftOwnerCap: string, beatMapsNftOwnerCap: string } | null> {
+        : Promise<{ packageId: string, treasuryCap: string, beatsNftOwnerCap: string, beatmapsNftOwnerCap: string } | null> {
         let output = null;
 
         //get owned objects
@@ -741,12 +744,12 @@ export class SuiService {
                     }
 
                     //get BEATMAPS nft owner object
-                    let beatMapsNftObj = null;
-                    const beatMapsNftOwners = objects.data.filter(o => {
+                    let beatmapsNftObj = null;
+                    const beatmapsNftOwners = objects.data.filter(o => {
                         return o.data.type == `${packageId}::beatmaps_nft::BeatmapsOwnerCap<${packageId}::beatmaps_nft::BEATMAPS_NFT>`;
                     });
-                    if (beatMapsNftOwners && beatMapsNftOwners.length) {
-                        beatMapsNftObj = beatMapsNftOwners[beatMapsNftOwners.length - 1];
+                    if (beatmapsNftOwners && beatmapsNftOwners.length) {
+                        beatmapsNftObj = beatmapsNftOwners[beatmapsNftOwners.length - 1];
                     }
 
                     //get coin cap object 
@@ -764,7 +767,7 @@ export class SuiService {
                             packageId: packageId,
                             treasuryCap: beatsObj.data?.objectId,
                             beatsNftOwnerCap: beatsNftObj?.data?.objectId,
-                            beatMapsNftOwnerCap: beatMapsNftObj?.data?.objectId
+                            beatmapsNftOwnerCap: beatmapsNftObj?.data?.objectId
                         };
                     }
                 }
@@ -884,10 +887,16 @@ export class SuiService {
             });
 
             if (response && response.data && response.data.length) {
+                
+                let packageId: string = '';
+                if (nftType.toLowerCase() == 'beats_nft')
+                    packageId = Config.beatsNftPackageId;
+                if (nftType.toLowerCase() == 'beatmaps_nft')
+                    packageId = Config.beatmapsNftPackageId;
 
                 //get objects which are the named NFTs
                 const beatsNfts = response.data.filter(o => {
-                    return o.data?.type?.startsWith(this.packageId) &&
+                    return o.data?.type?.startsWith(packageId) &&
                         o.data?.type?.endsWith(`::${nftType.toLowerCase()}::${nftType.toUpperCase()}>`);
                 });
                 

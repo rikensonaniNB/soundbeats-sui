@@ -13,14 +13,23 @@ export class Config {
     static get mnemonicPhrase(): string {
         return process.env.MNEMONIC_PHRASE;
     }
-    static get packageId(): string {
-        return process.env.PACKAGE_ID;
+    static get beatsCoinPackageId(): string {
+        return process.env.BEATS_COIN_PACKAGE_ID;
+    }
+    static get beatsNftPackageId(): string {
+        return process.env.BEATS_NFT_PACKAGE_ID;
+    }
+    static get beatmapsNftPackageId(): string {
+        return process.env.BEATMAPS_NFT_PACKAGE_ID;
     }
     static get treasuryCap(): string {
         return process.env.TREASURY_CAP;
     }
-    static get nftOwnerCap(): string {
-        return process.env.NFT_OWNER_CAP;
+    static get beatsNftOwnerCap(): string {
+        return process.env.BEATS_NFT_OWNER_CAP;
+    }
+    static get beatmapsNftOwnerCap(): string {
+        return process.env.BEATMAPS_NFT_OWNER_CAP;
     }
     static get coinCap(): string {
         return process.env.COIN_CAP;
