@@ -12,9 +12,8 @@ import { IAuthManager, IAuthRecord, IAuthSession } from './auth/IAuthManager';
 import { getAuthManagerInstance } from './auth/auth';
 import { Config } from './config';
 import { AppLogger } from './app.logger';
-//const { ethers } = require('ethers');
+const { ethers } = require('ethers');
 
-//TODO: real signature verification 
 //TODO: replace 'success' with 'completed'
 // - delete table 
 // - rename 2 props & create 
@@ -535,7 +534,7 @@ export class SuiService {
     }
     
     //TODO: comment header
-    //TODO: make more genereic
+    //TODO: make more generic
     /**
      * 
      * @param evmWallet 
@@ -826,7 +825,7 @@ export class SuiService {
     }
 
     async _verifyEvmSignature(expectedAddress: string, signature: string, message: string): Promise<{ address: string, verified: boolean }> {
-        /*try {
+        try {
             const decodedSignature = ethers.getBytes(signature);
             const hashedMessage = ethers.hashMessage(message);
             const signingAddress = ethers.recoverAddress(hashedMessage, signature);
@@ -835,8 +834,8 @@ export class SuiService {
             this.logger.error(e);
         }
         
-        return { address: '', verified: false};*/
-        return { address: expectedAddress, verified: true }
+        return { address: '', verified: false};
+        //return { address: expectedAddress, verified: true }
     }
 
     async _verifySessionId(sessionId: string, wallet: string, message: string): Promise<{success: boolean, reason: string}> {
