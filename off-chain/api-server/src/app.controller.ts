@@ -38,6 +38,12 @@ import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
 
 const LEADERBOARD_DEFAULT_LIMIT: number = 100;
+const MAX_URL_LENGTH = 400;
+const MAX_NFT_NAME_LENGTH = 100;
+const MAX_USERNAME_LENGTH = 100;
+const MAX_WALLET_LENGTH = 100;
+const MAX_JSON_LENGTH = 1000;
+const MAX_SIGNATURE_LENGTH = 500;
 
 @Controller()
 export class AppController {
@@ -68,11 +74,17 @@ export class AppController {
         const logString = `POST /api/v1/nfts/beats ${JSON.stringify(body)}`;
         this.logger.log(logString);
         const { name, recipient, imageUrl, quantity } = body;
-        if (body.name == null || body.name == '') {
+        if (!name || name == '') {
             throw new BadRequestException('name cannot be null or empty');
         }
-        if (imageUrl == null || imageUrl == '') {
+        if (name.length > MAX_NFT_NAME_LENGTH) {
+            throw new BadRequestException(`name exceeded max length of ${MAX_NFT_NAME_LENGTH}`)
+        }
+        if (!imageUrl || imageUrl == '') {
             throw new BadRequestException('imageUrl cannot be null or empty');
+        }
+        if (imageUrl.length > MAX_URL_LENGTH) {
+            throw new BadRequestException(`imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
         }
 
         try {
@@ -93,27 +105,36 @@ export class AppController {
         const logString = `POST /api/v1/nfts/beatmaps ${JSON.stringify(body)}`;
         this.logger.log(logString);
         let { recipient, username, title, artist, beatmapJson, imageUrl, quantity } = body;
-        if (body.username == null || body.username == '') {
-            throw new BadRequestException('name cannot be null or empty');
-        }
-        if (username == null || username == '') {
+        
+        if (!username || username == '') {
             throw new BadRequestException('username cannot be null or empty');
         }
-        if (title == null || title == '') {
+        if (username.length > MAX_USERNAME_LENGTH) {
+            throw new BadRequestException(`username exceeded max length of ${MAX_USERNAME_LENGTH}`)
+        }
+        if (!title || title == '') {
             throw new BadRequestException('title cannot be null or empty');
         }
-        if (artist == null) {
+        if (!artist) {
             artist = '';
         }
-        if (beatmapJson == null || beatmapJson == '') {
+        if (artist.length > MAX_USERNAME_LENGTH) {
+            throw new BadRequestException(`artist exceeded max length of ${MAX_USERNAME_LENGTH}`)
+        }
+        if (!beatmapJson || beatmapJson == '') {
             throw new BadRequestException('beatmapJson cannot be null or empty');
         }
-        if (imageUrl == null || imageUrl == '') {
+        if (beatmapJson.length > MAX_JSON_LENGTH) {
+            throw new BadRequestException(`beatmapJson exceeded max length of ${MAX_JSON_LENGTH}`)
+        }
+        if (!imageUrl|| imageUrl == '') {
             throw new BadRequestException('imageUrl cannot be null or empty');
+        }
+        if (imageUrl.length > MAX_URL_LENGTH) {
+            throw new BadRequestException(`imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
         }
 
         try {
-            //TODO: do we still need NFT name? 
             const output = await this.suiService.mintBeatmapsNfts(recipient, username, title, artist, beatmapJson, imageUrl, quantity ?? 1);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
@@ -136,7 +157,7 @@ export class AppController {
         const logString = `GET /api/v1/nfts/beats ${JSON.stringify(query)}`;
         this.logger.log(logString);
         const { wallet } = query;
-        if (wallet == null || wallet == '') {
+        if (!wallet || wallet == '') {
             throw new BadRequestException('wallet cannot be null or empty');
         }
 
@@ -157,7 +178,7 @@ export class AppController {
         const logString = `GET /api/v1/nfts/beatmaps ${JSON.stringify(query)}`;
         this.logger.log(logString);
         const { wallet } = query;
-        if (wallet == null || wallet == '') {
+        if (!wallet || wallet == '') {
             throw new BadRequestException('wallet cannot be null or empty');
         }
 
@@ -179,10 +200,10 @@ export class AppController {
         const logString = `POST /api/v1/token ${JSON.stringify(body)}`;
         this.logger.log(logString);
         const { amount, recipient } = body;
-        if (amount == null || amount <= 0) {
+        if (!amount  || amount <= 0) {
             throw new BadRequestException('amount cannot be null, zero or negative');
         }
-        if (recipient == null || recipient == '') {
+        if (!recipient  || recipient == '') {
             throw new BadRequestException('recipient cannot be null or empty');
         }
         
@@ -203,7 +224,7 @@ export class AppController {
         const logString = `GET /api/v1/token ${JSON.stringify(query)}`;
         this.logger.log(logString);
         const { wallet } = query;
-        if (wallet == null || wallet == '') {
+        if (!wallet || wallet == '') {
             throw new BadRequestException('wallet cannot be null or empty');
         }
         
@@ -224,13 +245,13 @@ export class AppController {
         const logString = `GET /api/v1/verify ${JSON.stringify(query)}`;
         this.logger.log(logString);
         let { address, signature, message } = query;
-        if (address == null || address == '') {
+        if (!address || address == '') {
             throw new BadRequestException('address cannot be null or empty')
         }
-        if (signature == null || signature == '') {
+        if (!signature || signature == '') {
             throw new BadRequestException('signature cannot be null or empty')
         }
-        if (message == null || message == '') {
+        if (!message || message == '') {
             throw new BadRequestException('message cannot be null or empty')
         }
         
@@ -251,7 +272,7 @@ export class AppController {
         const logString = `GET /api/v1/username ${JSON.stringify(query)}`;
         this.logger.log(logString);
         let { username } = query;
-        if (username == null || username == '') {
+        if (!username || username == '') {
             throw new BadRequestException('username cannot be null or empty')
         }
 
@@ -307,12 +328,16 @@ export class AppController {
         const logString = `POST /api/v1/leaderboard ${JSON.stringify(body)}`;
         this.logger.log(logString);
         const { score, wallet } = body;
-        if (score == null || score <= 0) {
+        if (!score  || score <= 0) {
             throw new BadRequestException('score cannot be null, zero or negative');
         }
-        if (wallet == null || wallet == '') {
+        if (!wallet  || wallet == '') {
             throw new BadRequestException('wallet cannot be null or empty');
         }
+        if (wallet.length > MAX_WALLET_LENGTH) {
+            throw new BadRequestException(`wallet exceeded max length of ${MAX_WALLET_LENGTH}`);
+        }
+        
         try {
             const output = await this.suiService.addLeaderboardScore(wallet, score);
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
@@ -356,8 +381,11 @@ export class AppController {
         const logString = `POST /api/v1/auth ${JSON.stringify(body)}`;
         this.logger.log(logString);
         let { evmWallet } = body;
-        if (evmWallet == null || evmWallet == '') {
+        if (!evmWallet  || evmWallet == '') {
             throw new BadRequestException('evmWallet cannot be null or empty');
+        }
+        if (evmWallet.length > MAX_WALLET_LENGTH) {
+            throw new BadRequestException(`evmWallet exceeds max length of ${MAX_WALLET_LENGTH}`);
         }
 
         try {
@@ -369,7 +397,6 @@ export class AppController {
         }
     }
 
-    //TODO: (HIGH) enforce max lengths for input params 
     @ApiOperation({ summary: 'Verify a signed message' })
     @Post('/api/v1/verify')
     @HttpCode(200)
@@ -379,26 +406,37 @@ export class AppController {
         let status = '';
         
         let { wallet, walletType, sessionId, messageToSign, action, signature, username } = body;
-        if (wallet == null || wallet == '') {
+        if (!wallet || wallet == '') {
             throw new BadRequestException('wallet cannot be null or empty');
         }
-        if (walletType == null) {
+        if (wallet.length > MAX_WALLET_LENGTH) {
+            throw new BadRequestException(`wallet exceeds max length of ${MAX_WALLET_LENGTH}`);
+        }
+        if (!walletType) {
             throw new BadRequestException('walletType cannot be null or empty');
         }
-        if (sessionId == null) {
+        if (!sessionId) {
             throw new BadRequestException('sessionId cannot be null or empty');
         }
-        if (messageToSign == null) {
+        if (!messageToSign) {
             throw new BadRequestException('messageToSign cannot be null or empty');
         }
-        if (signature == null || signature == '') {
+        if (!signature  || signature == '') {
             throw new BadRequestException('signature cannot be null or empty');
         }
+        if (signature.length > MAX_SIGNATURE_LENGTH) {
+            throw new BadRequestException(`signature exceeds max length of ${MAX_SIGNATURE_LENGTH}`);
+        }
+        
+        if (!username) {
+            username = '';
+        }
+        if (username.length > MAX_USERNAME_LENGTH) {
+            throw new BadRequestException(`username exceeds max length of ${MAX_USERNAME_LENGTH}`);
+        }
+        
         try {
-            if (username == null) {
-                username = '';
-            }
-            if (action == null) {
+            if (!action) {
                 action = 'verify';
             }
 
@@ -431,10 +469,10 @@ export class AppController {
         let output = { suiWallet: '', status: '' };
         this.logger.log(logString);
         let { authId, authType } = query;
-        if (authId == null || authId == '') {
+        if (!authId || authId == '') {
             throw new BadRequestException('Auth Id cannot be null or empty')
         }
-        if (authType == null) {
+        if (!authType) {
             throw new BadRequestException('Auth type cannot be null or empty')
         }
         try {
