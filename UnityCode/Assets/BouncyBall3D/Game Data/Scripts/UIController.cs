@@ -1,5 +1,5 @@
 //FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-#define FAKE_SIGNIN
+//#define FAKE_SIGNIN
 
 using System;
 using System.Collections;
@@ -14,6 +14,7 @@ using WalletConnectSharp.Network.Models;
 using WalletConnectUnity.Core;
 using UnityEngine.Scripting;
 using WalletConnectUnity.Modal;
+using Unity.VisualScripting;
 
 public class UIController : MonoBehaviour
 {
@@ -311,7 +312,7 @@ public class UIController : MonoBehaviour
                 this.OnSuccessfulVerifySignature(dto);
 #else
                 //CallSuiSignMessage(MessageToSign);
-               OnPersonalSignButton();
+                OnPersonalSignButton();
 #endif
             }
             catch (Exception e)
@@ -533,9 +534,8 @@ public class UIController : MonoBehaviour
         var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
             .Address;
 
-        MessageToSign = GenerateRandomMessage();
-
-        Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
+        //MessageToSign = GenerateRandomMessage();
+        //Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
         Debug.Log($"[WalletConnectModalSample] address: {address}");
 
         NetworkManager.Instance.StartAuthSession("" + address, OnSuccessfulAuthSession, OnErrorStartAuthSession);
@@ -543,8 +543,7 @@ public class UIController : MonoBehaviour
 
     public void setuserName()
     {
-        UserData.UserName = UserName.text;
-        ShowHomeScreen();
+        NetworkManager.Instance.CheckUsername("" + UserName.text, OnSuccessfulVerifyUserName, OnErrorStartAuthSession);
     }
 
     private void CreateNFT(string name, string imageUrl)
@@ -602,19 +601,41 @@ public class UIController : MonoBehaviour
             var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
             .Address;
 
-            Debug.Log("signed message:" + signature);
-            Debug.Log("wallet address:" + address);
 
-            //prepare a request to verify the signature
-            AuthVerifyDto request = new AuthVerifyDto();
-            request.wallet = "" + address;
-            request.walletType = "evm";
-            request.action = "verify";
-            request.sessionId = UserData.sessionID;
-            request.messageToSign = "";
-            request.signature = System.Web.HttpUtility.UrlEncode(signature);
+            var data = new PersonalSign(response, address);
 
-            NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
+            try
+            {
+                var result = WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+                Debug.Log("signed message:" + signature);
+                Debug.Log("wallet address:" + address);
+                Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result.ToString());
+
+                print(result.Result);
+                print(result.Exception);
+                print(result.IsCompleted);
+                print(result.ToSafeString());
+
+                //prepare a request to verify the signature
+                AuthVerifyDto request = new AuthVerifyDto();
+                request.wallet = "" + address;
+                request.walletType = "evm";
+                request.action = "verify";
+                request.sessionId = UserData.sessionID;
+                request.messageToSign = response;
+                request.username = UserData.UserName;
+                request.signature = System.Web.HttpUtility.UrlEncode(result.Result);
+
+                NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
+
+            }
+            catch (WalletConnectException e)
+            {
+
+                Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
+            }
+
+
 
             ////prepare a request to verify the signature
             //VerifySignatureDto request = new VerifySignatureDto();
@@ -938,6 +959,22 @@ public class UIController : MonoBehaviour
         {
             ErrorScreen.SetActive(true);
             txtError_ErrorScreen.text = startAuthSessionResponseDto.sessionId + ", " + startAuthSessionResponseDto.messageToSign;
+        }
+    }
+
+    private void OnSuccessfulVerifyUserName(CheckUsernameResponseDto checkUsernameResponseDto)
+    {
+        Debug.Log("OnSuccessfulVerifyUserName");
+        //set active wallet address 
+        if (!checkUsernameResponseDto.exists)
+        {
+            UserData.UserName = UserName.text;
+            ShowHomeScreen();
+        }
+        else
+        {
+            ErrorScreen.SetActive(true);
+            txtError_ErrorScreen.text = "Username is not available. Please choose another username";
         }
     }
 

@@ -14,7 +14,7 @@ using System.Text;
 public class ServerConfig
 {
     // URL with place to put API method in it.
-    public const string SERVER_API_URL_FORMAT = "https://{0}/{1}";
+    public const string SERVER_API_URL_FORMAT = "http://{0}/{1}";
     public const string API_POST_CREATE_NFT = "api/v1/nfts";
     public const string API_POST_REQUEST_NFT = "api/v1/nfts/request";
     public const string API_POST_REQUEST_PRIVATE_TOKEN = "api/v1/token";
@@ -23,15 +23,16 @@ public class ServerConfig
     public const string API_VERIFY_SIGNATURE = "api/v1/verify?address={0}&signature={1}&message={2}";
     public const string API_POST_AUTH_SESSION = "api/v1/auth";
     public const string API_POST_VERIFY = "api/v1/verify";
+    public const string API_GET_USERNAME = "api/v1/username";
 
     //devnet urls
-    public const string API_DOMAIN_DEVNET = "http://54.95.68.79:3000";
+    public const string API_DOMAIN_DEVNET = "54.95.68.79:3000";
 
     //testnet urls 
-    public const string API_DOMAIN_TESTNET = "http://54.95.68.79:3000";
+    public const string API_DOMAIN_TESTNET = "54.95.68.79:3000";
 
     //mainnet urls 
-    public const string API_DOMAIN_MAINNET = "http://54.95.68.79:3000";
+    public const string API_DOMAIN_MAINNET = "54.95.68.79:3000";
 
     //URL of Leaderboard and NFT
     public const string API_POST_LEADERBOARD = "api/v1/leaderboard";
@@ -203,11 +204,47 @@ public class NetworkManager : Singleton<NetworkManager>
     public void StartAuthSession(string evmWallet, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         StartAuthSessionDto body = new StartAuthSessionDto();
-        body.evmWallet = evmWallet;
-        var json = JsonConvert.SerializeObject(body);
+        var json = "{\"evmWallet\":\"" + evmWallet + "\"}";
         print(json);
-        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, "post", null, json);
+        StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, json));
     }
+
+    IEnumerator SendPostRequest<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, string jsonReqData = null)
+    {
+        print(url);
+        print(jsonReqData);
+        // Create a UnityWebRequest object
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+
+        // Set request headers
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        // Convert JSON string to byte array
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonReqData);
+
+        Debug.Log(bodyRaw);
+
+        // Set request body
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+
+        // Send the request
+        yield return request.SendWebRequest();
+
+        // Check for errors
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(request.error);
+            callbackOnFail?.Invoke(request.error);
+        }
+        else
+        {
+            // Print the response body
+            Debug.Log("Response: " + request.downloadHandler.text);
+            ParseResponse(request.downloadHandler.text, callbackOnSuccess, callbackOnFail);
+        }
+    }
+
 
     /// <summary>
     /// Starts an auth session, which will return the message to be signed for verification, and a session ID. 
@@ -218,10 +255,26 @@ public class NetworkManager : Singleton<NetworkManager>
     public void VerifyAuthSession(AuthVerifyDto body, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
-
-        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, "post", null, json);
+        StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, json));
     }
 
+    /// <summary>
+    /// Starts an auth session, which will return the message to be signed for verification, and a session ID. 
+    /// </summary>
+    /// <param name="evmWallet">User's EVM wallet address</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void CheckUsername(string username, UnityAction<CheckUsernameResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        Debug.Log(ServerConfig.API_GET_USERNAME + "?username=" + username);
+
+        SendRequest(
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_USERNAME + "?username=" + username),
+            callbackOnSuccess,
+            callbackOnFail,
+            "get"
+        );
+    }
 
     #endregion 
 
@@ -239,12 +292,10 @@ public class NetworkManager : Singleton<NetworkManager>
         print(reqType + " - " + url);
         if (reqType == "post")
         {
-            Debug.Log("Post: " + body.ToSafeString());
             StartCoroutine(RequestCoroutine_Post(url, callbackOnSuccess, callbackOnFail, body, jsonReqData));
         }
         else if (reqType == "postToken")
         {
-            Debug.Log("Post Token: " + body.ToSafeString());
             StartCoroutine(RequestTokenCoroutine_Post(url, callbackOnSuccess, callbackOnFail, body));
         }
         else
@@ -303,16 +354,21 @@ public class NetworkManager : Singleton<NetworkManager>
 
         if (jsonReqData != null)
         {
+            print(jsonReqData);
             byte[] byteArray = Encoding.UTF8.GetBytes(jsonReqData);
             form.AddBinaryData("body", byteArray);
         }
 
         using (var request = UnityWebRequest.Post(url, form))
         {
+
+            request.SetRequestHeader("Content-Type", "application/json");
+
             yield return request.SendWebRequest();
+
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.DataProcessingError)
             {
-                Debug.LogError(request.error);
+                Debug.LogError(" " + request.error + " -> " + request.isNetworkError + " || " + request.isHttpError + " || " + request.responseCode);
                 callbackOnFail?.Invoke(request.error);
             }
             else
@@ -320,6 +376,7 @@ public class NetworkManager : Singleton<NetworkManager>
                 Debug.Log(request.downloadHandler.text);
                 ParseResponse(request.downloadHandler.text, callbackOnSuccess, callbackOnFail);
             }
+
         }
     }
 
@@ -497,6 +554,7 @@ public class AuthVerifyDto
     public string sessionId;
     public string messageToSign;
     public string signature;
+    public string username;
 }
 
 [Serializable]
@@ -518,6 +576,12 @@ public class StartAuthSessionResponseDto
 {
     public string sessionId;
     public string messageToSign;
+}
+
+[Serializable]
+public class CheckUsernameResponseDto
+{
+    public bool exists;
 }
 
 #endregion
