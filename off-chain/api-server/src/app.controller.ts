@@ -59,6 +59,20 @@ export class AppController {
     }
 
     // *** NFTS and TOKENS *** 
+    
+    returnError(apiCall: string, errorCode: number, message: any) {
+        this.logger.error(`${apiCall} returning ${errorCode}: ${message}`);
+        switch (errorCode) {
+            case 400:
+                throw new BadRequestException(message);
+            case 401:
+                throw new UnauthorizedException(message);
+            case 500:
+                throw new InternalServerErrorException(message);
+        } 
+        
+        throw new BadRequestException(message);
+    }
 
     @ApiOperation({ summary: 'Mint NFT' })
     @Post('/api/v1/nfts')
@@ -75,16 +89,16 @@ export class AppController {
         this.logger.log(logString);
         const { name, recipient, imageUrl, quantity } = body;
         if (!name || name == '') {
-            throw new BadRequestException('name cannot be null or empty');
+            this.returnError(logString, 400, 'name cannot be null or empty');
         }
         if (name.length > MAX_NFT_NAME_LENGTH) {
-            throw new BadRequestException(`name exceeded max length of ${MAX_NFT_NAME_LENGTH}`)
+            this.returnError(logString, 400, `name exceeded max length of ${MAX_NFT_NAME_LENGTH}`)
         }
         if (!imageUrl || imageUrl == '') {
-            throw new BadRequestException('imageUrl cannot be null or empty');
+            this.returnError(logString, 400, 'imageUrl cannot be null or empty');
         }
         if (imageUrl.length > MAX_URL_LENGTH) {
-            throw new BadRequestException(`imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
+            this.returnError(logString, 400, `imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
         }
 
         try {
@@ -93,8 +107,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e.toString());
         }
     }
 
@@ -107,31 +120,31 @@ export class AppController {
         let { recipient, username, title, artist, beatmapJson, imageUrl, quantity } = body;
         
         if (!username || username == '') {
-            throw new BadRequestException('username cannot be null or empty');
+            this.returnError(logString, 400, 'username cannot be null or empty');
         }
         if (username.length > MAX_USERNAME_LENGTH) {
-            throw new BadRequestException(`username exceeded max length of ${MAX_USERNAME_LENGTH}`)
+            this.returnError(logString, 400, `username exceeded max length of ${MAX_USERNAME_LENGTH}`)
         }
         if (!title || title == '') {
-            throw new BadRequestException('title cannot be null or empty');
+            this.returnError(logString, 400, 'title cannot be null or empty');
         }
         if (!artist) {
             artist = '';
         }
         if (artist.length > MAX_USERNAME_LENGTH) {
-            throw new BadRequestException(`artist exceeded max length of ${MAX_USERNAME_LENGTH}`)
+            this.returnError(logString, 400, `artist exceeded max length of ${MAX_USERNAME_LENGTH}`)
         }
         if (!beatmapJson || beatmapJson == '') {
-            throw new BadRequestException('beatmapJson cannot be null or empty');
+            this.returnError(logString, 400, 'beatmapJson cannot be null or empty');
         }
         if (beatmapJson.length > MAX_JSON_LENGTH) {
-            throw new BadRequestException(`beatmapJson exceeded max length of ${MAX_JSON_LENGTH}`)
+            this.returnError(logString, 400, `beatmapJson exceeded max length of ${MAX_JSON_LENGTH}`)
         }
         if (!imageUrl|| imageUrl == '') {
-            throw new BadRequestException('imageUrl cannot be null or empty');
+            this.returnError(logString, 400, 'imageUrl cannot be null or empty');
         }
         if (imageUrl.length > MAX_URL_LENGTH) {
-            throw new BadRequestException(`imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
+            this.returnError(logString, 400, `imageUrl exceeded max length of ${MAX_URL_LENGTH}`)
         }
 
         try {
@@ -140,8 +153,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -158,7 +170,7 @@ export class AppController {
         this.logger.log(logString);
         const { wallet } = query;
         if (!wallet || wallet == '') {
-            throw new BadRequestException('wallet cannot be null or empty');
+            this.returnError(logString, 400, 'wallet cannot be null or empty');
         }
 
         try {
@@ -167,8 +179,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -179,7 +190,7 @@ export class AppController {
         this.logger.log(logString);
         const { wallet } = query;
         if (!wallet || wallet == '') {
-            throw new BadRequestException('wallet cannot be null or empty');
+            this.returnError(logString, 400, 'wallet cannot be null or empty');
         }
 
         try {
@@ -188,8 +199,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -201,10 +211,10 @@ export class AppController {
         this.logger.log(logString);
         const { amount, recipient } = body;
         if (!amount  || amount <= 0) {
-            throw new BadRequestException('amount cannot be null, zero or negative');
+            this.returnError(logString, 400, 'amount cannot be null, zero or negative');
         }
         if (!recipient  || recipient == '') {
-            throw new BadRequestException('recipient cannot be null or empty');
+            this.returnError(logString, 400, 'recipient cannot be null or empty');
         }
         
         try {
@@ -213,8 +223,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -225,7 +234,7 @@ export class AppController {
         this.logger.log(logString);
         const { wallet } = query;
         if (!wallet || wallet == '') {
-            throw new BadRequestException('wallet cannot be null or empty');
+            this.returnError(logString, 400, 'wallet cannot be null or empty');
         }
         
         try {
@@ -234,8 +243,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -246,13 +254,13 @@ export class AppController {
         this.logger.log(logString);
         let { address, signature, message } = query;
         if (!address || address == '') {
-            throw new BadRequestException('address cannot be null or empty')
+            this.returnError(logString, 400, 'address cannot be null or empty')
         }
         if (!signature || signature == '') {
-            throw new BadRequestException('signature cannot be null or empty')
+            this.returnError(logString, 400, 'signature cannot be null or empty')
         }
         if (!message || message == '') {
-            throw new BadRequestException('message cannot be null or empty')
+            this.returnError(logString, 400, 'message cannot be null or empty')
         }
         
         try {
@@ -261,8 +269,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
     
@@ -273,7 +280,7 @@ export class AppController {
         this.logger.log(logString);
         let { username } = query;
         if (!username || username == '') {
-            throw new BadRequestException('username cannot be null or empty')
+            this.returnError(logString, 400, 'username cannot be null or empty')
         }
 
         try {
@@ -285,8 +292,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -316,8 +322,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -329,13 +334,13 @@ export class AppController {
         this.logger.log(logString);
         const { score, wallet } = body;
         if (!score  || score <= 0) {
-            throw new BadRequestException('score cannot be null, zero or negative');
+            this.returnError(logString, 400, 'score cannot be null, zero or negative');
         }
         if (!wallet  || wallet == '') {
-            throw new BadRequestException('wallet cannot be null or empty');
+            this.returnError(logString, 400, 'wallet cannot be null or empty');
         }
         if (wallet.length > MAX_WALLET_LENGTH) {
-            throw new BadRequestException(`wallet exceeded max length of ${MAX_WALLET_LENGTH}`);
+            this.returnError(logString, 400, `wallet exceeded max length of ${MAX_WALLET_LENGTH}`);
         }
         
         try {
@@ -344,8 +349,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -367,8 +371,7 @@ export class AppController {
             return output;
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -382,18 +385,17 @@ export class AppController {
         this.logger.log(logString);
         let { evmWallet } = body;
         if (!evmWallet  || evmWallet == '') {
-            throw new BadRequestException('evmWallet cannot be null or empty');
+            this.returnError(logString, 400, 'evmWallet cannot be null or empty');
         }
         if (evmWallet.length > MAX_WALLET_LENGTH) {
-            throw new BadRequestException(`evmWallet exceeds max length of ${MAX_WALLET_LENGTH}`);
+            this.returnError(logString, 400, `evmWallet exceeds max length of ${MAX_WALLET_LENGTH}`);
         }
 
         try {
             return await this.suiService.startAuthSession(evmWallet);
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
     }
 
@@ -407,32 +409,32 @@ export class AppController {
         
         let { wallet, walletType, sessionId, messageToSign, action, signature, username } = body;
         if (!wallet || wallet == '') {
-            throw new BadRequestException('wallet cannot be null or empty');
+            this.returnError(logString, 400, 'wallet cannot be null or empty');
         }
         if (wallet.length > MAX_WALLET_LENGTH) {
-            throw new BadRequestException(`wallet exceeds max length of ${MAX_WALLET_LENGTH}`);
+            this.returnError(logString, 400, `wallet exceeds max length of ${MAX_WALLET_LENGTH}`);
         }
         if (!walletType) {
-            throw new BadRequestException('walletType cannot be null or empty');
+            this.returnError(logString, 400, 'walletType cannot be null or empty');
         }
         if (!sessionId) {
-            throw new BadRequestException('sessionId cannot be null or empty');
+            this.returnError(logString, 400, 'sessionId cannot be null or empty');
         }
         if (!messageToSign) {
-            throw new BadRequestException('messageToSign cannot be null or empty');
+            this.returnError(logString, 400, 'messageToSign cannot be null or empty');
         }
         if (!signature  || signature == '') {
-            throw new BadRequestException('signature cannot be null or empty');
+            this.returnError(logString, 400, 'signature cannot be null or empty');
         }
         if (signature.length > MAX_SIGNATURE_LENGTH) {
-            throw new BadRequestException(`signature exceeds max length of ${MAX_SIGNATURE_LENGTH}`);
+            this.returnError(logString, 400, `signature exceeds max length of ${MAX_SIGNATURE_LENGTH}`);
         }
         
         if (!username) {
             username = '';
         }
         if (username.length > MAX_USERNAME_LENGTH) {
-            throw new BadRequestException(`username exceeds max length of ${MAX_USERNAME_LENGTH}`);
+            this.returnError(logString, 400, `username exceeds max length of ${MAX_USERNAME_LENGTH}`);
         }
         
         try {
@@ -449,17 +451,16 @@ export class AppController {
             }
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
 
         console.log(status); 
         console.log(['sessionInvalid', 'sessionIdInvalid', 'sessionComplete', 'sessionExpired', 'walletMismatch', 'messageMismatch'].indexOf(status))
         if (['sessionInvalid', 'sessionIdInvalid', 'sessionComplete', 'sessionExpired', 'walletMismatch', 'messageMismatch'].indexOf(status) >= 0) {
-            throw new UnauthorizedException(status);
+            this.returnError(logString, 401, status);
         }
-        
-        throw new BadRequestException(status);
+
+        this.returnError(logString, 400, status);
     }
 
     @ApiOperation({ summary: 'Get a SUI address given an associated login' })
@@ -470,10 +471,10 @@ export class AppController {
         this.logger.log(logString);
         let { authId, authType } = query;
         if (!authId || authId == '') {
-            throw new BadRequestException('Auth Id cannot be null or empty')
+            this.returnError(logString, 400, 'Auth Id cannot be null or empty')
         }
         if (!authType) {
-            throw new BadRequestException('Auth type cannot be null or empty')
+            this.returnError(logString, 400, 'Auth type cannot be null or empty')
         }
         try {
             output = await this.suiService.getAccountFromLogin(authId, authType);
@@ -483,10 +484,9 @@ export class AppController {
             }
         }
         catch (e) {
-            this.logger.error(`error in ${logString}: ${e}`);
-            throw new InternalServerErrorException();
+            this.returnError(logString, 500, e);
         }
         
-        throw new BadRequestException(output.status);
+        this.returnError(logString, 400, output.status);
     }
 }
