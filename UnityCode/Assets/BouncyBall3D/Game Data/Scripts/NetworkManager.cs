@@ -24,7 +24,7 @@ public class ServerConfig
     public const string API_POST_AUTH_SESSION = "api/v1/auth";
     public const string API_POST_VERIFY = "api/v1/verify";
     public const string API_GET_USERNAME = "api/v1/username";
-    public const string API_GET_ACCOUNT = "/api/v1/accounts?authType=evm&authId=";
+    public const string API_GET_ACCOUNT = "api/v1/accounts?authType=evm&authId=";
 
     //devnet urls
     public const string API_DOMAIN_DEVNET = "54.95.68.79:3000";

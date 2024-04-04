@@ -53,7 +53,8 @@ namespace WalletConnectUnity.Modal.Sample
                 }
                 else
                 {
-                    EnableNetworksList();
+                    //EnableNetworksList();
+                    OnContinueButton();
                     Debug.Log($"[WalletConnectModalSample] EnableNetworksList.");
 
                 }
@@ -75,7 +76,8 @@ namespace WalletConnectUnity.Modal.Sample
                 WalletConnect.Instance.SessionDisconnected += (_, _) =>
                 {
                     Debug.Log($"[WalletConnectModalSample] Session deleted.");
-                    EnableNetworksList();
+                    //EnableNetworksList();
+                    OnContinueButton();
                 };
             };
         }
@@ -113,6 +115,7 @@ namespace WalletConnectUnity.Modal.Sample
 
         public void OnContinueButton()
         {
+            _selectedChains.Add(Chain.Ethereum);
             var options = new WalletConnectModalOptions
             {
                 ConnectOptions = BuildConnectOptions()

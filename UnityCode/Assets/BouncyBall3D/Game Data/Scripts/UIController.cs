@@ -1,5 +1,5 @@
 //FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-//#define FAKE_SIGNIN
+#define FAKE_SIGNIN
 
 using System;
 using System.Collections;
@@ -308,7 +308,7 @@ public class UIController : MonoBehaviour
                 //SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
                 VerifySignatureResponseDto dto = new VerifySignatureResponseDto();
                 dto.verified = true;
-                dto.address = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+                dto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
                 dto.failureReason = "";
                 this.OnSuccessfulVerifySignature(dto);
 #else
@@ -905,7 +905,7 @@ public class UIController : MonoBehaviour
         if (verifySignatureResponseDto.verified)
         {
 #if FAKE_SIGNIN
-            verifySignatureResponseDto.address = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
 #endif
 
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.wallet;
@@ -947,7 +947,7 @@ public class UIController : MonoBehaviour
         if (verifySignatureResponseDto.wallet != "")
         {
 #if FAKE_SIGNIN
-            startAuthSessionResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
 #endif
             if (verifySignatureResponseDto.suiWallet != "")
             {
