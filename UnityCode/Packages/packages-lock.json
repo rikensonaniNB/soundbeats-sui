@@ -98,34 +98,34 @@
       "url": "https://packages.unity.com"
     },
     "com.walletconnect.core": {
-      "version": "3.0.6",
-      "depth": 1,
-      "source": "registry",
+      "version": "https://github.com/WalletConnect/WalletConnectUnity.git?path=Packages/com.walletconnect.core",
+      "depth": 0,
+      "source": "git",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.0.0"
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
       },
-      "url": "https://package.openupm.com"
+      "hash": "9f977c1be7baf302ebb244a3889d7960c4c2a615"
     },
     "com.walletconnect.modal": {
-      "version": "1.0.6",
+      "version": "1.1.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.walletconnect.core": "3.0.6",
-        "com.walletconnect.ui": "1.0.6"
+        "com.walletconnect.core": "3.1.2",
+        "com.walletconnect.ui": "1.1.2"
       },
       "url": "https://package.openupm.com"
     },
     "com.walletconnect.ui": {
-      "version": "1.0.6",
-      "depth": 1,
-      "source": "registry",
+      "version": "https://github.com/WalletConnect/WalletConnectUnity.git?path=Packages/com.walletconnect.ui",
+      "depth": 0,
+      "source": "git",
       "dependencies": {
-        "com.walletconnect.core": "3.0.6",
+        "com.walletconnect.core": "3.1.2",
         "com.unity.textmeshpro": "3.0.0",
         "com.unity.ugui": "1.0.0"
       },
-      "url": "https://package.openupm.com"
+      "hash": "9f977c1be7baf302ebb244a3889d7960c4c2a615"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

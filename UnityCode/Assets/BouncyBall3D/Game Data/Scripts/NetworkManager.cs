@@ -24,6 +24,7 @@ public class ServerConfig
     public const string API_POST_AUTH_SESSION = "api/v1/auth";
     public const string API_POST_VERIFY = "api/v1/verify";
     public const string API_GET_USERNAME = "api/v1/username";
+    public const string API_GET_ACCOUNT = "/api/v1/accounts?authType=evm&authId=";
 
     //devnet urls
     public const string API_DOMAIN_DEVNET = "54.95.68.79:3000";
@@ -133,6 +134,24 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     /// <summary>
+    /// Gets the SUI address for the EVM wallet.
+    /// </summary>
+    /// <param name="authId">EVM Wallet address to get SUI Address</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void GetUserSUIAddress(string wallet, UnityAction<VerifySignatureResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        Debug.Log(ServerConfig.API_GET_ACCOUNT + wallet);
+
+        SendRequest(
+            ServerConfig.FormatServerUrl(ServerConfig.API_GET_ACCOUNT + wallet),
+            callbackOnSuccess,
+            callbackOnFail,
+            "get"
+        );
+    }
+
+    /// <summary>
     /// Calls the API to verify a signature passed in from the Javascript front end (from the user's wallet). 
     /// </summary>
     /// <param name="body">Request body containing address, signature, and original message</param>
@@ -234,7 +253,11 @@ public class NetworkManager : Singleton<NetworkManager>
         // Check for errors
         if (request.result != UnityWebRequest.Result.Success)
         {
+            Debug.LogError(request.ToSafeString());
             Debug.LogError(request.error);
+            Debug.LogError(request.error.ToSafeString());
+            Debug.LogError(request.result.ToSafeString());
+            Debug.LogError(request.downloadHandler.text);
             callbackOnFail?.Invoke(request.error);
         }
         else
@@ -252,7 +275,7 @@ public class NetworkManager : Singleton<NetworkManager>
     /// <param name="evmWallet">User's EVM wallet address</param>
     /// <param name="callbackOnSuccess">Callback on success.</param>
     /// <param name="callbackOnFail">Callback on fail.</param>
-    public void VerifyAuthSession(AuthVerifyDto body, UnityAction<StartAuthSessionResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    public void VerifyAuthSession(AuthVerifyDto body, UnityAction<VerifySignatureResponseDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         var json = JsonConvert.SerializeObject(body);
         StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_VERIFY), callbackOnSuccess, callbackOnFail, json));
@@ -521,7 +544,9 @@ public class VerifySignatureDto
 public class VerifySignatureResponseDto
 {
     public bool verified;
-    public string address;
+    public bool completed;
+    public string wallet;
+    public string suiWallet;
     public string failureReason;
 }
 

@@ -15,6 +15,7 @@ using WalletConnectUnity.Core;
 using UnityEngine.Scripting;
 using WalletConnectUnity.Modal;
 using Unity.VisualScripting;
+using WalletConnectUnity.Core.Evm;
 
 public class UIController : MonoBehaviour
 {
@@ -68,7 +69,7 @@ public class UIController : MonoBehaviour
     public TMP_InputField ActiveAddressText;
     public TextMeshProUGUI link_successful;
     public GameObject SuiWalletScreen;
-    public GameObject HomeScreen;
+    public GameObject HomeScreen, UserNamePanel;
     public GameObject PlaySongScreen;
     public GameObject WalletScreen;
     public GameObject LeaderboardScreen;
@@ -587,7 +588,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     /// <param name="response">A string of two elements delimited by ':'. First element is the signature, the second element is 
     /// the user's wallet address (which was used to sign the message).</param>
-    private void SignMessageCallback(string response)
+    private async void SignMessageCallback(string response)
     {
         Debug.Log("SignMessageCallback response : " + response);
         string[] args = response.Split(':');
@@ -606,15 +607,11 @@ public class UIController : MonoBehaviour
 
             try
             {
-                var result = WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+                var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+                Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result);
+
                 Debug.Log("signed message:" + signature);
                 Debug.Log("wallet address:" + address);
-                Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result.ToString());
-
-                print(result.Result);
-                print(result.Exception);
-                print(result.IsCompleted);
-                print(result.ToSafeString());
 
                 //prepare a request to verify the signature
                 AuthVerifyDto request = new AuthVerifyDto();
@@ -624,7 +621,7 @@ public class UIController : MonoBehaviour
                 request.sessionId = UserData.sessionID;
                 request.messageToSign = response;
                 request.username = UserData.UserName;
-                request.signature = System.Web.HttpUtility.UrlEncode(result.Result);
+                request.signature = System.Web.HttpUtility.UrlEncode(result);
 
                 NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
 
@@ -662,7 +659,6 @@ public class UIController : MonoBehaviour
         PlaySongScreen.SetActive(true);
         NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
         NFTLinkText = SuiWallet.ActiveWalletAddress;
-
         txtAddressNFT_WalletScreen.text = NFTLinkText;
         string nftSignature = PlayerPrefsExtra.GetString("nftSignature");
         link_successful.text = nftSignature;
@@ -670,6 +666,7 @@ public class UIController : MonoBehaviour
         SelectCharacterScreen.SetActive(true);
         SelectCharacter_Overlay.SetActive(false);
         txtMintCharacter.SetActive(false);
+        LoadingScreen.SetActive(false);
 
         if (UserData.HasSelectedNft && UserData.OwnedNftCount > 0)
         {
@@ -911,15 +908,15 @@ public class UIController : MonoBehaviour
             verifySignatureResponseDto.address = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
 #endif
 
-            SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.address;
+            SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.wallet;
 
             //get user owned NFTs
-            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.address, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
+            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.wallet, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
         }
         else
         {
             ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = verifySignatureResponseDto.address + ", " + verifySignatureResponseDto.failureReason;
+            txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
         }
     }
 
@@ -944,21 +941,28 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private void OnSuccessfulVerifySession(StartAuthSessionResponseDto startAuthSessionResponseDto)
+    private void OnSuccessfulVerifySession(VerifySignatureResponseDto verifySignatureResponseDto)
     {
         //set active wallet address 
-        if (startAuthSessionResponseDto.sessionId != "")
+        if (verifySignatureResponseDto.wallet != "")
         {
 #if FAKE_SIGNIN
-            startAuthSessionResponseDto.sessionId = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            startAuthSessionResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
 #endif
-            //get user owned NFTs
-            NetworkManager.Instance.GetUserOwnedBeatsNfts(startAuthSessionResponseDto.sessionId, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
+            if (verifySignatureResponseDto.suiWallet != "")
+            {
+                //get user owned NFTs
+                NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.suiWallet, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
+            }
+            else
+            {
+                NetworkManager.Instance.GetUserSUIAddress(verifySignatureResponseDto.wallet, OnSuccessfulVerifySession, OnErrorGetBeatsNfts);
+            }
         }
         else
         {
             ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = startAuthSessionResponseDto.sessionId + ", " + startAuthSessionResponseDto.messageToSign;
+            txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
         }
     }
 
@@ -969,7 +973,8 @@ public class UIController : MonoBehaviour
         if (!checkUsernameResponseDto.exists)
         {
             UserData.UserName = UserName.text;
-            ShowHomeScreen();
+            //ShowHomeScreen();
+            UserNamePanel.SetActive(false);
         }
         else
         {
@@ -1024,20 +1029,4 @@ public class UIController : MonoBehaviour
     }
 
     #endregion 
-}
-
-
-[RpcMethod("personal_sign")]
-[RpcRequestOptions(Clock.ONE_MINUTE, 99998)]
-public class PersonalSign : List<string>
-{
-    public PersonalSign(string hexUtf8, string account) : base(new[] { hexUtf8, account })
-    {
-
-    }
-
-    [Preserve]
-    public PersonalSign()
-    {
-    }
 }

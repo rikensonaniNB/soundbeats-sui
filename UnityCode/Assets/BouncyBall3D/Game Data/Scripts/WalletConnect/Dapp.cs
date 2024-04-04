@@ -25,6 +25,16 @@ namespace WalletConnectUnity.Modal.Sample
 
         private void Start()
         {
+            if (UserData.UserName == "")
+            {
+                _userName.SetActive(true);
+            }
+            else
+            {
+                _userName.SetActive(false);
+                _dappButtons.SetActive(true);
+            }
+
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
             Debug.Log($"[WalletConnectModalSample] WalletConnectModal.SignClient : " + WalletConnectModal.SignClient);
 
@@ -55,7 +65,9 @@ namespace WalletConnectUnity.Modal.Sample
 
                     Debug.Log($"[WalletConnectModalSample] Session connected. Topic: {@struct.Topic}");
                     UIController.instance.OnPersonalSignButton();
-                    _userName.SetActive(true);
+                    Debug.Log($"[WalletConnectModalSample] Session connected. Chain: {_selectedChains.ToString()}");
+                    //_userName.SetActive(true);
+                    UIController.instance.LoadingScreen.SetActive(true);
                     _networkList.SetActive(false);
                 };
 
@@ -78,7 +90,7 @@ namespace WalletConnectUnity.Modal.Sample
         {
             _dappButtons.SetActive(false);
             _networkList.SetActive(true);
-
+            UIController.instance.LoadingScreen.SetActive(false);
             if (_networkListContainer.childCount == 0)
             {
                 foreach (var chain in Chain.All)
