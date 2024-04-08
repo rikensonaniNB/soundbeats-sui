@@ -447,7 +447,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         yield return new WaitForSeconds(1);
 
-        GameManager.instance.producerManagerPopup.SetActive(false);
         UIManager.Instance.gameUI.SetActive(true);
         Debug.Log("wait is over");
         platformCount = 0;
@@ -457,6 +456,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         for (int i = 0; i < platformsDrawn; i++)
         {
+            Debug.Log("hbgbfy");
             GameObject newPlatform = platformPool.GetItem;
 
             RepositionProducer(newPlatform, platformCount);
@@ -468,13 +468,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
             platformCount++;
             platformsPassed++;
         }
-
-        //for (int i = 0; i < myDataList.dataSave.Count-1; i++)
-        //{
-        //    GameObject myplateform = Instantiate(platformPool.GetItem);
-        //    myplateform.transform.position = new Vector3(0, myplateform.transform.position.y, (float)myDataList.dataSave[i].time*2);
-        //}
-        // go1.SetActive(false);
         go2.SetActive(false);
         SetStarIDs();
     }
@@ -482,7 +475,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         float posX = id > 3 ? Random.Range(-levelWidth, levelWidth) : 0;
         float temp1 = (float)myDataList.dataSave[0] * Distance;
-        //Debug.LogError("temp after" + temp1);
 
         lastPlatformZ = temp1;
         platform.transform.position = new Vector3(posX, platform.transform.position.y, lastPlatformZ);
