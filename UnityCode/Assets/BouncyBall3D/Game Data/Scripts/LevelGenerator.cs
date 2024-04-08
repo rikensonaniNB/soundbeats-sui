@@ -343,6 +343,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
         GameManager.instance.producerCamera.SetActive(false);
         GameManager.instance.pauseButton.SetActive(true);
         GameManager.instance.producer = true;
+        player.transform.GetChild(10).gameObject.SetActive(false);
+        player.transform.GetChild(10).gameObject.SetActive(true);
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
         if (File.Exists(filePath))

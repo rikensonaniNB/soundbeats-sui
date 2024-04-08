@@ -167,6 +167,8 @@ public class SongHolder : MonoBehaviour
     {
         GameManager.instance.producer = false;
         Debug.Log("PlaySong " + song.name);
+        player.transform.GetChild(10).gameObject.SetActive(false);
+        player.transform.GetChild(10).gameObject.SetActive(true);
 
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         UIManager.Instance.CloseMenu();
