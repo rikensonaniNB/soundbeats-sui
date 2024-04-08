@@ -342,6 +342,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
         GameManager.instance.producerCamera.SetActive(false);
         GameManager.instance.pauseButton.SetActive(true);
+        GameManager.instance.producer = true;
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
         if (File.Exists(filePath))
