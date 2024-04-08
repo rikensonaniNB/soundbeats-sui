@@ -362,7 +362,7 @@ public class AudioVisualizeManager : MonoBehaviour
 
 
         Output = Output_Volume; //for visualAid //I should make this static instead of averageBlockVolume
-        if (Output > GameManager.Instance.ThresoldValue)
+        if (Output > GameManager.instance.ThresoldValue)
         {
             Debug.Log($"<color=red> AUDIO_OUTPUT : </color> " + Output);
             BeatDetect.beatDetect.AddToBeatList(Output);

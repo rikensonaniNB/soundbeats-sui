@@ -29,9 +29,9 @@ public class SongHolder : MonoBehaviour
     private void OnEnable()
     {
         PlayButton.interactable = true;
-        GameManager.Instance.ThresoldSlider.interactable = true;
+        GameManager.instance.ThresoldSlider.interactable = true;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Generate";
-        GameManager.Instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
+        GameManager.instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
     }
     private void Awake()
     {
@@ -156,10 +156,10 @@ public class SongHolder : MonoBehaviour
         GameManager.instance.songPlaying = false;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Finish";
         LevelGenerator.Instance.SaveFloatList();
-        GameManager.Instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
+        GameManager.instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
         SetBox.instance.camerabool = false;
-        GameManager.Instance.PlayBtn.interactable = false;
-        GameManager.Instance.SongListObj[GameManager.Instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;
+        GameManager.instance.PlayBtn.interactable = false;
+        GameManager.instance.SongListObj[GameManager.instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;
     }
 
 
@@ -201,7 +201,7 @@ public class SongHolder : MonoBehaviour
         GameManager.instance.producerCamera.SetActive(false);
         foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
         {
-            allwhiteBalls.gameObject.SetActive(false);
+            Destroy(allwhiteBalls);
         }
 
     }

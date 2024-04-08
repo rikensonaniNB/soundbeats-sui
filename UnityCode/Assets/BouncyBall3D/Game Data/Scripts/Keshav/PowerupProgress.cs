@@ -13,9 +13,9 @@ public class PowerupProgress : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.isSpeedupActive)
+        if (GameManager.instance.isSpeedupActive)
         {
-            if (GameManager.Instance.gameState == GameState.Gameplay)
+            if (GameManager.instance.gameState == GameState.Gameplay)
             {
                 timer -= Time.deltaTime;
                 progressBar.value = timer / PowerUp.powerUpTimer;
@@ -36,13 +36,13 @@ public class PowerupProgress : MonoBehaviour
     private void StartTimer()
     {
         timer = PowerUp.powerUpTimer;
-        GameManager.Instance.isSpeedupActive = true;
+        GameManager.instance.isSpeedupActive = true;
     }
 
     private void StopTimer()
     {
-        GameManager.Instance.resetGameSpeedToPrevious();
-        GameManager.Instance.isSpeedupActive = false;
+        GameManager.instance.resetGameSpeedToPrevious();
+        GameManager.instance.isSpeedupActive = false;
         gameObject.SetActive(false);
     }
 }

@@ -49,7 +49,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] Button playAgain_Button;
 
     [SerializeField] GameObject quitScreen;
-    [SerializeField] GameObject pauseButton;
+    public GameObject pauseButton;
     public Text ScoreWin;
     public LevelGenerator LevelGenerator;
 
@@ -118,15 +118,15 @@ public class GameManager : Singleton<GameManager>
     public bool songPlaying = false;
     public GameObject holdPopUp;
     public GameObject congrats;
+    public TextMeshProUGUI songTime;
+
     public static GameManager instance;
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
 
         player = FindObjectOfType<Player>();
         instance = this;
     }
-
 
     private void Start()
     {
@@ -136,6 +136,13 @@ public class GameManager : Singleton<GameManager>
             scoreAnim.SetTrigger("Up");
     }
 
+    private void Update()
+    {
+        if (AudioVisualizeManager.instance.audioSource.isPlaying)
+        {
+            UpdateSongRemainingTime();
+        }
+    }
 
     public int GetGameDuration()
     {
@@ -319,7 +326,7 @@ public class GameManager : Singleton<GameManager>
         revivePanel.SetActive(false);
         playButton.SetActive(true);
 
-        // LevelGenerator.Instance.StartWithSong();
+        //LevelGenerator.Instance.StartWithSong();
         //SongHolder.Instance.PlaySong();
 
 
@@ -481,9 +488,11 @@ public class GameManager : Singleton<GameManager>
 
     public void okBtn()
     {
+        songTime.gameObject.SetActive(false);
         producerManagerPopup.SetActive(false);
         platform.SetActive(true);
         pauseButton.SetActive(false);
+        producerCloseBtn.SetActive(false);
         gameState = GameState.Menu;
         UIManager.Instance.ShowMainMenu();
         producerManagerPopup.SetActive(false);
@@ -508,6 +517,10 @@ public class GameManager : Singleton<GameManager>
         {
             Destroy(allboxs.gameObject);
         }
+        foreach (Transform t in SetBox.instance.whiteBallParent.transform)
+        {
+            Destroy(t.gameObject);
+        }
     }
 
     public void CloseNftPopUp()
@@ -529,6 +542,7 @@ public class GameManager : Singleton<GameManager>
     {
         LevelGenerator.Instance.currentSong = null;
         platform.SetActive(true);
+        songTime.gameObject.SetActive(false);
         Debug.Log("on close");
         Time.timeScale = 1;
         gameState = GameState.Menu;
@@ -566,6 +580,10 @@ public class GameManager : Singleton<GameManager>
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
         {
             Destroy(allboxs.gameObject);
+        }
+        foreach (Transform t in SetBox.instance.whiteBallParent.transform)
+        {
+            Destroy(t.gameObject);
         }
     }
 
@@ -617,7 +635,7 @@ public class GameManager : Singleton<GameManager>
         PushMultiplierPartTwoSlider.maxValue = 100f;
 
         ///// MinOutput_AND_MaxOutput /////
-        MinOutputSlider.value = -1f;
+        MinOutputSlider.value = 1f;
         MinOutputSlider.minValue = -4f;
         MinOutputSlider.maxValue = 4f;
         /////////////////////////////////
@@ -670,7 +688,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Log($"<color=blue> Push_Multiplier_Past_One_Slider_Value </color>" + PushMultiplierPartOneSlider.value);
         PushMultiplierPartTwoSlider.value = 1f;
         Debug.Log($"<color=blue> Push_Multiplier_Past_Two_Slider_Value </color>" + PushMultiplierPartTwoSlider.value);
-        MinOutputSlider.value = -1f;
+        MinOutputSlider.value = 1f;
         Debug.Log($"<color=blue> Min_Output_Slider_Value </color>" + MinOutputSlider.value);
         MaxOutputSlider.value = 1f;
         Debug.Log($"<color=blue> max_Output_Slider_Value </color>" + MaxOutputSlider.value);
@@ -772,7 +790,18 @@ public class GameManager : Singleton<GameManager>
         sky.SetActive(false);
         RenderSettings.skybox = producerCameraMat;
         songPlaying = true;
+        songTime.gameObject.SetActive(true);
     }
+    void UpdateSongRemainingTime()
+    {
+        float totalLength = LevelGenerator.Instance.currentSong.song.length;
+        float remainingTime = totalLength - AudioVisualizeManager.instance.audioSource.time;
+        int remainingMinutes = Mathf.FloorToInt(remainingTime / 60);
+        int remainingSeconds = Mathf.FloorToInt(remainingTime % 60);
+        string formattedTime = string.Format("{0:00}:{1:00}", remainingMinutes, remainingSeconds);
+        songTime.text = formattedTime;
+    }
+
 
     public void ShowPlayingPopUp()
     {

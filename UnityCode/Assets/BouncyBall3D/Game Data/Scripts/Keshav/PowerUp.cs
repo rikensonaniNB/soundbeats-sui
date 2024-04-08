@@ -12,11 +12,11 @@ public class PowerUp : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            if (GameManager.Instance.gameState == GameState.Gameplay && !GameManager.Instance.isSpeedupActive)
+            if (GameManager.instance.gameState == GameState.Gameplay && !GameManager.instance.isSpeedupActive)
             {
                 Destroy(Instantiate(collectedEffect, transform.position, Quaternion.Euler(-90, 0, 0)), 1f);
                 Debug.Log("Powerup collected");
-                GameManager.Instance.IncreaseGameSpeedForNSec();
+                GameManager.instance.IncreaseGameSpeedForNSec();
                 Destroy(gameObject);
             }
         }

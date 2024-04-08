@@ -7,12 +7,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    public List<GameObject> platformList = new List<GameObject>();
-
-    public GameObject Analyzer, Visualise, PlayerObj;
-    
     public float speed = 10;
-    public float Speed => speed * (GameManager.Instance == null ? 1 : GameManager.Instance.GameSpeed);
+    public float Speed => speed * (GameManager.instance == null ? 1 : GameManager.instance.GameSpeed);
     public int platformHitCount = 1;
     public Text Text_Name;
     //public LevelGenerator LevelGenerator;
@@ -82,11 +78,11 @@ public class Player : MonoBehaviour
 
         if (IsMobilePlatform())
         {
-            GameManager.Instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Swipe up to start/un-pause, swipe down to pause\nswipe left/Right to move Left/Right";
+            GameManager.instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Swipe up to start/un-pause, swipe down to pause\nswipe left/Right to move Left/Right";
         }
         else
         {
-            GameManager.Instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Press Space to start/pause\nWASD / Arrow keys to move";
+            GameManager.instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Press Space to start/pause\nWASD / Arrow keys to move";
         }
     }
 
@@ -119,7 +115,7 @@ public class Player : MonoBehaviour
         mainCamera = Camera.main;
         canMove = false;
         platformHitCount = 1;
-        GameManager.Instance.gameState = GameState.Menu;
+        GameManager.instance.gameState = GameState.Menu;
         jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
@@ -161,7 +157,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance.gameState == GameState.Lost || GameManager.Instance.gameState == GameState.Win)
+        if (GameManager.instance.gameState == GameState.Lost || GameManager.instance.gameState == GameState.Win)
         {
             return;
         }
@@ -307,7 +303,7 @@ public class Player : MonoBehaviour
     void OnSwipeLeft()
     {
         //swiped left
-        if (GameManager.Instance.gameState == GameState.Gameplay)
+        if (GameManager.instance.gameState == GameState.Gameplay)
         {
             float moveSpeed = 5;
             transform.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -317,7 +313,7 @@ public class Player : MonoBehaviour
     void OnSwipeRight()
     {
         //swiped right
-        if (GameManager.Instance.gameState == GameState.Gameplay)
+        if (GameManager.instance.gameState == GameState.Gameplay)
         {
             float moveSpeed = 5;
             transform.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -327,51 +323,51 @@ public class Player : MonoBehaviour
     void OnSwipeUp()
     {
         //swiped up
-        if (GameManager.Instance.gameState == GameState.Menu)
+        if (GameManager.instance.gameState == GameState.Menu)
         {
             print("Case 1");
-            GameManager.Instance.GameStartTextHide();
-            GameManager.Instance.StartGame();
+            GameManager.instance.GameStartTextHide();
+            GameManager.instance.StartGame();
             Time.timeScale = 1;
             SoundManager._Instance.PlayMusic();
         }
-        else if (Time.timeScale == 0 && !GameManager.Instance.isPausePopupOpen)
+        else if (Time.timeScale == 0 && !GameManager.instance.isPausePopupOpen)
         {
             print("Case 2");
             Time.timeScale = 1;
             SoundManager._Instance.ResumeMusic();
-            GameManager.Instance.gameState = GameState.Gameplay;
+            GameManager.instance.gameState = GameState.Gameplay;
         }
     }
 
     void OnSwipeDown()
     {
         //swiped down
-        GameManager.Instance.gameState = GameState.Pause;
+        GameManager.instance.gameState = GameState.Pause;
         Time.timeScale = 0;
     }
 
     void HandleInputActions()
     {
-        if (GameManager.Instance.gameStartText.activeInHierarchy)
+        if (GameManager.instance.gameStartText.activeInHierarchy)
         {
             print("Case 1");
-            GameManager.Instance.GameStartTextHide();
-            GameManager.Instance.StartGame();
+            GameManager.instance.GameStartTextHide();
+            GameManager.instance.StartGame();
             Time.timeScale = 1;
             SoundManager._Instance.PlayMusic();
         }
-        else if (Time.timeScale == 0 && !GameManager.Instance.isPausePopupOpen)
+        else if (Time.timeScale == 0 && !GameManager.instance.isPausePopupOpen)
         {
             print("Case 2");
             Time.timeScale = 1;
             SoundManager._Instance.ResumeMusic();
-            GameManager.Instance.gameState = GameState.Gameplay;
+            GameManager.instance.gameState = GameState.Gameplay;
         }
         else
         {
             print("Case 3");
-            GameManager.Instance.gameState = GameState.Pause;
+            GameManager.instance.gameState = GameState.Pause;
             Time.timeScale = 0;
         }
     }
@@ -401,7 +397,7 @@ public class Player : MonoBehaviour
 
     void HandleInput()
     {
-        if (GameManager.Instance.gameState == GameState.Gameplay)
+        if (GameManager.instance.gameState == GameState.Gameplay)
         {
             if (Input.touchCount > 0)
             {
@@ -475,7 +471,7 @@ public class Player : MonoBehaviour
     public float distance;
     void Show_WinPanel()
     {
-        GameManager.Instance.PlayerWin();
+        GameManager.instance.PlayerWin();
     }
     void CheckPlatform()
     {
@@ -487,7 +483,7 @@ public class Player : MonoBehaviour
             if (platformB.name == "Start")
             {
                 SoundManager.Instance.PlayMusicFromBeat(1);
-                GameManager.Instance.IncreaseGameSpeed();
+                GameManager.instance.IncreaseGameSpeed();
                 platformHitCount = 0;
             }
             if (platformB.name == "Winplace")
@@ -521,7 +517,7 @@ public class Player : MonoBehaviour
             distance = Vector3.Distance(platformA.position, platformB.position);
             platformHitCount++;
 
-            GameManager.Instance.AddScore(perfect);
+            GameManager.instance.AddScore(perfect);
             check = true;
         }
         else
@@ -529,7 +525,7 @@ public class Player : MonoBehaviour
             if (canMove)
             {
                 StopMoving();
-                GameManager.Instance.PlayerFailed();
+                GameManager.instance.PlayerFailed();
             }
         }
     }

@@ -9,7 +9,7 @@ public class Star : MonoBehaviour
         if (other.tag == "Player")
         {
             Destroy(Instantiate(collectedEffect, transform.position, Quaternion.Euler(-90, 0, 0)), 3);
-            GameManager.Instance.star++;
+            GameManager.instance.star++;
             Destroy(gameObject);
         }
     }

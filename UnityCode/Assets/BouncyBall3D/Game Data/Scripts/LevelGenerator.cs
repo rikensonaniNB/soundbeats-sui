@@ -23,7 +23,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public Pool movingPlatformPool;
     [SerializeField] GameObject starPrefab, PowerUpPrefab;
     public int hitindex = 0;
-    int[] starIDs = new int[3];
+    public int[] starIDs = new int[3];
     //int songLevel = 0;
     int platformCount;
 #pragma warning disable 0414
@@ -39,6 +39,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     //bool checkrun = true;
     public int count = 1;
 
+    public string userName;
     [Header("PRODUCER")]
     public string fileName;
     public DataList myDataList = new DataList();
@@ -47,6 +48,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public float distanceBetweenPlatforms => currentSong.song.length / beatPerSong * (player == null ? 10 : player.speed) /*+ hitindex*/;
     public bool PathIsValid => platformList.Count > 2;
 
+
+    private void Update()
+    {
+        userName = UserData.UserName;
+    }
     float TurnStep
     {
         get
@@ -207,10 +213,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         if (CheckForStar())
         {
-            //GameObject star = Instantiate(starPrefab, platform.transform);
+            GameObject star = Instantiate(starPrefab, platform.transform);
         }
 
-        if (GameManager.Instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 5 && GameManager.Instance.isSpeedupActive == false)
+        if (GameManager.instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 5 && GameManager.instance.isSpeedupActive == false)
         {
             GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
         }
@@ -335,18 +341,14 @@ public class LevelGenerator : Singleton<LevelGenerator>
         GameManager.instance.sky.SetActive(true);
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
         GameManager.instance.producerCamera.SetActive(false);
-        foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
-        {
-            allwhiteBalls.gameObject.SetActive(false);
-        }
+        GameManager.instance.pauseButton.SetActive(true);
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
         if (File.Exists(filePath))
         {
-            // Read the JSON file as a string
+            Debug.Log("Json");
             string json = File.ReadAllText(filePath);
 
-            // Deserialize the JSON string into an object
             FileName data = JsonUtility.FromJson<FileName>(json);
             myDataList.dataSave.Clear();
             for (int i = 0; i < data.dataSave.Count; i++)
@@ -354,14 +356,21 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 myDataList.dataSave.Add((float)data.dataSave[i]);
             }
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-            Debug.LogError("Filename" + fileNameWithoutExtension);
-            for (int i = 0; i < GameManager.Instance.SongLists.Count; i++)
+            Debug.LogError("Filename " + fileNameWithoutExtension);
+
+            for (int j = 0; j < GameManager.instance.SongLists.Count; j++)
             {
-                if (GameManager.Instance.SongLists[i].name == fileNameWithoutExtension)
+                if (GameManager.instance.SongLists[j].name + " - " + UserData.UserName == fileNameWithoutExtension || GameManager.instance.SongLists[j].name == fileNameWithoutExtension)
                 {
-                    currentSong = GameManager.Instance.SongLists[i];
+                    currentSong = GameManager.instance.SongLists[j];
                     Debug.LogError(currentSong);
                 }
+            }
+
+            foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
+            {
+                allwhiteBalls.gameObject.SetActive(false);
+                Destroy(allwhiteBalls);
             }
             StartCoroutine(StartWithSongProducer(this.gameObject, UIManager.Instance.menuUI));
         }
@@ -420,7 +429,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         // Convert the float list to JSON string
         string jsonString = JsonUtility.ToJson(myDataList);
-        fileName = currentSong.name + UserData.UserName + ".json";
+        fileName = currentSong.name + " - " + UserData.UserName + ".json";
         // Get the persistent data path
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
         if (File.Exists(filePath))
@@ -438,25 +447,21 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         yield return new WaitForSeconds(1);
 
-        GameManager.Instance.producerManagerPopup.SetActive(false);
+        GameManager.instance.producerManagerPopup.SetActive(false);
         UIManager.Instance.gameUI.SetActive(true);
         Debug.Log("wait is over");
         platformCount = 0;
         platformsPassed = 0;
-        SetStarIDs();
         player.MakeCharacterReady();
         movingPlatformPool.SetMovingPlatform();
 
         for (int i = 0; i < platformsDrawn; i++)
         {
             GameObject newPlatform = platformPool.GetItem;
-            //GameObject newPlatformBox = platformPool.GetItem;
 
             RepositionProducer(newPlatform, platformCount);
-            //Reposition(newPlatformBox, platformCount);
 
             platformList.Add(newPlatform);
-            //platformListBox.Add(newPlatformBox);
 
             Debug.Log(newPlatform);
 
@@ -471,6 +476,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         //}
         // go1.SetActive(false);
         go2.SetActive(false);
+        SetStarIDs();
     }
     public void RepositionProducer(GameObject platform, int id)
     {

@@ -31,15 +31,15 @@ public class SoundManager : Singleton<SoundManager>
 
     private void Update()
     {
-        if (GameManager.Instance.CurrentGameState == GameState.Pause || GameManager.Instance.CurrentGameState == GameState.Lost)
+        if (GameManager.instance.CurrentGameState == GameState.Pause || GameManager.instance.CurrentGameState == GameState.Lost)
         {
             track.Pause();
         }
         else
         {
-            mainMixer.SetFloat("Music Pitch", GameManager.Instance.GameSpeed);
-            GameManager.Instance.UpdateSongProgress(track.time / track.clip.length);
-            if (GameManager.Instance.levelProgress.fillAmount >= 0.99f)
+            mainMixer.SetFloat("Music Pitch", GameManager.instance.GameSpeed);
+            GameManager.instance.UpdateSongProgress(track.time / track.clip.length);
+            if (GameManager.instance.levelProgress.fillAmount >= 0.99f)
             {
                 LevelGenerator.Instance.check = 1;
                 Debug.Log("goooo");
