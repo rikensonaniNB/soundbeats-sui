@@ -43,7 +43,11 @@ public class SoundManager : Singleton<SoundManager>
             {
                 LevelGenerator.Instance.check = 1;
                 Debug.Log("goooo");
-
+            }
+            if (GameManager.instance.levelProgress.fillAmount >= 0.90f || LevelGenerator.Instance.myDataList.dataSave.Count == 4)
+            {
+                LevelGenerator.Instance.checkProducer = 1;
+                Debug.Log("goooo");
             }
         }
     }

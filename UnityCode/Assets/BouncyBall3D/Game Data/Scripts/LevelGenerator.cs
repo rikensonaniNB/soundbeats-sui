@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class LevelGenerator : Singleton<LevelGenerator>
 {
@@ -74,7 +76,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
     }
 
     public int check = 0;
-    public int getcount;
     public Transform GetNextPlatform
     {
 
@@ -149,6 +150,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public void StartWithSong()
     {
         platformCount = 0;
+        checkProducer = 0;
         platformsPassed = 0;
         SetStarIDs();
         player.MakeCharacterReady();
@@ -251,6 +253,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public int checkProducer = 0;
     public Transform GetNextPlatformProducer
     {
 
@@ -287,7 +290,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 newPlatform = platformPool.GetItem;
 
             newPlatform.GetComponent<Animator>().SetTrigger("Spawn");
-            if (check == 1)
+            if (checkProducer == 1)
             {
                 //nextPlatformIsStart = false;
                 newPlatform.name = "Start";
@@ -337,14 +340,20 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
+        Player.instance.characters[Player.instance.characterSelect].transform.position
+            = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0, 
+            Player.instance.characters[Player.instance.characterSelect].transform.position.z);
+
         GameManager.instance.mainCamera.SetActive(true);
         GameManager.instance.sky.SetActive(true);
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
         GameManager.instance.producerCamera.SetActive(false);
         GameManager.instance.pauseButton.SetActive(true);
         GameManager.instance.producer = true;
+        checkProducer = 0;
         player.transform.GetChild(10).gameObject.SetActive(false);
         player.transform.GetChild(10).gameObject.SetActive(true);
+        Player.instance.ResetPlayer();
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
         if (File.Exists(filePath))

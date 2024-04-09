@@ -57,6 +57,12 @@ public class Player : MonoBehaviour
     private Vector2 fingerUpPos;
     public bool detectSwipeAfterRelease = false;
     public float SWIPE_THRESHOLD = 20f;
+    public float distance;
+
+    [Header("Select_Character")]
+    public int userIndex = 0;
+
+    public int characterSelect = 0;
 
     public static Player instance;
 
@@ -86,27 +92,36 @@ public class Player : MonoBehaviour
         }
     }
 
+
     private void Videocomplet(bool complet)
     {
 
     }
     public void MakeCharacterReady()
     {
-        Debug.Log("MakeCharacterReady :==>  " + UserData.SelectedNftIndex);
+        //Debug.Log("MakeCharacterReady :==>  " + UserData.SelectedNftIndex);
 
+        ////ResetPlayer();
+        ////  StartCoroutine(GameManager.Instance.GameStartText());
+        //jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
+        //_rb = GetComponentInChildren<Rigidbody>();
+        //jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
+        //marshmello_Animator = Selected_character[UserData.SelectedNftIndex].GetComponent<Animator>();
+        ////Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
+        //Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
+        //characters[UserData.SelectedNftIndex].SetActive(true);
+        //marshmello_Animator.Play("Idle");
+
+        Debug.Log("MakeCharacterReady :==>  " + characterSelect);
         //ResetPlayer();
-      //  StartCoroutine(GameManager.Instance.GameStartText());
-        jumpingPart = Selected_character[UserData.SelectedNftIndex].transform;
+        //  StartCoroutine(GameManager.Instance.GameStartText());
+        jumpingPart = Selected_character[characterSelect].transform;
         _rb = GetComponentInChildren<Rigidbody>();
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
-        marshmello_Animator = Selected_character[UserData.SelectedNftIndex].GetComponent<Animator>();
-
+        marshmello_Animator = Selected_character[characterSelect].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
-        Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
-
-
-        characters[UserData.SelectedNftIndex].SetActive(true);
-
+        Text_Name.text = Selected_character[characterSelect].name;
+        characters[characterSelect].SetActive(true);
         marshmello_Animator.Play("Idle");
     }
     public void ResetPlayer()
@@ -126,7 +141,7 @@ public class Player : MonoBehaviour
         var obj = transform;
         obj.position = new Vector3(0f, .5f, 0f);
         obj.rotation = Quaternion.identity;
-        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = /*Vector3.zero;*/new Vector3(0f, .5f, 0f); 
+        Selected_character[UserData.SelectedNftIndex].gameObject.transform.position = /*Vector3.zero;*/new Vector3(0f, .5f, 0f);
         Selected_character[UserData.SelectedNftIndex].gameObject.transform.rotation = Quaternion.identity;
     }
 
@@ -139,15 +154,17 @@ public class Player : MonoBehaviour
         {
             characters[i].SetActive(false);
         }
-        characters[index].SetActive(true);
-        PlayerPrefs.SetInt("Selected_player", index);
+        //PlayerPrefs.SetInt("Selected_player", index);
         //Debug.Log(PlayerPrefs.GetInt("Selected_player"));
+        characters[index].SetActive(true);
         jumpingPart = Selected_character[index].transform;
         marshmello_Animator = Selected_character[index].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
         Text_Name.transform.parent.gameObject.SetActive(true);
 
         Text_Name.text = characters[index].name;
+        characterSelect = index;
+        characters[index].transform.position = new Vector3(characters[index].transform.position.x, 0, characters[index].transform.position.z);
     }
 
     private void Start()
@@ -157,6 +174,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        userIndex = UserData.SelectedNftIndex;
+
         if (GameManager.instance.gameState == GameState.Lost || GameManager.instance.gameState == GameState.Win)
         {
             return;
@@ -203,9 +222,6 @@ public class Player : MonoBehaviour
         {
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //Analyzer.SetActive(true);
-            //Visualise.SetActive(true);
-            //PlayerObj.SetActive(true);
             Movement();
             Jumping();
             VelocityScale();
@@ -468,7 +484,6 @@ public class Player : MonoBehaviour
             CheckPlatform();
         }
     }
-    public float distance;
     void Show_WinPanel()
     {
         GameManager.instance.PlayerWin();
@@ -488,7 +503,6 @@ public class Player : MonoBehaviour
             }
             if (platformB.name == "Winplace")
             {
-                //Debug.Log("kglfhjkgdhfkjl");
                 canMove = false;
                 marshmello_Animator.Play("Flip");
                 Show_WinPanel();

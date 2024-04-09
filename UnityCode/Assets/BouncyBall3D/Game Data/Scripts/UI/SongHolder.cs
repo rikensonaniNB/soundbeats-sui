@@ -165,6 +165,7 @@ public class SongHolder : MonoBehaviour
 
     public void PlaySong()
     {
+        Player.instance.ResetPlayer();
         GameManager.instance.producer = false;
         Debug.Log("PlaySong " + song.name);
         player.transform.GetChild(10).gameObject.SetActive(false);
@@ -173,24 +174,27 @@ public class SongHolder : MonoBehaviour
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         UIManager.Instance.CloseMenu();
 
-        if (UserData.SelectedNftIndex == 0)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(true);
-            player.GetComponent<Player>().Selected_character[1].SetActive(false);
-            player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        }
-        else if (UserData.SelectedNftIndex == 1)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(false);
-            player.GetComponent<Player>().Selected_character[1].SetActive(true);
-            player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        }
-        else if (UserData.SelectedNftIndex == 2)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(false);
-            player.GetComponent<Player>().Selected_character[1].SetActive(false);
-            player.GetComponent<Player>().Selected_character[2].SetActive(true);
-        }
+        //if (UserData.SelectedNftIndex == 0)
+        //{
+        //    player.GetComponent<Player>().Selected_character[0].SetActive(true);
+        //    player.GetComponent<Player>().Selected_character[1].SetActive(false);
+        //    player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        //}
+        //else if (UserData.SelectedNftIndex == 1)
+        //{
+        //    player.GetComponent<Player>().Selected_character[0].SetActive(false);
+        //    player.GetComponent<Player>().Selected_character[1].SetActive(true);
+        //    player.GetComponent<Player>().Selected_character[2].SetActive(false);
+        //}
+        //else if (UserData.SelectedNftIndex == 2)
+        //{
+        //    player.GetComponent<Player>().Selected_character[0].SetActive(false);
+        //    player.GetComponent<Player>().Selected_character[1].SetActive(false);
+        //    player.GetComponent<Player>().Selected_character[2].SetActive(true);
+        //}
+        Player.instance.characters[Player.instance.characterSelect].transform.position
+            = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
+                Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
 
         LevelGenerator.Instance.currentSong = song;

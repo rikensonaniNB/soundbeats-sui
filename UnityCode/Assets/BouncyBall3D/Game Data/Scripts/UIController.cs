@@ -377,37 +377,37 @@ public class UIController : MonoBehaviour
         //Mint Marshmallow 
         Mint_Button_Marshmallow.onClick.AddListener(() =>
         {
-            MintButtonClick(1);
+            //MintButtonClick(1);
         });
 
         //Mint Taral 
         Mint_Button_Taral.onClick.AddListener(() =>
         {
-            MintButtonClick(2);
+            //MintButtonClick(2);
         });
 
         //Mint Alien 
         Mint_Button_Alien.onClick.AddListener(() =>
         {
-            MintButtonClick(0);
+            MintButtonClick(1);
         });
 
         //Mint Neon
         Mint_Button_Neon.onClick.AddListener(() =>
         {
-            MintButtonClick(1);
+            MintButtonClick(2);
         });
 
         //Mint Robot
         Mint_Button_Robot.onClick.AddListener(() =>
         {
-            MintButtonClick(2);
+            MintButtonClick(3);
         });
 
         //Mint Rainbow
         Mint_Button_Rainbow.onClick.AddListener(() =>
         {
-            MintButtonClick(3);
+            MintButtonClick(4);
         });
 
 
@@ -783,6 +783,8 @@ public class UIController : MonoBehaviour
                 ShowNftScreen();
             }
         }
+        Player.instance.playerIndex(index);
+        Player.instance.characterSelect = index;
     }
 
     /// <summary>

@@ -521,6 +521,7 @@ public class GameManager : Singleton<GameManager>
         {
             Destroy(t.gameObject);
         }
+        Player.instance.ResetPlayer();
     }
 
     public void CloseNftPopUp()
@@ -646,6 +647,7 @@ public class GameManager : Singleton<GameManager>
 
         if (!producerManagerPopup.activeSelf)
         {
+            LevelGenerator.Instance.checkProducer = 0;
             AudioVisualizeManager.instance.audioSource.enabled = true;
             producerManagerPopup.SetActive(true);
             producerCloseBtn.SetActive(true);
@@ -738,6 +740,7 @@ public class GameManager : Singleton<GameManager>
             else
             {
                 PlaySong();
+                Player.instance.ResetPlayer();
                 SetBox.instance.SpawnWhiteBalls();
             }
         }
