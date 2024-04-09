@@ -467,7 +467,7 @@ export class AppController {
     @Get('/api/v1/accounts')
     async getAccountFromLogin(@Query() query: GetAccountDto): Promise<GetAccountResponseDto> {
         const logString = `GET /api/v1/accounts ${JSON.stringify(query)}`;
-        let output = { suiWallet: '', status: '' };
+        let output = { suiWallet: '', status: '', username: '' };
         this.logger.log(logString);
         let { authId, authType } = query;
         if (!authId || authId == '') {
