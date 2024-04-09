@@ -193,6 +193,8 @@ export class GetAccountDto {
 export class GetAccountResponseDto {
     @ApiProperty({ description: 'SUI wallet address' })
     suiWallet: string
+    @ApiProperty({ description: 'Account unique username' })
+    username: string
     @ApiProperty({ description: 'Success or failure of the operation' })
     status: string
 }

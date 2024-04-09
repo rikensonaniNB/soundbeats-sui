@@ -588,14 +588,15 @@ export class SuiService {
      * @param authType 
      * @returns The status of the search and SUI wallet address (if found)
      */
-    async getAccountFromLogin(authId: string, authType: 'evm' | 'sui'): Promise<{suiWallet: string, status: string }> {
-        const output = { suiWallet: "", status: "" }
+    async getAccountFromLogin(authId: string, authType: 'evm' | 'sui'): Promise<{suiWallet: string, username: string, status: string }> {
+        const output = { suiWallet: "", status: "", username: "" }
         const authRecord = await this.authManager.getAuthRecord(authId, authType); 
         if (authRecord == null) {
             output.status = "notfound"; 
         }
         else {
             output.suiWallet = authRecord?.suiWallet;
+            output.username = authRecord.username;
             output.status = "success"; 
         }
         
