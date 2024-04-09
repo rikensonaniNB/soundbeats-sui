@@ -374,8 +374,8 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         };
         
         const result = await this.dynamoDb.query(params); 
-        if (!result.success) {
-            const sortedItems = result.data.Items.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
+        if (result.success) {
+            const sortedItems = result.data.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
             return sortedItems.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
         }
 
