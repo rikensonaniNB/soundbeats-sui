@@ -429,9 +429,8 @@ export class AppController {
         if (signature.length > MAX_SIGNATURE_LENGTH) {
             this.returnError(logString, 400, `signature exceeds max length of ${MAX_SIGNATURE_LENGTH}`);
         }
-        
-        if (!username) {
-            username = '';
+        if (!username || username == '') {
+            this.returnError(logString, 400, 'username cannot be null or empty');
         }
         if (username.length > MAX_USERNAME_LENGTH) {
             this.returnError(logString, 400, `username exceeds max length of ${MAX_USERNAME_LENGTH}`);

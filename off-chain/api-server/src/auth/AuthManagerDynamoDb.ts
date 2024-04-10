@@ -101,22 +101,24 @@ export class AuthManagerDynamoDb implements IAuthManager {
     }
 
     async usernameExists(username: string): Promise<boolean> {
-        const params = {
-            TableName: Config.authTableName,
-            IndexName: GSI_USERNAME_NAME,
-            KeyConditionExpression: "username = :username_val",
-            ExpressionAttributeValues: {
-                ":username_val": { 'S': username }
-            }
-        };
+        if (username && username.length) {
+            const params = {
+                TableName: Config.authTableName,
+                IndexName: GSI_USERNAME_NAME,
+                KeyConditionExpression: "username = :username_val",
+                ExpressionAttributeValues: {
+                    ":username_val": { 'S': username }
+                }
+            };
 
-        //run the query to get records by username
-        const result = await this.dynamoDb.query(params);
-        
-        //return true if any records 
-        if (result.success) {
-            if (result.data && result.data.length) 
-                return true;
+            //run the query to get records by username
+            const result = await this.dynamoDb.query(params);
+
+            //return true if any records 
+            if (result.success) {
+                if (result.data && result.data.length)
+                    return true;
+            }
         }
 
         return false;

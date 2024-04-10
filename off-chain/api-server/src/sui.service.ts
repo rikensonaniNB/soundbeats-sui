@@ -348,6 +348,7 @@ export class SuiService {
         
         //first verify session id, if any
         if (sessionId && sessionId.length) {
+            this.logger.log(`verify session id ${sessionId}`);
             const sessionResponse = await this._verifySessionId(sessionId, walletAddress, message);
             if (!sessionResponse.success) {
                 output.failureReason = sessionResponse.reason; 
@@ -382,6 +383,7 @@ export class SuiService {
         let evmWallet: string = walletType == 'evm' ? output.wallet : null;
         let suiWallet: string = walletType == 'sui' ? output.wallet : null; 
 
+        this.logger.log(`getting auth record for ${walletType} ${output.wallet}`);
         const authRecord: IAuthRecord = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
         output.suiWallet = authRecord?.suiWallet ?? '';
 
@@ -390,16 +392,28 @@ export class SuiService {
             
             //if record exists, update it 
             if (authRecord) {
-                if (authRecord.suiWallet != suiWallet) {
+                this.logger.log(`updating authRecord for ${output.wallet}`);
+                if (suiWallet && authRecord.suiWallet != suiWallet) {
                     await this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
                 }
+                
+                output.completed = true;
+                this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true); 
             }
             //otherwise, register it 
             else {
-                await this.registerAccountEvm(evmWallet, username);
+                this.logger.log(`registering new account for ${output.wallet}`);
+                const regOutput = await this.registerAccountEvm(evmWallet, username);
                 output.completed = true;
-                this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
-                output.suiWallet = suiWallet ?? '';
+                
+                if (regOutput.status == "success") {
+                    suiWallet = regOutput.suiWallet;
+                    this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
+                    output.suiWallet = suiWallet ?? '';
+                }
+                else {
+                    output.failureReason = regOutput.status;
+                }
             }
         }
         else {
@@ -552,7 +566,8 @@ export class SuiService {
         const authRecord = await this.authManager.getAuthRecord(evmWallet, "evm"); 
         if (authRecord != null) {
             output.status = "duplicate"; 
-            output.suiWallet = authRecord.authId; 
+            output.suiWallet = authRecord.authId;
+            this.logger.log(`account for ${evmWallet} already exists`);
         }
         else {
             //create a new wallet 
@@ -565,6 +580,7 @@ export class SuiService {
             if (await this.authManager.usernameExists(username)) {
                 success = false;
                 output.status = "duplicate";
+                this.logger.log(`duplicate username ${username}`);
             }
             else {
                 //store the info in the database
