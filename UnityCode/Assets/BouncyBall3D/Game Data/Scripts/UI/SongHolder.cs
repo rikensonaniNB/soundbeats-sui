@@ -121,32 +121,14 @@ public class SongHolder : MonoBehaviour
         Debug.Log("PlaySong " + song.name);
         PlayButton.interactable = true;
         songgo = true;
-        LevelGenerator.Instance.currentSong = song;
-        Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
-        AudioVisualizeManager.visualizeManager.audioSource.clip = song.song;
+        //LevelGenerator.Instance.currentSong = song;
+        //Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
+        //AudioVisualizeManager.visualizeManager.audioSource.clip = song.song;
         AudioVisualizeManager.visualizeManager.audioSource.Play();
         AudioVisualizeManager.visualizeManager.StartBeatDetect();
         Debug.Log("count=" + LevelGenerator.Instance.myDataList.dataSave.Count);
 
         StartCoroutine(waitforsavedata(song.song));
-        if (UserData.SelectedNftIndex == 0)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(true);
-            player.GetComponent<Player>().Selected_character[1].SetActive(false);
-            player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        }
-        else if (UserData.SelectedNftIndex == 1)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(false);
-            player.GetComponent<Player>().Selected_character[1].SetActive(true);
-            player.GetComponent<Player>().Selected_character[2].SetActive(false);
-        }
-        else if (UserData.SelectedNftIndex == 2)
-        {
-            player.GetComponent<Player>().Selected_character[0].SetActive(false);
-            player.GetComponent<Player>().Selected_character[1].SetActive(false);
-            player.GetComponent<Player>().Selected_character[2].SetActive(true);
-        }
     }
     public IEnumerator waitforsavedata(AudioClip clipTime)
     {

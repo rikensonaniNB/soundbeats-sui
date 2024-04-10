@@ -5,6 +5,7 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 using Random = UnityEngine.Random;
 
 public class LevelGenerator : Singleton<LevelGenerator>
@@ -330,18 +331,23 @@ public class LevelGenerator : Singleton<LevelGenerator>
         foreach (string fileName in fileNamess)
         {
             GameObject Obj = Instantiate(FileNamePrefab, FileNameparraent);
-            Obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileName;
+            if (fileName.Contains(".json"))
+            {
+                string fileN = fileName;
+                fileN = fileN.Replace(".json", "");
+                Obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileN;
+            }
             Obj.GetComponent<Button>().onClick.AddListener(() =>
             {
                 OpenFileAndPlaySongWithGameStart(fileName);
             });
         }
     }
-
+    public string fileNameWithoutExtension;
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
         Player.instance.characters[Player.instance.characterSelect].transform.position
-            = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0, 
+            = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
             Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
         GameManager.instance.mainCamera.SetActive(true);
@@ -367,16 +373,28 @@ public class LevelGenerator : Singleton<LevelGenerator>
             {
                 myDataList.dataSave.Add((float)data.dataSave[i]);
             }
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
             Debug.LogError("Filename " + fileNameWithoutExtension);
 
             for (int j = 0; j < GameManager.instance.SongLists.Count; j++)
             {
-                if (GameManager.instance.SongLists[j].name + " - " + UserData.UserName == fileNameWithoutExtension || GameManager.instance.SongLists[j].name == fileNameWithoutExtension)
+                //if (ContainsIntegerFollowedByBeat(GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName) || GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
+                if (GameManager.instance.SongLists[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_3_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_4_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_5_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_6_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_7_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_8_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_9_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_10_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
                 {
                     currentSong = GameManager.instance.SongLists[j];
                     Debug.LogError(currentSong);
                 }
+
             }
 
             foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
@@ -392,6 +410,18 @@ public class LevelGenerator : Singleton<LevelGenerator>
         }
     }
 
+    bool ContainsIntegerFollowedByBeat(string input)
+    {
+        string pattern = @"_Beat_\d+";
+        Regex regex = new Regex(pattern);
+        return regex.IsMatch(input);
+    }
+
+
+
+
+
+
     public string[] GetFileNamesInPersistentDataPath()
     {
         // Get the persistent data path
@@ -399,6 +429,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         // Get file names in the persistent data path
         string[] fileNames = Directory.GetFiles(persistentDataPath);
+
 
         // Return only the file names without the path
         for (int i = 0; i < fileNames.Length; i++)
@@ -441,12 +472,18 @@ public class LevelGenerator : Singleton<LevelGenerator>
     {
         // Convert the float list to JSON string
         string jsonString = JsonUtility.ToJson(myDataList);
-        fileName = currentSong.name + " - " + UserData.UserName + ".json";
+        string baseFileName = currentSong.name + "_Beat_";
+        string fileName = baseFileName + UserData.UserName + ".json";
         // Get the persistent data path
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
-        if (File.Exists(filePath))
+
+        // Check if the file already exists
+        int index = 1;
+        while (File.Exists(filePath))
         {
-            File.Delete(filePath);
+            fileName = baseFileName + index + "_" + UserData.UserName + ".json";
+            filePath = Path.Combine(Application.persistentDataPath, fileName);
+            index++;
         }
 
         // Write the JSON string to the file
@@ -454,6 +491,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         Debug.Log("Float list saved to: " + filePath);
     }
+
+
+
 
     public IEnumerator StartWithSongProducer(GameObject go1, GameObject go2)
     {
@@ -468,7 +508,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         for (int i = 0; i < platformsDrawn; i++)
         {
-            Debug.Log("hbgbfy");
             GameObject newPlatform = platformPool.GetItem;
 
             RepositionProducer(newPlatform, platformCount);

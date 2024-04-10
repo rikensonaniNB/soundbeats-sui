@@ -281,7 +281,7 @@ public class Player : MonoBehaviour
             }
             else if (fingerDownPos.y - fingerUpPos.y < 0)
             {
-                OnSwipeDown();
+              //  OnSwipeDown();
             }
             fingerUpPos = fingerDownPos;
 

@@ -155,6 +155,7 @@ public class GameManager : Singleton<GameManager>
         //WinPanel.SetActive(true);
         //revivePanel.SetActive(true);
         Winpanel.SetActive(true);
+        LevelGenerator.Instance.currentSong = null;
         UIManager.Instance.ShowHUD(false);
 
         if (LevelGenerator.Instance.currentSong.stars < star)
@@ -326,11 +327,8 @@ public class GameManager : Singleton<GameManager>
         revivePanel.SetActive(false);
         playButton.SetActive(true);
 
-        //LevelGenerator.Instance.StartWithSong();
-        //SongHolder.Instance.PlaySong();
-
-
-
+        LevelGenerator.Instance.StartWithSong();
+        SongHolder.Instance.PlaySong();
     }
     public void StartGame()
     {
@@ -424,7 +422,11 @@ public class GameManager : Singleton<GameManager>
         // LevelGenerator.Instance.RemovePlatforms();
         quitScreen.SetActive(false);
         pauseButton.SetActive(true);
-        HidePopup();
+        //HidePopup();
+        scoreText.text = "0";
+        player.ResetPlayer();
+        revivePanel.SetActive(false);
+        playButton.SetActive(true);
         LevelGenerator.Instance.RemovePlatforms();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
         // SongHolder.Instance.rhythmdata = null;
@@ -652,7 +654,6 @@ public class GameManager : Singleton<GameManager>
             producerManagerPopup.SetActive(true);
             producerCloseBtn.SetActive(true);
             LevelGenerator.Instance.RemovePlatforms();
-            ////////// Add Strat //////////
             UIController.instance.HomeScreen.SetActive(false);
             //UIController.instance.Mint_NFTScreen.SetActive(false);
             producerObj.SetActive(false);
@@ -675,6 +676,16 @@ public class GameManager : Singleton<GameManager>
             RenderSettings.skybox = mainCameraMat;
             producerCamera.SetActive(false);
             songPlaying = false;
+            mainCamera.SetActive(false);
+            producerCamera.SetActive(true);
+            sky.SetActive(false);
+            RenderSettings.skybox = producerCameraMat;
+            Player.instance.ResetPlayer();
+            LevelGenerator.Instance.currentSong = SongLists[n];
+            Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
+            AudioVisualizeManager.visualizeManager.audioSource.clip = SongLists[n].song;
+            songTime.gameObject.SetActive(true);
+            UpdateSongRemainingTime();
             ////////// End //////////
         }
     }
@@ -740,7 +751,7 @@ public class GameManager : Singleton<GameManager>
             else
             {
                 PlaySong();
-                Player.instance.ResetPlayer();
+                //Player.instance.ResetPlayer();
                 SetBox.instance.SpawnWhiteBalls();
             }
         }
@@ -785,15 +796,13 @@ public class GameManager : Singleton<GameManager>
     public void PlaySong()
     {
         Debug.Log("Song name:" + songName);
+        LevelGenerator.Instance.myDataList.dataSave.Clear();
         SongListObj[n].GetComponent<SongHolder>().PlaySongProducer();
         SongListObj[n].GetComponent<SongHolder>().PlayButton.interactable = true;
         SetBox.instance.camerabool = true;
-        mainCamera.SetActive(false);
-        producerCamera.SetActive(true);
-        sky.SetActive(false);
-        RenderSettings.skybox = producerCameraMat;
+
         songPlaying = true;
-        songTime.gameObject.SetActive(true);
+        //songTime.gameObject.SetActive(true);
     }
     void UpdateSongRemainingTime()
     {
