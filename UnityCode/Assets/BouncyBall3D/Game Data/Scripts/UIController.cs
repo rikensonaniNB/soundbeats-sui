@@ -591,59 +591,54 @@ public class UIController : MonoBehaviour
     private async void SignMessageCallback(string response)
     {
         Debug.Log("SignMessageCallback response : " + response);
-        string[] args = response.Split(':');
 
-        if (args.Length > 0)
+        var session = WalletConnect.Instance.ActiveSession;
+        var sessionNamespace = session.Namespaces;
+        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
+        .Address;
+
+        Debug.Log("SignMessageCallback address : " + address);
+        var data = new PersonalSign(response, address);
+
+        Debug.Log("SignMessageCallback PersonalSign : " + data);
+
+        try
         {
-            //retrieve the wallet address and signature 
-            string signature = args[0];
-            var session = WalletConnect.Instance.ActiveSession;
-            var sessionNamespace = session.Namespaces;
-            var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
-            .Address;
+            var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
+            Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result);
 
+            Debug.Log("signed message:" + response);
+            Debug.Log("wallet address:" + address);
 
-            var data = new PersonalSign(response, address);
+            //prepare a request to verify the signature
+            AuthVerifyDto request = new AuthVerifyDto();
+            request.wallet = "" + address;
+            request.walletType = "evm";
+            request.action = "verify";
+            request.sessionId = UserData.sessionID;
+            request.messageToSign = response;
+            request.username = UserData.UserName;
+            request.signature = System.Web.HttpUtility.UrlEncode(result);
 
-            try
-            {
-                var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
-                Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result);
+            NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
 
-                Debug.Log("signed message:" + signature);
-                Debug.Log("wallet address:" + address);
-
-                //prepare a request to verify the signature
-                AuthVerifyDto request = new AuthVerifyDto();
-                request.wallet = "" + address;
-                request.walletType = "evm";
-                request.action = "verify";
-                request.sessionId = UserData.sessionID;
-                request.messageToSign = response;
-                request.username = UserData.UserName;
-                request.signature = System.Web.HttpUtility.UrlEncode(result);
-
-                NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
-
-            }
-            catch (WalletConnectException e)
-            {
-
-                Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
-            }
-
-
-
-            ////prepare a request to verify the signature
-            //VerifySignatureDto request = new VerifySignatureDto();
-            //request.address = address;
-            //request.signature = System.Web.HttpUtility.UrlEncode(signature);
-            //request.message = MessageToSign;
-
-            ////call to verify signature
-            //NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
-            ////this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
         }
+        catch (WalletConnectException e)
+        {
+
+            Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
+        }
+
+        ////prepare a request to verify the signature
+        //VerifySignatureDto request = new VerifySignatureDto();
+        //request.address = address;
+        //request.signature = System.Web.HttpUtility.UrlEncode(signature);
+        //request.message = MessageToSign;
+
+        ////call to verify signature
+        //NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
+        ////this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
+
     }
 
     #endregion
@@ -906,9 +901,9 @@ public class UIController : MonoBehaviour
         //set active wallet address 
         if (verifySignatureResponseDto.verified)
         {
-#if FAKE_SIGNIN
-            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-#endif
+            //#if FAKE_SIGNIN
+            //            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            //#endif
 
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.wallet;
 
@@ -928,9 +923,9 @@ public class UIController : MonoBehaviour
         //set active wallet address 
         if (startAuthSessionResponseDto.sessionId != "")
         {
-#if FAKE_SIGNIN
-            startAuthSessionResponseDto.sessionId = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-#endif
+            //#if FAKE_SIGNIN
+            //            startAuthSessionResponseDto.sessionId = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            //#endif
             UserData.sessionID = startAuthSessionResponseDto.sessionId;
             MessageToSign = startAuthSessionResponseDto.messageToSign;
 
@@ -948,9 +943,10 @@ public class UIController : MonoBehaviour
         //set active wallet address 
         if (verifySignatureResponseDto.wallet != "")
         {
-#if FAKE_SIGNIN
-            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-#endif
+            //#if FAKE_SIGNIN
+            //            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            //#endif
+            NetworkManager.Instance.CheckUsername("" + UserName.text, isUserNameSaved, null);
             if (verifySignatureResponseDto.suiWallet != "")
             {
                 //get user owned NFTs
@@ -963,6 +959,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
+            UserData.UserName = "";
             ErrorScreen.SetActive(true);
             txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
         }
@@ -982,6 +979,18 @@ public class UIController : MonoBehaviour
         {
             ErrorScreen.SetActive(true);
             txtError_ErrorScreen.text = "Username is not available. Please choose another username";
+        }
+    }
+
+    private void isUserNameSaved(CheckUsernameResponseDto checkUsernameResponseDto)
+    {
+        Debug.Log("isUserNameSaved : " + checkUsernameResponseDto.exists);
+        //set active wallet address 
+        if (!checkUsernameResponseDto.exists)
+        {
+            UserData.UserName = "";
+            //ErrorScreen.SetActive(true);
+            //txtError_ErrorScreen.text = "Username is not saved yet.";
         }
     }
 
