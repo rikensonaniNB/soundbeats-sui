@@ -637,14 +637,14 @@ public class GameManager : Singleton<GameManager>
         PushMultiplierPartTwoSlider.minValue = 0f;
         PushMultiplierPartTwoSlider.maxValue = 100f;
 
-        ///// MinOutput_AND_MaxOutput /////
-        MinOutputSlider.value = 1f;
-        MinOutputSlider.minValue = -4f;
-        MinOutputSlider.maxValue = 4f;
-        /////////////////////////////////
-        MaxOutputSlider.value = 1f;
-        MaxOutputSlider.minValue = -4f;
-        MaxOutputSlider.maxValue = 4f;
+        /////// MinOutput_AND_MaxOutput /////
+        //MinOutputSlider.value = 1f;
+        //MinOutputSlider.minValue = -4f;
+        //MinOutputSlider.maxValue = 4f;
+        ///////////////////////////////////
+        //MaxOutputSlider.value = 1f;
+        //MaxOutputSlider.minValue = -4f;
+        //MaxOutputSlider.maxValue = 4f;
 
 
         if (!producerManagerPopup.activeSelf)
@@ -700,11 +700,11 @@ public class GameManager : Singleton<GameManager>
         PushMultiplierPartOneSlider.value = 0f;
         Debug.Log($"<color=blue> Push_Multiplier_Past_One_Slider_Value </color>" + PushMultiplierPartOneSlider.value);
         PushMultiplierPartTwoSlider.value = 1f;
-        Debug.Log($"<color=blue> Push_Multiplier_Past_Two_Slider_Value </color>" + PushMultiplierPartTwoSlider.value);
-        MinOutputSlider.value = 1f;
-        Debug.Log($"<color=blue> Min_Output_Slider_Value </color>" + MinOutputSlider.value);
-        MaxOutputSlider.value = 1f;
-        Debug.Log($"<color=blue> max_Output_Slider_Value </color>" + MaxOutputSlider.value);
+        //Debug.Log($"<color=blue> Push_Multiplier_Past_Two_Slider_Value </color>" + PushMultiplierPartTwoSlider.value);
+        //MinOutputSlider.value = 1f;
+        //Debug.Log($"<color=blue> Min_Output_Slider_Value </color>" + MinOutputSlider.value);
+        //MaxOutputSlider.value = 1f;
+        //Debug.Log($"<color=blue> max_Output_Slider_Value </color>" + MaxOutputSlider.value);
     }
 
     public void OnvlaueChange()

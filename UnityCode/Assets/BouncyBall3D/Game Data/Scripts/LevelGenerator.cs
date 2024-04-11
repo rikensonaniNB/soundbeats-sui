@@ -379,7 +379,8 @@ public class LevelGenerator : Singleton<LevelGenerator>
             for (int j = 0; j < GameManager.instance.SongLists.Count; j++)
             {
                 //if (ContainsIntegerFollowedByBeat(GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName) || GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
-                if (GameManager.instance.SongLists[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
+                if (GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.SongLists[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
                     GameManager.instance.SongLists[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
                     GameManager.instance.SongLists[j].name + "_Beat_3_" + UserData.UserName == fileNameWithoutExtension ||
                     GameManager.instance.SongLists[j].name + "_Beat_4_" + UserData.UserName == fileNameWithoutExtension ||
