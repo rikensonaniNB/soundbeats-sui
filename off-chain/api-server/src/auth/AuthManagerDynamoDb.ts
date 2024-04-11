@@ -37,7 +37,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         }
 
         //write it to the database
-        const result = await this._dataAccess_putAuthRecord(authId, authType, suiWallet, username, extraData);
+        const result = await this._dataAccess_putAuthRecord(authId, authType, suiWallet, username, 0, extraData);
 
         return result.success;
     }
@@ -55,6 +55,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
                 authId: existing.data.authId.S,
                 authType: existing.data.authType.S,
                 extraData: null, 
+                level: parseInt(existing.data.level.N?.toString() ?? '0'),
                 suiWallet: existing.data.suiWallet.S,
                 username: existing.data.username?.S ?? ''
             }
@@ -68,7 +69,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
     }
 
     async getAuthRecords(): Promise<IAuthRecord[]> {
-        const result = await await this.dynamoDb.scanTable(Config.authTableName);
+        const result = await this.dynamoDb.scanTable(Config.authTableName);
         const items = result.success ? result.data : [];
         const output = [];
 
@@ -76,6 +77,8 @@ export class AuthManagerDynamoDb implements IAuthManager {
             output.push({
                 authId: s.authId.S,
                 authType: s.authType.S,
+                username: s.username.S,
+                level: parseInt(s.level.N?.toString() ?? ''),
                 extraData: s.extraData && s.extraData.S && s.extraData.S.length ? JSON.parse(s.extraData.S) : null
             });
         });
@@ -83,7 +86,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         return output;
     }
     
-    async updateAuthRecord(authId: string, authType: 'evm' | 'sui', suiWallet: string): Promise<void> {
+    async updateAuthRecord(authId: string, authType: 'evm' | 'sui', suiWallet: string, level: number = -1): Promise<void> {
         const record: IAuthRecord = await this.getAuthRecord(authId, authType); 
         
         //ensure that record exists
@@ -91,8 +94,14 @@ export class AuthManagerDynamoDb implements IAuthManager {
             throw new Error(`Auth record ${authId}/${authType} not found.`);
         }
         
+        //level stays the same unless specified
+        if (level < 0)
+            level = record.level;
+            
         //update the database
-        await this._dataAccess_putAuthRecord(authId, authType, suiWallet, record.username, record.extraData);
+        await this._dataAccess_putAuthRecord(
+            authId, authType, suiWallet, record.username, level, record.extraData
+        );
     }
 
     async getAuthSession(sessionId: string): Promise<IAuthSession> {
@@ -180,7 +189,7 @@ export class AuthManagerDynamoDb implements IAuthManager {
         
         //update the data
         record.authId = suiAddress;
-        const response = await this._dataAccess_putAuthRecord(authId, authType, suiAddress, record.username); 
+        const response = await this._dataAccess_putAuthRecord(authId, authType, suiAddress, record.username, record.level); 
         return response.success;
     }
 
@@ -242,13 +251,15 @@ export class AuthManagerDynamoDb implements IAuthManager {
         authType: 'evm' | 'sui', 
         suiWallet: string, 
         username: string, 
+        level: number,
         extraData: any = null): Promise<IDynamoResult> {
         //get the core data items 
         const data: any = {
             authId: { 'S': authId },
             authType: { 'S': authType },
             suiWallet: { 'S': suiWallet },
-            username: { 'S': username }
+            username: { 'S': username },
+            level: { 'N': level.toString() }
         };
         
         //add extra data if any

@@ -195,6 +195,8 @@ export class GetAccountResponseDto {
     suiWallet: string
     @ApiProperty({ description: 'Account unique username' })
     username: string
+    @ApiProperty({ description: 'Player level' })
+    level: number
     @ApiProperty({ description: 'Success or failure of the operation' })
     status: string
 }
@@ -237,4 +239,13 @@ export class AuthVerifyResponseDto {
     failureReason: string
     @ApiProperty({ description: 'Sui wallet address (if any)' })
     suiWallet: string
+}
+
+export class UpdateUserLevelDto {
+    @ApiProperty({ description: 'Auth ID, e.g. EVM wallet address or username' })
+    authId: string
+    @ApiProperty({ description: 'Auth type, e.g. "evm"' })
+    authType: 'evm' | 'sui'
+    @ApiProperty({ description: 'Level of player' })
+    level: number
 }

@@ -3,6 +3,7 @@ export interface IAuthRecord {
     authId: string;
     authType: 'evm' | 'sui';
     suiWallet: string;
+    level: number;
     username: string;
     extraData: any;
 }
@@ -58,7 +59,7 @@ export interface IAuthManager {
     getAuthRecords(): Promise<IAuthRecord[]>;
 
     //TODO: comment 
-    updateAuthRecord(authId: string, authType: 'evm' | 'sui', suiWallet: string): Promise<void>;
+    updateAuthRecord(authId: string, authType: 'evm' | 'sui', suiWallet: string, level: number): Promise<void>;
     
     /**
      * Sets the SUI wallet address associated with the identified auth record, identified

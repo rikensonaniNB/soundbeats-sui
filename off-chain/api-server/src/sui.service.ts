@@ -394,7 +394,7 @@ export class SuiService {
             if (authRecord) {
                 this.logger.log(`updating authRecord for ${output.wallet}`);
                 if (suiWallet && authRecord.suiWallet != suiWallet) {
-                    await this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet); 
+                    await this.authManager.updateAuthRecord(evmWallet, "evm", suiWallet, authRecord.level); 
                 }
                 
                 output.completed = true;
@@ -604,18 +604,38 @@ export class SuiService {
      * @param authType 
      * @returns The status of the search and SUI wallet address (if found)
      */
-    async getAccountFromLogin(authId: string, authType: 'evm' | 'sui'): Promise<{suiWallet: string, username: string, status: string }> {
-        const output = { suiWallet: "", status: "", username: "" }
-        const authRecord = await this.authManager.getAuthRecord(authId, authType); 
+    async getAccountFromLogin(authId: string, authType: 'evm' | 'sui'): Promise<{suiWallet: string, username: string, level: number, status: string }> {
+        const output = { suiWallet: "", status: "", username: "", level: 0 }
+        const authRecord: IAuthRecord = await this.authManager.getAuthRecord(authId, authType); 
         if (authRecord == null) {
             output.status = "notfound"; 
         }
         else {
             output.suiWallet = authRecord?.suiWallet;
             output.username = authRecord.username;
+            output.level = authRecord.level;
             output.status = "success"; 
         }
         
+        return output; 
+    }
+
+    //TODO: comment header
+    async updateUserLevel(authId: string, authType: 'evm' | 'sui', level: number): Promise<{ suiWallet: string, username: string, level: number, status: string }> {
+        const output = { suiWallet: "", status: "", username: "", level: 0 }
+        const authRecord: IAuthRecord = await this.authManager.getAuthRecord(authId, authType);
+        if (authRecord == null) {
+            output.status = "notfound";
+        }
+        else {
+            await this.authManager.updateAuthRecord(authRecord.authId, authRecord.authType, authRecord.suiWallet, level);
+            
+            output.suiWallet = authRecord?.suiWallet;
+            output.username = authRecord.username;
+            output.level = level;
+            output.status = "success";
+        }
+
         return output; 
     }
     

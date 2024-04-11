@@ -32,7 +32,8 @@ import {
     GetAccountDto,
     GetAccountResponseDto, 
     CheckUsernameDto, 
-    CheckUsernameResponseDto
+    CheckUsernameResponseDto,
+    UpdateUserLevelDto
 } from './entity/req.entity'
 import { SuiService } from './sui.service'
 import { AppLogger } from './app.logger';
@@ -466,7 +467,7 @@ export class AppController {
     @Get('/api/v1/accounts')
     async getAccountFromLogin(@Query() query: GetAccountDto): Promise<GetAccountResponseDto> {
         const logString = `GET /api/v1/accounts ${JSON.stringify(query)}`;
-        let output = { suiWallet: '', status: '', username: '' };
+        let output = { suiWallet: '', status: '', username: '', level: 0 };
         this.logger.log(logString);
         let { authId, authType } = query;
         if (!authId || authId == '') {
@@ -486,6 +487,37 @@ export class AppController {
             this.returnError(logString, 500, e);
         }
         
+        this.returnError(logString, 400, output.status);
+    }
+
+    @ApiOperation({ summary: "Update user's level" })
+    @Post('/api/v1/level')
+    async updateUserLevel(@Body() body: UpdateUserLevelDto): Promise<GetAccountResponseDto> {
+        const logString = `GET /api/v1/level ${JSON.stringify(body)}`;
+        let output = { suiWallet: '', status: '', username: '', level: 0 };
+        this.logger.log(logString);
+        let { authId, authType, level } = body;
+        if (!authId || authId == '') {
+            this.returnError(logString, 400, 'Auth Id cannot be null or empty')
+        }
+        if (!authType) {
+            this.returnError(logString, 400, 'Auth type cannot be null or empty')
+        }
+        if (isNaN(level) || level < 0) {
+            this.returnError(logString, 400, 'Level must be a positive number, and is required')
+        }
+        
+        try {
+            output = await this.suiService.updateUserLevel(authId, authType, level);
+            this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
+            if (output.status === "success") {
+                return output;
+            }
+        }
+        catch (e) {
+            this.returnError(logString, 500, e);
+        }
+
         this.returnError(logString, 400, output.status);
     }
 }
