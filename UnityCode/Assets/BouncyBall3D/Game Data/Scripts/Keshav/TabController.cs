@@ -10,7 +10,7 @@ public class TabController : MonoBehaviour
 
     private void OnEnable()
     {
-        Option1.isOn = true;
+        Option2.isOn = true;
     }
 
     public void playerData(bool value)

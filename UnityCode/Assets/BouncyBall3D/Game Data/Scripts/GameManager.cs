@@ -429,7 +429,6 @@ public class GameManager : Singleton<GameManager>
         playButton.SetActive(true);
         LevelGenerator.Instance.RemovePlatforms();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
-        // SongHolder.Instance.rhythmdata = null;
         UIManager.Instance.ShowMainMenu();
     }
 

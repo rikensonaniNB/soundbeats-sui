@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using UnityEngine.UI;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class GetLeaderboard : MonoBehaviour
 {
@@ -48,8 +49,9 @@ public class GetLeaderboard : MonoBehaviour
         {
             var dataObject = Instantiate(prefabObj, parentObj);
             dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
-            dataObject.transform.GetChild(0).GetComponent<Text>().text = score.wallet;
-            dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
+            dataObject.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = score.wallet;
+            //dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
+            //dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
         }
     }
 
@@ -57,9 +59,9 @@ public class GetLeaderboard : MonoBehaviour
     /// Executes when the API call to get leaderboard scores succeeds. 
     /// </summary>
     /// <param name="response">API response object</param>
-    private void OnGetLeaderboardsSuccess(LeaderboardResponseDto response) 
+    private void OnGetLeaderboardsSuccess(LeaderboardResponseDto response)
     {
-        ClearList(); 
+        ClearList();
         DisplayList(response);
     }
 
@@ -67,7 +69,7 @@ public class GetLeaderboard : MonoBehaviour
     /// Executes when the API call to get leaderboard scores fails.
     /// </summary>
     /// <param name="error">Error message</param>
-    private void OnGetLeaderboardError(string error) 
+    private void OnGetLeaderboardError(string error)
     {
         //TODO: (MED) do on error? 
     }
