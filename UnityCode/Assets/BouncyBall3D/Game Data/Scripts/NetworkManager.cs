@@ -25,6 +25,7 @@ public class ServerConfig
     public const string API_POST_VERIFY = "api/v1/verify";
     public const string API_GET_USERNAME = "api/v1/username";
     public const string API_GET_ACCOUNT = "api/v1/accounts?authType=evm&authId=";
+    public const string API_POST_LEVEL = "api/v1/level";
 
     //devnet urls
     public const string API_DOMAIN_DEVNET = "54.95.68.79:3000";
@@ -228,6 +229,21 @@ public class NetworkManager : Singleton<NetworkManager>
         StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_AUTH_SESSION), callbackOnSuccess, callbackOnFail, json));
     }
 
+    /// <summary>
+    /// Starts an auth session, which will return the message to be signed for verification, and a session ID. 
+    /// </summary>
+    /// <param name="level">User's Level</param>
+    /// <param name="evmWallet">User's EVM wallet address</param>
+    /// <param name="callbackOnSuccess">Callback on success.</param>
+    /// <param name="callbackOnFail">Callback on fail.</param>
+    public void postLevel(int level, string evmWallet, UnityAction<UpdateUserLevelDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
+    {
+        StartAuthSessionDto body = new StartAuthSessionDto();
+        var json = "{\"authId\":\"" + evmWallet + "\",\"authType\":\"evm\",\"level\": " + level + " }";
+        print(json);
+        StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEVEL), callbackOnSuccess, callbackOnFail, json));
+    }
+
     IEnumerator SendPostRequest<T>(string url, UnityAction<T> callbackOnSuccess, UnityAction<string> callbackOnFail, string jsonReqData = null)
     {
         print(url);
@@ -299,7 +315,7 @@ public class NetworkManager : Singleton<NetworkManager>
         );
     }
 
-    #endregion 
+    #endregion
 
     #region Server Communication
 
@@ -465,7 +481,7 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     /// <summary>
-	/// This method finishes request process as we have received answer from server.
+    /// This method finishes request process as we have received answer from server.
     /// </summary>
     /// <param name="data">Data received from server in JSON format.</param>
     /// <param name="callbackOnSuccess">Callback on success.</param>
@@ -547,6 +563,7 @@ public class VerifySignatureResponseDto
     public bool completed;
     public string wallet;
     public string suiWallet;
+    public int level;
     public string failureReason;
 }
 
@@ -607,6 +624,15 @@ public class StartAuthSessionResponseDto
 public class CheckUsernameResponseDto
 {
     public bool exists;
+}
+
+[Serializable]
+public class UpdateUserLevelDto
+{
+    public string suiWallet;
+    public string status;
+    public string username;
+    public int level;
 }
 
 #endregion

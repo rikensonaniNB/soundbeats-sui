@@ -29,6 +29,18 @@ public class UserData
         }
     }
 
+    public static int currentLevel
+    {
+        get
+        {
+            return PlayerPrefsExtra.GetInt("currentLevel", 0);
+        }
+        set
+        {
+            PlayerPrefsExtra.SetInt("currentLevel", value);
+        }
+    }
+
     public static string sessionID
     {
         get
