@@ -147,11 +147,14 @@ public class SongHolder : MonoBehaviour
 
     public void PlaySong()
     {
+        UIManager.Instance.gameUI.SetActive(true);
+        GameManager.instance.playerObj.SetActive(true);
+        GameManager.instance.platform.SetActive(true);
         Player.instance.ResetPlayer();
         GameManager.instance.producer = false;
         Debug.Log("PlaySong " + song.name);
-        player.transform.GetChild(10).gameObject.SetActive(false);
-        player.transform.GetChild(10).gameObject.SetActive(true);
+        //player.transform.GetChild(10).gameObject.SetActive(false);
+        //player.transform.GetChild(10).gameObject.SetActive(true);
 
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         UIManager.Instance.CloseMenu();

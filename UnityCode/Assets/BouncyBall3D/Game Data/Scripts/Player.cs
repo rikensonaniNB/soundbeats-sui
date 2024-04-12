@@ -156,7 +156,8 @@ public class Player : MonoBehaviour
         }
         //PlayerPrefs.SetInt("Selected_player", index);
         //Debug.Log(PlayerPrefs.GetInt("Selected_player"));
-        characters[index].SetActive(true);
+
+        //characters[index].SetActive(true);
         jumpingPart = Selected_character[index].transform;
         marshmello_Animator = Selected_character[index].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);

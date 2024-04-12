@@ -1,5 +1,8 @@
+using DG.Tweening;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SelectSong : MonoBehaviour
@@ -11,6 +14,7 @@ public class SelectSong : MonoBehaviour
     public SongDataSet _songDataSet;
     public GameObject _songDataSetObj;
     public string _songDataSetObjName;
+    public Vector3 levelPlayerPosition;
 
     private void Start()
     {
@@ -28,6 +32,13 @@ public class SelectSong : MonoBehaviour
 
     public void setSong()
     {
+        GameManager.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+        StartCoroutine(SetSongData());
+    }
+
+    public IEnumerator SetSongData()
+    {
+        yield return new WaitForSeconds(1.2f);
         if (toggle.isOn)
         {
             LevelGenerator.Instance.currentSong = _song;
@@ -36,6 +47,7 @@ public class SelectSong : MonoBehaviour
                 if (gameObject.name == data.openPlayPanel.name)
                 {
                     data.openPlayPanel.SetActive(true);
+                    toggle.isOn = false;
                 }
             }
         }

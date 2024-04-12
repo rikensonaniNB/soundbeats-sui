@@ -53,77 +53,9 @@ public class GameManager : Singleton<GameManager>
     public Text ScoreWin;
     public LevelGenerator LevelGenerator;
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    [Space(25)]
-    [Header("          PRODUCER")]
-    [Space(25)]
-    public bool producer;
-    [Space]
-
-    //[SerializeField] Button OpenSongListbtn;
-    public Button PlayBtn;
-
-    public GameObject producerManagerPopup;
-    [Header("Thresold")]
-    [Space]
-    public Slider ThresoldSlider;
-    public Text ThresoldValueTxt;
-    public float ThresoldValue;
-
-    [Header("RefreshTime")]
-    [Space]
-    public Slider RefreshTimeSlider;
-    public Text RefreshTimeValueTxt;
-    public float RefreshTimeValue;
-
-    [Header("Output Multiplier")]
-    [Space]
-    public Slider PushMultiplierPartOneSlider;
-    public Text PushMultiplierPartOneValueTxt;
-    public float PushMultiplierPartOneValue;
-    [Space]
-    public Slider PushMultiplierPartTwoSlider;
-    public Text PushMultiplierPartTwoValueTxt;
-    public float PushMultiplierPartTwoValue;
-
-    [Header("MinOutput_AND_MaxOutput")]
-    [Space]
-    public Slider MinOutputSlider;
-    public Text MinOutputValueTxt;
-    public float MinOutputValue;
-    [Space]
-    public Slider MaxOutputSlider;
-    public Text MaxOutputValueTxt;
-    public float MaxOutputValue;
-
-    public List<GameObject> SongListObj = new List<GameObject>();
-    public List<Song> SongLists = new List<Song>();
-    public int n;
-    public GameObject playsongs;
-    public GameObject platform;
-    public GameObject playerObj;
-    public GameObject selectCharacter;
-    public GameObject producerCloseBtn;
-    public GameObject producerQuitScreen;
-    public GameObject mainCamera;
-    public Material mainCameraMat;
-    public GameObject producerCamera;
-    public Material producerCameraMat;
-    public GameObject sky;
-    public bool songPlaying = false;
-    public GameObject holdPopUp;
-    public GameObject congrats;
-    public TextMeshProUGUI songTime;
-
     public static GameManager instance;
     private void Awake()
     {
-
         player = FindObjectOfType<Player>();
         instance = this;
     }
@@ -133,7 +65,9 @@ public class GameManager : Singleton<GameManager>
         scoreText.text = score.ToString();
         gameStartText.SetActive(true);
         if (scoreAnim.isActiveAndEnabled)
+        {
             scoreAnim.SetTrigger("Up");
+        }
     }
 
     private void Update()
@@ -286,9 +220,13 @@ public class GameManager : Singleton<GameManager>
         for (int i = 0; i < 3; i++)
         {
             if (i < star)
+            {
                 stars[i].color = activeStars;
+            }
             else
+            {
                 stars[i].color = inactiveStars;
+            }
         }
     }
 
@@ -367,7 +305,9 @@ public class GameManager : Singleton<GameManager>
     public void IncreaseGameSpeed()
     {
         if (gameSpeed < 5)
+        {
             gameSpeed++;
+        }
     }
 
 
@@ -390,9 +330,13 @@ public class GameManager : Singleton<GameManager>
     public void AddScore(bool perfect)
     {
         if (perfect)
+        {
             score += 10;
+        }
         else
+        {
             score += 5;
+        }
 
         scoreText.text = score.ToString();
         scoreAnim.SetTrigger("Up");
@@ -430,6 +374,11 @@ public class GameManager : Singleton<GameManager>
         LevelGenerator.Instance.RemovePlatforms();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
         UIManager.Instance.ShowMainMenu();
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.SelectCharacterScreen.SetActive(true);
+        levelSelection.SetActive(false);
+        Player.instance.characters[Player.instance.characterSelect].SetActive(false);
+        platform.SetActive(false);
     }
 
     public void onNO()
@@ -483,9 +432,235 @@ public class GameManager : Singleton<GameManager>
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////// Level Selection //////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    [Space(25)]
+    [Header("          LEVEL_SELECTION")]
+    [Space(25)]
+    public GameObject levelSelection;
+    public Button[] levelButtons;
+    public Sprite unlockedBGImage;
+    public Sprite lockedBGImage;
+    public Sprite playableBGFillImage;
+    public Sprite unlockedBGFillImage;
+    public Sprite lockedBGFillImage;
+    public Sprite playableBGImage;
+    public RectTransform content;
+    public Vector2 Margin;
+    int j;
+    public float moveSpeed = 1;
+
+    public GameObject levelSelectorPlayer;
+
+    public void LevelSelectButton()
+    {
+        levelSelection.SetActive(true);
+        sky.SetActive(true);
+        UIController.instance.SuiWalletScreen.SetActive(false);
+        UIController.instance.HomeScreen.SetActive(false);
+        UIController.instance.SelectCharacterScreen.SetActive(false);
+        UIManager.Instance.gameUI.SetActive(false);
+        playerObj.SetActive(false);
+        platform.SetActive(false);
+    }
+    public void LevelSelectToMenu()
+    {
+        levelSelection.SetActive(false);
+        sky.SetActive(false);
+        UIController.instance.SuiWalletScreen.SetActive(true);
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.SelectCharacterScreen.SetActive(true);
+        UIManager.Instance.gameUI.SetActive(true);
+        //playerObj.SetActive(true);
+        //platform.SetActive(true);
+    }
+
+    public void LevelSelection()
+    {
+        if (1 < PlayerPrefs.GetInt("LevelCompleted"))
+        {
+            //btn.instance.MainPanel.SetActive(false);
+            //btn.instance.Levelselection.SetActive(true);
+        }
+
+        if (PlayerPrefs.GetInt("FirstLevel") != 1)
+        {
+            PlayerPrefs.SetInt("LevelCompleted", 1);
+            PlayerPrefs.SetInt("FirstLevel", 1);
+        }
+
+
+        //for (int i = 0; i < levelButtons.Length; i++)
+        //{
+        //    //if (i < PlayerPrefs.GetInt("LevelCompleted"))
+        //    //{
+        //    //    levelButtons[i].interactable = true;
+        //    //    if (i == PlayerPrefs.GetInt("LevelCompleted") - 1)
+        //    //    {
+        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = playableBGImage;
+
+        //    //        levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = playableBGFillImage;
+        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(true);
+        //    //        if (i > 0)
+        //    //        {
+        //    //            levelButtons[i].gameObject.transform.parent.gameObject.GetComponent<Image>().enabled = false;
+        //    //            KeepChildInScrollViewPort(content.GetComponentInParent<ScrollRect>(), levelButtons[i - 1].gameObject.GetComponent<RectTransform>(), Margin);
+        //    //        }
+        //    //        j = i;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = unlockedBGFillImage;
+        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(false);
+        //    //        levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = unlockedBGImage;
+        //    //    }
+
+        //    //}
+        //    //else
+        //    //{
+        //    //    levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = lockedBGImage;
+        //    //    levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = lockedBGFillImage;
+        //    //    levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(false);
+        //    //}
+        //}
+    }
+    //public static void KeepChildInScrollViewPort(ScrollRect scrollRect, RectTransform child, Vector2 margin)
+    //{
+    //    Canvas.ForceUpdateCanvases();
+
+    //    Vector2 viewPosMin = scrollRect.viewport.rect.min;
+    //    Vector2 viewPosMax = scrollRect.viewport.rect.max;
+
+    //    Vector2 childPosMin = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.min));
+    //    Vector2 childPosMax = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.max));
+
+    //    childPosMin -= margin;
+    //    childPosMax += margin;
+
+    //    Vector2 move = Vector2.zero;
+
+
+    //    if (childPosMax.y > viewPosMax.y)
+    //    {
+    //        move.y = childPosMax.y - viewPosMax.y;
+    //    }
+    //    if (childPosMin.x < viewPosMin.x)
+    //    {
+    //        move.x = childPosMin.x - viewPosMin.x;
+    //    }
+    //    if (childPosMax.x > viewPosMax.x)
+    //    {
+    //        move.x = childPosMax.x - viewPosMax.x;
+    //    }
+    //    if (childPosMin.y < viewPosMin.y)
+    //    {
+    //        move.y = childPosMin.y - viewPosMin.y;
+    //    }
+    //    Vector3 worldMove = scrollRect.viewport.TransformDirection(move);
+    //    //scrollRect.content.localPosition -= scrollRect.content.InverseTransformDirection(worldMove);
+    //    Vector3 movePos = scrollRect.content.InverseTransformDirection(worldMove);
+    //    FindObjectOfType<GameManager>().startCoroutine(scrollRect, movePos);
+
+    //}
+
+    //public void startCoroutine(ScrollRect scrollRect, Vector3 movePos)
+    //{
+    //    StartCoroutine(smoothMove(scrollRect, movePos));
+    //}
+
+    //public IEnumerator smoothMove(ScrollRect scrollRect, Vector3 movePos)
+    //{
+    //    float t = 0;
+    //    Vector3 updatedPos = scrollRect.content.localPosition - movePos;
+    //    Vector3 startPos = scrollRect.content.localPosition;
+    //    while (t < 1)
+    //    {
+    //        t += Time.deltaTime * moveSpeed;
+    //        scrollRect.content.localPosition = Vector3.Lerp(startPos, updatedPos, t);
+
+    //        yield return new WaitForSecondsRealtime(Time.deltaTime);
+
+    //    }
+    //    levelButtons[j].gameObject.transform.parent.gameObject.GetComponent<Image>().enabled = true;
+    //}
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////// Level Selection //////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////// PRODUCER /////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    [Space(25)]
+    [Header("          PRODUCER")]
+    [Space(25)]
+    public bool producer;
+    [Space]
+
+    //[SerializeField] Button OpenSongListbtn;
+    public Button PlayBtn;
+
+    public GameObject producerManagerPopup;
+    [Header("Thresold")]
+    [Space]
+    public Slider ThresoldSlider;
+    public Text ThresoldValueTxt;
+    public float ThresoldValue;
+
+    [Header("RefreshTime")]
+    [Space]
+    public Slider RefreshTimeSlider;
+    public Text RefreshTimeValueTxt;
+    public float RefreshTimeValue;
+
+    [Header("Output Multiplier")]
+    [Space]
+    public Slider PushMultiplierPartOneSlider;
+    public Text PushMultiplierPartOneValueTxt;
+    public float PushMultiplierPartOneValue;
+    [Space]
+    public Slider PushMultiplierPartTwoSlider;
+    public Text PushMultiplierPartTwoValueTxt;
+    public float PushMultiplierPartTwoValue;
+
+    [Header("MinOutput_AND_MaxOutput")]
+    [Space]
+    public Slider MinOutputSlider;
+    public Text MinOutputValueTxt;
+    public float MinOutputValue;
+    [Space]
+    public Slider MaxOutputSlider;
+    public Text MaxOutputValueTxt;
+    public float MaxOutputValue;
+
+    public List<GameObject> SongListObj = new List<GameObject>();
+    public List<Song> SongLists = new List<Song>();
+    public int n;
+    public GameObject playsongs;
+    public GameObject platform;
+    public GameObject playerObj;
+    public GameObject selectCharacter;
+    public GameObject producerCloseBtn;
+    public GameObject producerQuitScreen;
+    public GameObject mainCamera;
+    public Material mainCameraMat;
+    public GameObject producerCamera;
+    public Material producerCameraMat;
+    public GameObject sky;
+    public bool songPlaying = false;
+    public GameObject holdPopUp;
+    public GameObject congrats;
+    public TextMeshProUGUI songTime;
 
     public void okBtn()
     {
