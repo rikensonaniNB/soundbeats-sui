@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using System.Linq;
 using Unity.VisualScripting;
 
-public class GetLeaderboard : MonoBehaviour
+public class GetLeaderboard : Singleton<GetLeaderboard>
 {
     public GameObject prefabObj;
     public Transform parentObj;
@@ -44,14 +44,15 @@ public class GetLeaderboard : MonoBehaviour
     /// <param name="response">Response from API call to get leaderboard scores.</param>
     private void DisplayList(LeaderboardResponseDto response)
     {
+        int counter = 0;
         var scores = response.scores.OrderBy(s => s.score).Reverse().ToArray();
         foreach (var score in scores)
         {
             var dataObject = Instantiate(prefabObj, parentObj);
             dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
-            dataObject.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = score.wallet;
-            //dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
-            //dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
+            dataObject.transform.GetChild(0).GetComponent<Text>().text = ++counter + ")";
+            dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
+            dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
         }
     }
 

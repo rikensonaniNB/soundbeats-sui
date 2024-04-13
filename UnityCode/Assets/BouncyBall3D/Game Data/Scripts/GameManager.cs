@@ -473,7 +473,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.SuiWalletScreen.SetActive(true);
         UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.SelectCharacterScreen.SetActive(true);
-        UIManager.Instance.gameUI.SetActive(true);
+        UIManager.Instance.gameUI.SetActive(false);
         //playerObj.SetActive(true);
         //platform.SetActive(true);
     }

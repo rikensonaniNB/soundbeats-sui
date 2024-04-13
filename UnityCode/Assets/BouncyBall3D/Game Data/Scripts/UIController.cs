@@ -617,6 +617,8 @@ public class UIController : MonoBehaviour
 
         try
         {
+
+            Debug.Log("Generating Signature from Data.");
             var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
             Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result);
 
@@ -641,6 +643,8 @@ public class UIController : MonoBehaviour
 
             Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
         }
+
+        Debug.Log("Done with VerifyAuthSession.");
 
         ////prepare a request to verify the signature
         //VerifySignatureDto request = new VerifySignatureDto();
@@ -966,6 +970,7 @@ public class UIController : MonoBehaviour
 
     private void OnSuccessfulVerifySession(VerifySignatureResponseDto verifySignatureResponseDto)
     {
+        Debug.Log("Inside OnSuccessfulVerifySession");
         //set active wallet address 
         if (verifySignatureResponseDto.wallet != "")
         {
