@@ -15,6 +15,7 @@ public class SelectSong : MonoBehaviour
     public GameObject _songDataSetObj;
     public string _songDataSetObjName;
     public Vector3 levelPlayerPosition;
+    public int LevelNumber;
 
     private void Start()
     {
@@ -32,13 +33,19 @@ public class SelectSong : MonoBehaviour
 
     public void setSong()
     {
+<<<<<<< HEAD
+        Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+=======
         GameManager.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+        SongSelectionPopup.Instance.setData(LevelNumber - 1);
+
+>>>>>>> 910ea156bf2ae25523b1f74bdc6b79a6e45da0c7
         StartCoroutine(SetSongData());
     }
 
     public IEnumerator SetSongData()
     {
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(1f);
         if (toggle.isOn)
         {
             LevelGenerator.Instance.currentSong = _song;
@@ -46,7 +53,7 @@ public class SelectSong : MonoBehaviour
             {
                 if (gameObject.name == data.openPlayPanel.name)
                 {
-                    data.openPlayPanel.SetActive(true);
+                    //data.openPlayPanel.SetActive(true);
                     toggle.isOn = false;
                 }
             }

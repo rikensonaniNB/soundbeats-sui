@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
 
     public GameObject[] Selected_character;
 
+    public GameObject levelSelectorPlayer;
+    public GameObject[] song_Select_Character;
+
+
 
     [SerializeField] float turnSpeed = 1;
     [SerializeField] float jumpHeigh = 5;
@@ -166,6 +170,11 @@ public class Player : MonoBehaviour
         Text_Name.text = characters[index].name;
         characterSelect = index;
         characters[index].transform.position = new Vector3(characters[index].transform.position.x, 0, characters[index].transform.position.z);
+        for (int i = 0; i < song_Select_Character.Length; i++)
+        {
+            song_Select_Character[i].SetActive(false);
+        }
+        song_Select_Character[index].SetActive(true);
     }
 
     private void Start()
@@ -282,7 +291,7 @@ public class Player : MonoBehaviour
             }
             else if (fingerDownPos.y - fingerUpPos.y < 0)
             {
-              //  OnSwipeDown();
+                //  OnSwipeDown();
             }
             fingerUpPos = fingerDownPos;
 

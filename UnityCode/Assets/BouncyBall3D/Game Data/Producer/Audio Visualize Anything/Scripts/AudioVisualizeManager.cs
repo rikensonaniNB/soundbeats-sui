@@ -36,6 +36,8 @@ public class AudioVisualizeManager : MonoBehaviour
     private void Update()
     {
         SetBox.instance.cameraZPos = audioSource.time;
+
+
     }
     public enum InvokeMode
     {
@@ -68,20 +70,20 @@ public class AudioVisualizeManager : MonoBehaviour
     [SerializeField] private bool multiplyByMinusOne;
 
     [Range(0.01f, .1f)]
-    [SerializeField] private float refreshTime = 1f;
+    public float refreshTime = 1f;
     [Range(0f, 1f)]
-    [SerializeField] private float PushMultiplierPartOne = 0f;
+    public float PushMultiplierPartOne = 0f;
 
     [Range(0f, 100f)]
-    [SerializeField] private float PushMultiplierPartTwo = 1f;
+    public float PushMultiplierPartTwo = 1f;
 
     [SerializeField] private float tottalMultiplier; // Addition of the two above //Add a editor script to this
 
     [SerializeField] private bool ClampOutput;
     [Range(-4f, 4f)]
-    [SerializeField] private float minOutput = -1f;
+    public float minOutput = -1f;
     [Range(-4f, 4f)]
-    [SerializeField] private float maxOutput = 1f;
+    public float maxOutput = 1f;
 
     [Header("Subscribe To Events")]
     [SerializeField] private UnityEvent OnVolumeChange;

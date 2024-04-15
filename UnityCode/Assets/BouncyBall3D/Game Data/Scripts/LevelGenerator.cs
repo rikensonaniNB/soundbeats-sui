@@ -219,7 +219,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             GameObject star = Instantiate(starPrefab, platform.transform);
         }
 
-        if (GameManager.instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 5 && GameManager.instance.isSpeedupActive == false)
+        if (GameManager.instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 7 && GameManager.instance.isSpeedupActive == false)
         {
             GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
         }
@@ -350,6 +350,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
             Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
+        player.gameObject.SetActive(true);
         GameManager.instance.mainCamera.SetActive(true);
         GameManager.instance.sky.SetActive(true);
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
@@ -359,6 +360,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
         checkProducer = 0;
         player.transform.GetChild(10).gameObject.SetActive(false);
         player.transform.GetChild(10).gameObject.SetActive(true);
+        GameManager.instance.platform.SetActive(true);
         Player.instance.ResetPlayer();
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
@@ -378,7 +380,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
             for (int j = 0; j < GameManager.instance.SongLists.Count; j++)
             {
-                //if (ContainsIntegerFollowedByBeat(GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName) || GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
                 if (GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
                     GameManager.instance.SongLists[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
                     GameManager.instance.SongLists[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
@@ -395,6 +396,16 @@ public class LevelGenerator : Singleton<LevelGenerator>
                     currentSong = GameManager.instance.SongLists[j];
                     Debug.LogError(currentSong);
                 }
+                //for (int beat = 1; beat < 10; beat++)
+                //{
+                //    if (GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
+                //        GameManager.instance.SongLists[j].name + "_Beat_" + beat + "_" + UserData.UserName == fileNameWithoutExtension ||
+                //        GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
+                //    {
+                //        currentSong = GameManager.instance.SongLists[j];
+                //        Debug.LogError(currentSong);
+                //    }
+                //}
 
             }
 

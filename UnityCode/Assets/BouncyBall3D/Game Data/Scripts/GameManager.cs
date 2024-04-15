@@ -265,8 +265,8 @@ public class GameManager : Singleton<GameManager>
         revivePanel.SetActive(false);
         playButton.SetActive(true);
 
-        LevelGenerator.Instance.StartWithSong();
-        SongHolder.Instance.PlaySong();
+        //LevelGenerator.Instance.StartWithSong();
+        //SongHolder.Instance.PlaySong();
     }
     public void StartGame()
     {
@@ -379,6 +379,7 @@ public class GameManager : Singleton<GameManager>
         levelSelection.SetActive(false);
         Player.instance.characters[Player.instance.characterSelect].SetActive(false);
         platform.SetActive(false);
+        player.transform.GetChild(10).gameObject.SetActive(false);
     }
 
     public void onNO()
@@ -453,7 +454,6 @@ public class GameManager : Singleton<GameManager>
     int j;
     public float moveSpeed = 1;
 
-    public GameObject levelSelectorPlayer;
 
     public void LevelSelectButton()
     {
@@ -473,7 +473,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.SuiWalletScreen.SetActive(true);
         UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.SelectCharacterScreen.SetActive(true);
-        UIManager.Instance.gameUI.SetActive(true);
+        UIManager.Instance.gameUI.SetActive(false);
         //playerObj.SetActive(true);
         //platform.SetActive(true);
     }
@@ -649,7 +649,6 @@ public class GameManager : Singleton<GameManager>
     public GameObject playsongs;
     public GameObject platform;
     public GameObject playerObj;
-    public GameObject selectCharacter;
     public GameObject producerCloseBtn;
     public GameObject producerQuitScreen;
     public GameObject mainCamera;
@@ -664,23 +663,21 @@ public class GameManager : Singleton<GameManager>
 
     public void okBtn()
     {
-        songTime.gameObject.SetActive(false);
-        producerManagerPopup.SetActive(false);
-        platform.SetActive(true);
+        producerCamera.SetActive(false);
+        mainCamera.SetActive(true);
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.SelectCharacterScreen.SetActive(true);
+        UIManager.Instance.ShowMainMenu();
+        platform.SetActive(false);
         pauseButton.SetActive(false);
         producerCloseBtn.SetActive(false);
         gameState = GameState.Menu;
-        UIManager.Instance.ShowMainMenu();
         producerManagerPopup.SetActive(false);
         producerQuitScreen.SetActive(false);
-        UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.Mint_NFTScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
-        gameObject.transform.GetChild(0).gameObject.SetActive(true);
         playerObj.SetActive(true);
         UIController.instance.SuiWalletScreen.SetActive(false);
-        UIController.instance.SelectCharacterScreen.SetActive(false);
-        selectCharacter.SetActive(true);
         congrats.SetActive(false);
         foreach (Transform b in playsongs.gameObject.transform)
         {
@@ -717,8 +714,23 @@ public class GameManager : Singleton<GameManager>
 
     public void onCloseProducer()
     {
+        producerCamera.SetActive(false);
+        mainCamera.SetActive(true);
+        UIController.instance.HomeScreen.SetActive(true);
+        UIController.instance.SelectCharacterScreen.SetActive(true);
+        platform.SetActive(false);
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            b.gameObject.transform.gameObject.SetActive(true);
+
+        }
+        foreach (Transform b in playsongs.gameObject.transform)
+        {
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            b.gameObject.transform.gameObject.SetActive(false);
+        }
         LevelGenerator.Instance.currentSong = null;
-        platform.SetActive(true);
         songTime.gameObject.SetActive(false);
         Debug.Log("on close");
         Time.timeScale = 1;
@@ -726,34 +738,21 @@ public class GameManager : Singleton<GameManager>
         SoundManager.Instance.StopTrack();
         score = 0;
         LevelGenerator.Instance.RemovePlatforms();
+        producerQuitScreen.SetActive(false);
         quitScreen.SetActive(false);
         pauseButton.SetActive(true);
         HidePopup();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
+        playerObj.SetActive(true);
         UIManager.Instance.ShowMainMenu();
         producerManagerPopup.SetActive(false);
-        producerQuitScreen.SetActive(false);
-        UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.Mint_NFTScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        playerObj.SetActive(true);
         UIController.instance.SuiWalletScreen.SetActive(false);
-        UIController.instance.SelectCharacterScreen.SetActive(false);
-        selectCharacter.SetActive(true);
+        UIController.instance.SelectCharacterScreen.SetActive(true);
         PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
-        foreach (Transform b in playsongs.gameObject.transform)
-        {
-            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-            b.gameObject.transform.gameObject.SetActive(true);
-
-        }
         AudioVisualizeManager.instance.audioSource.enabled = false;
-        foreach (Transform b in playsongs.gameObject.transform)
-        {
-            b.gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            b.gameObject.transform.gameObject.SetActive(false);
-        }
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
         {
             Destroy(allboxs.gameObject);
@@ -791,93 +790,103 @@ public class GameManager : Singleton<GameManager>
     public void OpenThresoldPanal()
     {
         ///// ThresoldSlider /////
-        ThresoldSlider.value = 0;
-        ThresoldSlider.minValue = 0;
-        ThresoldSlider.maxValue = 2;
+        ThresoldSlider.value = 0.35f;
+        ThresoldSlider.minValue = 0.1f;
+        ThresoldSlider.maxValue = 0.8f;
         ThresoldValueTxt.text = ThresoldSlider.value.ToString();
 
         ///// RefreshTimeSlider /////
         RefreshTimeSlider.value = 0.1f;
+        AudioVisualizeManager.instance.refreshTime = RefreshTimeValue;
         RefreshTimeSlider.minValue = 0.01f;
         RefreshTimeSlider.maxValue = 0.1f;
         RefreshTimeValueTxt.text = RefreshTimeSlider.value.ToString();
 
         ///// Output_Multiplier /////
         PushMultiplierPartOneSlider.value = 0f;
+        AudioVisualizeManager.instance.PushMultiplierPartOne = PushMultiplierPartOneValue;
         PushMultiplierPartOneSlider.minValue = 0f;
         PushMultiplierPartOneSlider.maxValue = 1f;
         ///////////////////////////////////////////
         PushMultiplierPartTwoSlider.value = 1f;
+        AudioVisualizeManager.instance.PushMultiplierPartTwo = PushMultiplierPartTwoValue;
         PushMultiplierPartTwoSlider.minValue = 0f;
         PushMultiplierPartTwoSlider.maxValue = 100f;
 
         /////// MinOutput_AND_MaxOutput /////
-        //MinOutputSlider.value = 1f;
+        //MinOutputSlider.value = 0f;
+        //AudioVisualizeManager.instance.minOutput = MinOutputValue;
         //MinOutputSlider.minValue = -4f;
         //MinOutputSlider.maxValue = 4f;
         ///////////////////////////////////
         //MaxOutputSlider.value = 1f;
+        //AudioVisualizeManager.instance.maxOutput = MaxOutputValue;
         //MaxOutputSlider.minValue = -4f;
         //MaxOutputSlider.maxValue = 4f;
 
 
-        if (!producerManagerPopup.activeSelf)
+        LevelGenerator.Instance.checkProducer = 0;
+        AudioVisualizeManager.instance.audioSource.enabled = true;
+        producerManagerPopup.SetActive(true);
+        producerCloseBtn.SetActive(true);
+        LevelGenerator.Instance.RemovePlatforms();
+        UIController.instance.HomeScreen.SetActive(false);
+        //UIController.instance.Mint_NFTScreen.SetActive(false);
+        producerObj.SetActive(false);
+        platform.SetActive(false);
+        UIManager.Instance.gameUI.SetActive(false);
+        gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        playerObj.SetActive(false);
+        UIController.instance.SuiWalletScreen.SetActive(false);
+        UIController.instance.SelectCharacterScreen.SetActive(false);
+        PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
+        foreach (Transform b in playsongs.gameObject.transform)
         {
-            LevelGenerator.Instance.checkProducer = 0;
-            AudioVisualizeManager.instance.audioSource.enabled = true;
-            producerManagerPopup.SetActive(true);
-            producerCloseBtn.SetActive(true);
-            LevelGenerator.Instance.RemovePlatforms();
-            UIController.instance.HomeScreen.SetActive(false);
-            //UIController.instance.Mint_NFTScreen.SetActive(false);
-            producerObj.SetActive(false);
-            platform.SetActive(false);
-            UIManager.Instance.gameUI.SetActive(false);
-            gameObject.transform.GetChild(0).gameObject.SetActive(false);
-            playerObj.SetActive(false);
-            UIController.instance.SuiWalletScreen.SetActive(false);
-            UIController.instance.SelectCharacterScreen.SetActive(false);
-            selectCharacter.SetActive(false);
-            PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
-            foreach (Transform b in playsongs.gameObject.transform)
-            {
-                b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-                b.gameObject.transform.gameObject.SetActive(true);
+            b.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            b.gameObject.transform.gameObject.SetActive(true);
 
-            }
-            mainCamera.SetActive(true);
-            sky.SetActive(true);
-            RenderSettings.skybox = mainCameraMat;
-            producerCamera.SetActive(false);
-            songPlaying = false;
-            mainCamera.SetActive(false);
-            producerCamera.SetActive(true);
-            sky.SetActive(false);
-            RenderSettings.skybox = producerCameraMat;
-            Player.instance.ResetPlayer();
-            LevelGenerator.Instance.currentSong = SongLists[n];
-            Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
-            AudioVisualizeManager.visualizeManager.audioSource.clip = SongLists[n].song;
-            songTime.gameObject.SetActive(true);
-            UpdateSongRemainingTime();
-            ////////// End //////////
         }
+        mainCamera.SetActive(true);
+        sky.SetActive(true);
+        RenderSettings.skybox = mainCameraMat;
+        producerCamera.SetActive(false);
+        songPlaying = false;
+        mainCamera.SetActive(false);
+        producerCamera.SetActive(true);
+        sky.SetActive(false);
+        RenderSettings.skybox = producerCameraMat;
+        Player.instance.ResetPlayer();
+        LevelGenerator.Instance.currentSong = SongLists[n];
+        Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
+        AudioVisualizeManager.visualizeManager.audioSource.clip = SongLists[n].song;
+        songTime.gameObject.SetActive(true);
+        UpdateSongRemainingTime();
+        ////////// End //////////
     }
     public GameObject producerObj;
 
     public void ResetPopManager()
     {
-        ThresoldSlider.value = 0;
+        ThresoldSlider.value = 0.35f;
         Debug.Log($"<color=blue> Threshold_Slider_Value </color>" + ThresoldSlider.value);
+
         RefreshTimeSlider.value = 0.1f;
+        AudioVisualizeManager.instance.refreshTime = RefreshTimeValue;
         Debug.Log($"<color=blue> Refresh_Time_Slider_Value </color>" + RefreshTimeSlider.value);
+
         PushMultiplierPartOneSlider.value = 0f;
+        AudioVisualizeManager.instance.PushMultiplierPartOne = PushMultiplierPartOneValue;
         Debug.Log($"<color=blue> Push_Multiplier_Past_One_Slider_Value </color>" + PushMultiplierPartOneSlider.value);
+
         PushMultiplierPartTwoSlider.value = 1f;
-        //Debug.Log($"<color=blue> Push_Multiplier_Past_Two_Slider_Value </color>" + PushMultiplierPartTwoSlider.value);
-        //MinOutputSlider.value = 1f;
+        AudioVisualizeManager.instance.PushMultiplierPartTwo = PushMultiplierPartTwoValue;
+        Debug.Log($"<color=blue> Push_Multiplier_Past_Two_Slider_Value </color>" + PushMultiplierPartTwoSlider.value);
+
+        //MinOutputSlider.value = 0f;
+        //AudioVisualizeManager.instance.minOutput = MinOutputValue;
         //Debug.Log($"<color=blue> Min_Output_Slider_Value </color>" + MinOutputSlider.value);
         //MaxOutputSlider.value = 1f;
+        //AudioVisualizeManager.instance.maxOutput = MaxOutputValue;
         //Debug.Log($"<color=blue> max_Output_Slider_Value </color>" + MaxOutputSlider.value);
     }
 
@@ -889,29 +898,33 @@ public class GameManager : Singleton<GameManager>
 
         ///// RefreshTime /////
         RefreshTimeValue = RefreshTimeSlider.value;
+        AudioVisualizeManager.instance.refreshTime = RefreshTimeValue;
         RefreshTimeValueTxt.text = RefreshTimeSlider.value.ToString();
 
         ///// Output_Multiplier /////
         PushMultiplierPartOneValue = PushMultiplierPartOneSlider.value;
+        AudioVisualizeManager.instance.PushMultiplierPartOne = PushMultiplierPartOneValue;
         PushMultiplierPartOneValueTxt.text = PushMultiplierPartOneSlider.value.ToString();
         ////////////////////////////
         PushMultiplierPartTwoValue = PushMultiplierPartTwoSlider.value;
+        AudioVisualizeManager.instance.PushMultiplierPartTwo = PushMultiplierPartTwoValue;
         PushMultiplierPartTwoValueTxt.text = PushMultiplierPartTwoSlider.value.ToString();
 
         ///// MinOutput_AND_MaxOutput /////
-        MinOutputValue = MinOutputSlider.value;
-        MinOutputValueTxt.text = MinOutputSlider.value.ToString();
+        //MinOutputValue = MinOutputSlider.value;
+        //MinOutputValueTxt.text = MinOutputSlider.value.ToString();
         ///////////////////////////
-        MaxOutputValue = MaxOutputSlider.value;
-        MaxOutputValueTxt.text = MaxOutputSlider.value.ToString();
+        //MaxOutputValue = MaxOutputSlider.value;
+        //MaxOutputValueTxt.text = MaxOutputSlider.value.ToString();
 
 
         Debug.Log($"<color=yellow> ThresoldValue :: </color>" + ThresoldValue);
         Debug.Log($"<color=yellow> RefreshTimeValue :: </color>" + RefreshTimeValue);
         Debug.Log($"<color=yellow> PushMultiplierPartOneValue :: </color>" + PushMultiplierPartOneValue);
         Debug.Log($"<color=yellow> PushMultiplierPartTwoValue :: </color>" + PushMultiplierPartTwoValue);
-        Debug.Log($"<color=yellow> MinOutputValue :: </color>" + MinOutputValue);
-        Debug.Log($"<color=yellow> MaxOutputValue :: </color>" + MaxOutputValue);
+
+        //Debug.Log($"<color=yellow> MinOutputValue :: </color>" + MinOutputValue);
+        //Debug.Log($"<color=yellow> MaxOutputValue :: </color>" + MaxOutputValue);
     }
 
     public void OnCloseThresoldpanal()

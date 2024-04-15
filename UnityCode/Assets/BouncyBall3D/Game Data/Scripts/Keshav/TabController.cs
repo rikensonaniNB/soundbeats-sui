@@ -10,14 +10,14 @@ public class TabController : MonoBehaviour
 
     private void OnEnable()
     {
-        Option2.isOn = true;
+        Option1.isOn = true;
     }
 
     public void playerData(bool value)
     {
         if (value)
         {
-            //GetLeaderboard._instance.GetLeaderboardAPI();
+            GetLeaderboard.Instance.GetLeaderboardAPI();
         }
     }
 
