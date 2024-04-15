@@ -557,6 +557,7 @@ public class UIController : MonoBehaviour
 
     public void setuserName()
     {
+        Debug.Log("get");
         NetworkManager.Instance.CheckUsername("" + UserName.text, OnSuccessfulVerifyUserName, OnErrorStartAuthSession);
     }
 

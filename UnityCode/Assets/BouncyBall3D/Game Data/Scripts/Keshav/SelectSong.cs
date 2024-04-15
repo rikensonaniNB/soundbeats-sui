@@ -34,6 +34,7 @@ public class SelectSong : MonoBehaviour
     public void setSong()
     {
         Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+        GameManager.instance.songDataPopUp.SetActive(true);
         SongSelectionPopup.Instance.setData(LevelNumber - 1);
 
         StartCoroutine(SetSongData());

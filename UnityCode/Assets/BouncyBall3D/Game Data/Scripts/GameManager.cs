@@ -53,6 +53,8 @@ public class GameManager : Singleton<GameManager>
     public Text ScoreWin;
     public LevelGenerator LevelGenerator;
 
+    public GameObject songDataPopUp;
+
     public static GameManager instance;
     private void Awake()
     {
@@ -478,114 +480,6 @@ public class GameManager : Singleton<GameManager>
         //platform.SetActive(true);
     }
 
-    public void LevelSelection()
-    {
-        if (1 < PlayerPrefs.GetInt("LevelCompleted"))
-        {
-            //btn.instance.MainPanel.SetActive(false);
-            //btn.instance.Levelselection.SetActive(true);
-        }
-
-        if (PlayerPrefs.GetInt("FirstLevel") != 1)
-        {
-            PlayerPrefs.SetInt("LevelCompleted", 1);
-            PlayerPrefs.SetInt("FirstLevel", 1);
-        }
-
-
-        //for (int i = 0; i < levelButtons.Length; i++)
-        //{
-        //    //if (i < PlayerPrefs.GetInt("LevelCompleted"))
-        //    //{
-        //    //    levelButtons[i].interactable = true;
-        //    //    if (i == PlayerPrefs.GetInt("LevelCompleted") - 1)
-        //    //    {
-        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = playableBGImage;
-
-        //    //        levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = playableBGFillImage;
-        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(true);
-        //    //        if (i > 0)
-        //    //        {
-        //    //            levelButtons[i].gameObject.transform.parent.gameObject.GetComponent<Image>().enabled = false;
-        //    //            KeepChildInScrollViewPort(content.GetComponentInParent<ScrollRect>(), levelButtons[i - 1].gameObject.GetComponent<RectTransform>(), Margin);
-        //    //        }
-        //    //        j = i;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = unlockedBGFillImage;
-        //    //        levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(false);
-        //    //        levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = unlockedBGImage;
-        //    //    }
-
-        //    //}
-        //    //else
-        //    //{
-        //    //    levelButtons[i].gameObject.transform.parent.GetComponent<Image>().sprite = lockedBGImage;
-        //    //    levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(0).GetComponent<Image>().sprite = lockedBGFillImage;
-        //    //    levelButtons[i].gameObject.transform.parent.gameObject.transform.GetChild(2).gameObject.SetActive(false);
-        //    //}
-        //}
-    }
-    //public static void KeepChildInScrollViewPort(ScrollRect scrollRect, RectTransform child, Vector2 margin)
-    //{
-    //    Canvas.ForceUpdateCanvases();
-
-    //    Vector2 viewPosMin = scrollRect.viewport.rect.min;
-    //    Vector2 viewPosMax = scrollRect.viewport.rect.max;
-
-    //    Vector2 childPosMin = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.min));
-    //    Vector2 childPosMax = scrollRect.viewport.InverseTransformPoint(child.TransformPoint(child.rect.max));
-
-    //    childPosMin -= margin;
-    //    childPosMax += margin;
-
-    //    Vector2 move = Vector2.zero;
-
-
-    //    if (childPosMax.y > viewPosMax.y)
-    //    {
-    //        move.y = childPosMax.y - viewPosMax.y;
-    //    }
-    //    if (childPosMin.x < viewPosMin.x)
-    //    {
-    //        move.x = childPosMin.x - viewPosMin.x;
-    //    }
-    //    if (childPosMax.x > viewPosMax.x)
-    //    {
-    //        move.x = childPosMax.x - viewPosMax.x;
-    //    }
-    //    if (childPosMin.y < viewPosMin.y)
-    //    {
-    //        move.y = childPosMin.y - viewPosMin.y;
-    //    }
-    //    Vector3 worldMove = scrollRect.viewport.TransformDirection(move);
-    //    //scrollRect.content.localPosition -= scrollRect.content.InverseTransformDirection(worldMove);
-    //    Vector3 movePos = scrollRect.content.InverseTransformDirection(worldMove);
-    //    FindObjectOfType<GameManager>().startCoroutine(scrollRect, movePos);
-
-    //}
-
-    //public void startCoroutine(ScrollRect scrollRect, Vector3 movePos)
-    //{
-    //    StartCoroutine(smoothMove(scrollRect, movePos));
-    //}
-
-    //public IEnumerator smoothMove(ScrollRect scrollRect, Vector3 movePos)
-    //{
-    //    float t = 0;
-    //    Vector3 updatedPos = scrollRect.content.localPosition - movePos;
-    //    Vector3 startPos = scrollRect.content.localPosition;
-    //    while (t < 1)
-    //    {
-    //        t += Time.deltaTime * moveSpeed;
-    //        scrollRect.content.localPosition = Vector3.Lerp(startPos, updatedPos, t);
-
-    //        yield return new WaitForSecondsRealtime(Time.deltaTime);
-
-    //    }
-    //    levelButtons[j].gameObject.transform.parent.gameObject.GetComponent<Image>().enabled = true;
-    //}
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
