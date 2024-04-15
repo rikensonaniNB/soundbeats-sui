@@ -289,6 +289,8 @@ MonoBehaviour:
   _songDataSet: {fileID: 0}
   _songDataSetObj: {fileID: 0}
   _songDataSetObjName: SongDataSetProducer
+  levelPlayerPosition: {x: 140, y: -480, z: 0}
+  LevelNumber: 0
 --- !u!222 &8993030059879418205
 CanvasRenderer:
   m_ObjectHideFlags: 0

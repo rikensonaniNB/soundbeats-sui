@@ -326,8 +326,12 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public void GetFileName()
     {
 
+        UIController.instance.Mint_NFTScreen.SetActive(true);
         fileNamess = GetFileNamesInPersistentDataPath();
-
+        foreach(Transform t in FileNameparraent.transform)
+        {
+            Destroy(t.gameObject);
+        }
         foreach (string fileName in fileNamess)
         {
             GameObject Obj = Instantiate(FileNamePrefab, FileNameparraent);
@@ -350,6 +354,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
             = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
             Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
+        UIController.instance.SuiWalletScreen.SetActive(false);
+        UIController.instance.HomeScreen.SetActive(false);
+        UIController.instance.Mint_NFTScreen.SetActive(false);
+        UIController.instance.SelectCharacterScreen.SetActive(false);
+        GameManager.instance.platform.SetActive(true);
         GameManager.instance.mainCamera.SetActive(true);
         GameManager.instance.sky.SetActive(true);
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
@@ -376,23 +385,23 @@ public class LevelGenerator : Singleton<LevelGenerator>
             fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
             Debug.LogError("Filename " + fileNameWithoutExtension);
 
-            for (int j = 0; j < GameManager.instance.SongLists.Count; j++)
+            for (int j = 0; j < GameManager.instance.songNameCheckForBeatMapJson.Count; j++)
             {
                 //if (ContainsIntegerFollowedByBeat(GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName) || GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
-                if (GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_3_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_4_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_5_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_6_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_7_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_8_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_9_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_10_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
+                if (GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_3_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_4_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_5_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_6_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_7_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_8_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_9_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_10_" + UserData.UserName == fileNameWithoutExtension ||
+                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_" == fileNameWithoutExtension)
                 {
-                    currentSong = GameManager.instance.SongLists[j];
+                    currentSong = GameManager.instance.songNameCheckForBeatMapJson[j];
                     Debug.LogError(currentSong);
                 }
 
@@ -403,7 +412,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 allwhiteBalls.gameObject.SetActive(false);
                 Destroy(allwhiteBalls);
             }
-            StartCoroutine(StartWithSongProducer(this.gameObject, UIManager.Instance.menuUI));
+            StartCoroutine(StartWithSongProducer());
         }
         else
         {
@@ -496,7 +505,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
 
 
-    public IEnumerator StartWithSongProducer(GameObject go1, GameObject go2)
+    public IEnumerator StartWithSongProducer()
     {
         yield return new WaitForSeconds(1);
 
@@ -520,7 +529,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
             platformCount++;
             platformsPassed++;
         }
-        go2.SetActive(false);
         SetStarIDs();
     }
     public void RepositionProducer(GameObject platform, int id)

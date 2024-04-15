@@ -141,7 +141,6 @@ public class SongHolder : MonoBehaviour
         GameManager.instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
         SetBox.instance.camerabool = false;
         GameManager.instance.PlayBtn.interactable = false;
-        GameManager.instance.SongListObj[GameManager.instance.n].GetComponent<SongHolder>().PlayButton.GetComponent<Button>().interactable = true;
     }
 
 
@@ -153,8 +152,8 @@ public class SongHolder : MonoBehaviour
         Player.instance.ResetPlayer();
         GameManager.instance.producer = false;
         Debug.Log("PlaySong " + song.name);
-        //player.transform.GetChild(10).gameObject.SetActive(false);
-        //player.transform.GetChild(10).gameObject.SetActive(true);
+        player.transform.GetChild(10).gameObject.SetActive(false);
+        player.transform.GetChild(10).gameObject.SetActive(true);
 
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         UIManager.Instance.CloseMenu();

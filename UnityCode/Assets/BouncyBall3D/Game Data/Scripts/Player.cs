@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     public GameObject[] characters;
 
     public GameObject[] Selected_character;
+    public GameObject levelSelectorPlayer;
+    public GameObject[] Level_Selected_character;
 
 
     [SerializeField] float turnSpeed = 1;
@@ -166,6 +168,12 @@ public class Player : MonoBehaviour
         Text_Name.text = characters[index].name;
         characterSelect = index;
         characters[index].transform.position = new Vector3(characters[index].transform.position.x, 0, characters[index].transform.position.z);
+        Debug.Log(index);
+        for (int i = 0; i <= Level_Selected_character.Length - 1; i++)
+        {
+            Level_Selected_character[i].SetActive(false);
+        }
+        Level_Selected_character[index].SetActive(true);
     }
 
     private void Start()

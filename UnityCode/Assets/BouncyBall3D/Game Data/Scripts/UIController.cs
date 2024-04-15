@@ -398,19 +398,19 @@ public class UIController : MonoBehaviour
         //Mint Neon
         Mint_Button_Neon.onClick.AddListener(() =>
         {
-            MintButtonClick(2);
+            MintButtonClick(1);
         });
 
         //Mint Robot
         Mint_Button_Robot.onClick.AddListener(() =>
         {
-            MintButtonClick(3);
+            MintButtonClick(2);
         });
 
         //Mint Rainbow
         Mint_Button_Rainbow.onClick.AddListener(() =>
         {
-            MintButtonClick(4);
+            MintButtonClick(3);
         });
 
 
@@ -668,7 +668,7 @@ public class UIController : MonoBehaviour
     private void ShowHomeScreen()
     {
         HomeScreen.SetActive(true);
-        PlaySongScreen.SetActive(true);
+        //PlaySongScreen.SetActive(true);
         NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
         NFTLinkText = SuiWallet.ActiveWalletAddress;
         txtAddressNFT_WalletScreen.text = NFTLinkText;
@@ -820,7 +820,9 @@ public class UIController : MonoBehaviour
         {
             this.SetSelectedNft(index);
         }
-    }
+        Player.instance.playerIndex(index);
+        Player.instance.characterSelect = index;
+    }   
 
     /// <summary>
     /// Sets the NFT that's currently selected, and updates the UI accordingly. 
