@@ -43,18 +43,18 @@ public class SelectSong : MonoBehaviour
     public IEnumerator SetSongData()
     {
         yield return new WaitForSeconds(1.2f);
-        if (toggle.isOn)
+        //if (toggle.isOn)
+        //{
+        LevelGenerator.Instance.currentSong = _song;
+        foreach (SongData data in _songDataSet.Songs)
         {
-            LevelGenerator.Instance.currentSong = _song;
-            foreach (SongData data in _songDataSet.Songs)
-            {
-                //if (gameObject.name == data.openPlayPanel.name)
-                //{
-                //    //data.openPlayPanel.SetActive(true);
-                //    toggle.isOn = false;
-                //}
-            }
+            //if (gameObject.name == data.openPlayPanel.name)
+            //{
+            //    //data.openPlayPanel.SetActive(true);
+            //    toggle.isOn = false;
+            //}
         }
+        //}
     }
 
 }

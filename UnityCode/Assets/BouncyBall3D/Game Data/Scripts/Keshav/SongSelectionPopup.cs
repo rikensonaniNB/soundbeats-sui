@@ -82,6 +82,10 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
             }
             GameManager.instance.playerObj.transform.GetChild(10).gameObject.SetActive(true);
             GameManager.instance.platform.SetActive(true);
+            UIController.instance.HomeScreen.SetActive(false);
+            UIController.instance.SelectCharacterScreen.SetActive(false);
+            UIController.instance.LeaderboardScreen.SetActive(false);
+            UIController.instance.SuiWalletScreen.SetActive(false);
         }
         if (GameManager.instance.producer == true)
         {

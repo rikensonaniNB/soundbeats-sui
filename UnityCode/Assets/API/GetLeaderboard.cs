@@ -11,8 +11,13 @@ using Unity.VisualScripting;
 public class GetLeaderboard : Singleton<GetLeaderboard>
 {
     public GameObject prefabObj;
+    public GameObject prefabBeatObj;
     public Transform parentObj;
 
+    [Header("BEATMAP")]
+    public SelectSong songPrefab;
+    public Transform contentParent;
+    public SongDataSet songDataSet;
     void Start()
     {
     }
@@ -27,6 +32,10 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
         NetworkManager.Instance.GetLeaderboard(OnGetLeaderboardsSuccess, OnGetLeaderboardError);
     }
 
+    public void GetBeatmapLeaderboardAPI()
+    {
+        NetworkManager.Instance.GetLeaderboard(OnGetBeatmapLeaderboardsSuccess, OnGetLeaderboardError);
+    }
     /// <summary>
     /// Clears the UI row items in the leaderboard display table. 
     /// </summary>
@@ -44,15 +53,38 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
     /// <param name="response">Response from API call to get leaderboard scores.</param>
     private void DisplayList(LeaderboardResponseDto response)
     {
-        int counter = 0;
         var scores = response.scores.OrderBy(s => s.score).Reverse().ToArray();
-        foreach (var score in scores)
+        for (int i = 0; i < scores.Length; i++)
         {
+            var score = scores[i];
             var dataObject = Instantiate(prefabObj, parentObj);
             dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
-            dataObject.transform.GetChild(0).GetComponent<Text>().text = ++counter + ")";
+            dataObject.transform.GetChild(0).GetComponent<Text>().text = (i + 1) + ")";
             dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
             dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
+        }
+    }
+
+    private void DisplayListBeat(LeaderboardResponseDto response)
+    {
+        //var scores = response.scores.OrderBy(s => s.score).Reverse().ToArray();
+        //for (int i = 0; i < scores.Length; i++)
+        //{
+        //    var score = scores[i];
+        //    var dataObject = Instantiate(prefabBeatObj, parentObj);
+        //    dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
+        //    dataObject.transform.GetChild(0).GetComponent<Text>().text = (i + 1) + ")";
+        //    dataObject.transform.GetChild(1).GetComponent<Text>().text = "songname_" + UserData.UserName + "_beatmap";
+        //    // Add listener to button here if needed
+        //}
+        for (int i = 0; i < songDataSet.Songs.Length; i++)
+        {
+            SongData songData = songDataSet.Songs[i];
+            SelectSong newSongObject = Instantiate(songPrefab, contentParent);
+            newSongObject.transform.GetChild(0).GetComponent<Text>().text = i + 1 + ")";
+            newSongObject.transform.GetChild(1).GetComponent<Text>().text = songData.Name + "_" + UserData.UserName + "_" + "beatmap";
+            Debug.Log(songData.Name);
+            newSongObject.LevelNumber = i + 1;
         }
     }
 
@@ -65,7 +97,11 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
         ClearList();
         DisplayList(response);
     }
-
+    private void OnGetBeatmapLeaderboardsSuccess(LeaderboardResponseDto response)
+    {
+        ClearList();
+        DisplayListBeat(response);
+    }
     /// <summary>
     /// Executes when the API call to get leaderboard scores fails.
     /// </summary>
