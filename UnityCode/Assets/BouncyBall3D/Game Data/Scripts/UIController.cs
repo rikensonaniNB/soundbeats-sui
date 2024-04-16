@@ -129,6 +129,7 @@ public class UIController : MonoBehaviour
     public GameObject setup1Panel;
     public GameObject setup2Panel;
 
+    public GameObject SongPlayerObj;
     #endregion
 
 #pragma warning disable 0414

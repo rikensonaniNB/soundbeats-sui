@@ -14,8 +14,9 @@ public class SelectSong : MonoBehaviour
     public SongDataSet _songDataSet;
     public GameObject _songDataSetObj;
     public string _songDataSetObjName;
-    public Vector3 levelPlayerPosition;
+    private Vector3 levelPlayerPosition = new Vector3(-1.79f,113.45f,-2.45f);
     public int LevelNumber;
+
 
     private void Start()
     {
@@ -33,7 +34,10 @@ public class SelectSong : MonoBehaviour
 
     public void setSong()
     {
+       // Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+        Player.instance.levelSelectorPlayer.transform.SetParent(toggle.transform);
         Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+        Player.instance.levelSelectorPlayer.transform.localScale = new Vector3(9000,9000,9000);
         GameManager.instance.songDataPopUp.SetActive(true);
         SongSelectionPopup.Instance.setData(LevelNumber - 1);
 
