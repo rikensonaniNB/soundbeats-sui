@@ -91,7 +91,7 @@ public class GameManager : Singleton<GameManager>
         //WinPanel.SetActive(true);
         //revivePanel.SetActive(true);
         Winpanel.SetActive(true);
-        LevelGenerator.Instance.currentSong = null;
+
         UIManager.Instance.ShowHUD(false);
 
         if (LevelGenerator.Instance.currentSong.stars < star)
@@ -121,6 +121,7 @@ public class GameManager : Singleton<GameManager>
             PlayerPrefsExtra.SetInt(LevelGenerator.Instance.currentSong.name, score);
         }
         PlayerPrefsExtra.Save();
+        LevelGenerator.Instance.currentSong = null;
         Debug.Log("win");
         GoogleAnalytics.Instance.SendPlayerWin(score, this.GetGameDuration());
     }

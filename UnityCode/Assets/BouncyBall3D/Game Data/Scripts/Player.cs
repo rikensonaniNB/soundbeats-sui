@@ -290,7 +290,7 @@ public class Player : MonoBehaviour
             }
             else if (fingerDownPos.y - fingerUpPos.y < 0)
             {
-              //  OnSwipeDown();
+                //  OnSwipeDown();
             }
             fingerUpPos = fingerDownPos;
 
@@ -495,7 +495,12 @@ public class Player : MonoBehaviour
     }
     void Show_WinPanel()
     {
-        GameManager.instance.PlayerWin();
+        if (canMove)
+        {
+            StopMoving();
+            GameManager.instance.PlayerFailed();
+        }
+        //GameManager.instance.PlayerWin();
     }
     void CheckPlatform()
     {
