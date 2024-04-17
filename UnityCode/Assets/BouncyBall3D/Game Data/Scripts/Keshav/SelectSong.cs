@@ -37,9 +37,12 @@ public class SelectSong : MonoBehaviour
         // Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
         if (toggle)
         {
-            Player.instance.levelSelectorPlayer.transform.SetParent(toggle.transform);
-            Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
-            Player.instance.levelSelectorPlayer.transform.localScale = new Vector3(9000, 9000, 9000);
+            if (GameManager.instance.producer == false)
+            {
+                Player.instance.levelSelectorPlayer.transform.SetParent(toggle.transform);
+                Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+                Player.instance.levelSelectorPlayer.transform.localScale = new Vector3(9000, 9000, 9000);
+            }
         }
         GameManager.instance.songDataPopUp.SetActive(true);
         SongSelectionPopup.Instance.setData(LevelNumber - 1);

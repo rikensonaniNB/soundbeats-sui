@@ -747,7 +747,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ResetPopManager()
     {
-        ThresoldSlider.value = 0;
+        ThresoldSlider.value = 0.35f;
         Debug.Log($"<color=blue> Threshold_Slider_Value </color>" + ThresoldSlider.value);
 
         RefreshTimeSlider.value = 0.1f;
