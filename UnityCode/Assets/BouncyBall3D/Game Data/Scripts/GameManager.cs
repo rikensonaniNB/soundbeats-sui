@@ -332,11 +332,11 @@ public class GameManager : Singleton<GameManager>
     {
         if (perfect)
         {
-            score += 10;
+            score += 4;
         }
         else
         {
-            score += 5;
+            score += 2;
         }
 
         scoreText.text = score.ToString();
