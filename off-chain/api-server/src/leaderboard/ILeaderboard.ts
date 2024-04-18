@@ -14,7 +14,7 @@ export interface ILeaderboard {
      * @param wallet the wallet for which to get the score
      * @param sprintId unique sprint id (can be null)
      */
-    getLeaderboardScore(wallet: string, sprintId: string): Promise<{ wallet: string, score: number, network: string }>;
+    getLeaderboardScore(wallet: string, sprintId: string): Promise<{ wallet: string, username: string, score: number, network: string }>;
     
     /**
      * Gets a list of scores for the given leaderboard. If no sprint is specified, gets
@@ -23,7 +23,7 @@ export interface ILeaderboard {
      * @param limit the max number of records to return
      * @param sprintId unique sprint id (can be null)
      */
-    getLeaderboardScores(limit: number, sprintId: string): Promise<{ scores: { wallet: string, score: number }[], network: string }>
+    getLeaderboardScores(limit: number, sprintId: string): Promise<{ scores: { wallet: string, username: string, score: number }[], network: string }>
     
     /**
      * Accumulates the given score to the specified wallet.
@@ -32,7 +32,7 @@ export interface ILeaderboard {
      * @param score the score to add to the wallet's total 
      * @param sprintId unique sprint id (can be null)
      */
-    addLeaderboardScore(wallet: string, score: number, sprintId: string): Promise<{ score: number, network: string }>
+    addLeaderboardScore(wallet: string, username: string, score: number, sprintId: string): Promise<{ score: number, network: string }>
     
     //admin methods 
 

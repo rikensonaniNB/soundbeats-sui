@@ -333,19 +333,26 @@ export class AppController {
     async addLeaderboardScore(@Body() body: AddLeaderboardDto): Promise<AddLeaderboardResponseDto> {
         const logString = `POST /api/v1/leaderboard ${JSON.stringify(body)}`;
         this.logger.log(logString);
-        const { score, wallet } = body;
+        const { score, authId, authType } = body
+        
         if (!score  || score <= 0) {
             this.returnError(logString, 400, 'score cannot be null, zero or negative');
         }
-        if (!wallet  || wallet == '') {
-            this.returnError(logString, 400, 'wallet cannot be null or empty');
+        if (!authId || authId == '') {
+            this.returnError(logString, 400, 'wallet cannot be null or empty')
         }
-        if (wallet.length > MAX_WALLET_LENGTH) {
-            this.returnError(logString, 400, `wallet exceeded max length of ${MAX_WALLET_LENGTH}`);
+        if (authId.length > MAX_WALLET_LENGTH) {
+            this.returnError(logString, 400, `wallet exceeded max length of ${MAX_WALLET_LENGTH}`)
+        }
+        if (!authType || authType == '') {
+            this.returnError(logString, 400, 'authType cannot be null or empty')
+        }
+        if (authType.length > MAX_USERNAME_LENGTH) {
+            this.returnError(logString, 400, `authType exceeded max length of ${MAX_USERNAME_LENGTH}`)
         }
         
         try {
-            const output = await this.suiService.addLeaderboardScore(wallet, score);
+            const output = await this.suiService.addLeaderboardScore(authId, authId, score)
             this.logger.log(`${logString} returning ${JSON.stringify(output)}`);
             return output;
         }

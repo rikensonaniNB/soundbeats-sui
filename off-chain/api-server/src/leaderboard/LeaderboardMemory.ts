@@ -14,8 +14,8 @@ export class LeaderboardMemory implements ILeaderboard {
         this.network = network;
     }
 
-    async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, score: number, network: string }> {
-        const output = { wallet, score: 0, network: this.network };
+    async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, username: string, score: number, network: string }> {
+        const output = { wallet, score: 0, username: '', network: this.network };
 
         if (this.leaderboardMap.has(wallet))
             output.score = this.leaderboardMap.get(wallet);
@@ -23,7 +23,7 @@ export class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    async getLeaderboardScores(limit: number = 100, sprintId: string = ""): Promise<{ scores: { wallet: string, score: number }[], network: string }> {
+    async getLeaderboardScores(limit: number = 100, sprintId: string = ""): Promise<{ scores: { wallet: string, username: string, score: number }[], network: string }> {
         let output = { scores: [], network: this.network };
 
         this.leaderboardMap.forEach((value: number, key: string) => {
@@ -40,8 +40,8 @@ export class LeaderboardMemory implements ILeaderboard {
         return output;
     }
 
-    async addLeaderboardScore(wallet: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
-        const output = { score: 0, network: this.network };
+    async addLeaderboardScore(wallet: string, username: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
+        const output = { score: 0, network: this.network, username: '' };
 
         if (this.leaderboardMap.has(wallet))
             output.score = this.leaderboardMap.get(wallet);

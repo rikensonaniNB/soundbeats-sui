@@ -2,7 +2,6 @@ import { Config } from '../config';
 import { IAuthRecord, IAuthManager, IAuthSession } from './IAuthManager';
 import { IDynamoResult } from '../dataAccess/IDynamoResult';
 import { DynamoDbAccess } from '../dataAccess/DynamoDbAccess';
-import { resourceLimits } from 'worker_threads';
 
 const GSI_USERNAME_NAME = "GSI_USERNAME";
 

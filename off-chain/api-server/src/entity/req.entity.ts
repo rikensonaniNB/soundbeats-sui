@@ -129,6 +129,8 @@ export class LeaderboardDto {
     wallet: string
     @ApiProperty({ description: 'The total score of the users' })
     score: number
+    @ApiProperty({ description: 'The username of the user' })
+    username: number
     @ApiProperty({ description: 'Optional unique id of sprint' })
     sprint: string
 }
@@ -140,9 +142,13 @@ export class GetLeaderboardResponseDto extends ResponseDtoBase {
 
 export class AddLeaderboardDto {
     @ApiProperty({ description: 'The address of the wallet of the user' })
-    wallet: string
+    authId: string
+    @ApiProperty({ description: 'The auth type of the user login' })
+    authType: string
     @ApiProperty({ description: 'The score to add' })
     score: number
+    @ApiProperty({ description: 'The present username of the user being added' })
+    username: string
 }
 
 export class AddLeaderboardResponseDto extends ResponseDtoBase {

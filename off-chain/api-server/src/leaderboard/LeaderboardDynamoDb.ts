@@ -2,6 +2,7 @@ import { ILeaderboard, ISprint } from './ILeaderboard';
 import { IDynamoResult } from '../dataAccess/IDynamoResult';
 import { Config } from '../config';
 import { DynamoDbAccess } from '../dataAccess/DynamoDbAccess';
+import { String } from 'aws-sdk/clients/batch';
 
 const DEFAULT_SPRINT_KEY = "default";
 const GSI_SPRINT_NAME = "GSI_SPRINT";
@@ -18,6 +19,7 @@ function unixDate() {
 
 interface IScore {
     wallet: string; 
+    username: string;
     score: number;
 }
 
@@ -49,14 +51,20 @@ class LocalScoreCache {
         return this.ageSeconds() > this.expirationSeconds;
     }
     
-    update(score: IScore) {
-        this.data[score.wallet] = score;
+    update(wallet: string, username: string, score: number) {
+        if (this.data[wallet]) {
+            this.data[wallet].score = score;
+            this.data[wallet].username = username
+        }
+        else {
+            this.data[wallet] = { wallet, score, username}
+        }
     }
     
     refresh(scores: IScore[]) {
         this.lastRefresh = unixDate();
         for(let n=0; n<scores.length; n++) {
-            this.update(scores[n]);
+            this.update(scores[n].wallet, scores[n].username, scores[n].score);
         }
     }
     
@@ -84,7 +92,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         this.dynamoDb = new DynamoDbAccess();
     }
 
-    async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, score: number, network: string }> {
+    async getLeaderboardScore(wallet: string, sprintId: string = ""): Promise<{ wallet: string, score: number, username: string, network: string }> {
         if (!sprintId || !sprintId.length) 
             sprintId = DEFAULT_SPRINT_KEY;
         if (sprintId == "current") 
@@ -94,6 +102,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         const output = {
             wallet: wallet, 
             score: 0, 
+            username: '',
             network: this.network
         };
         
@@ -101,6 +110,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         
         if (result.success && result.data) {
             output.score = parseInt(result.data.score.N);
+            output.username = result.data.username.S;
         }
         
         return output;
@@ -141,7 +151,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         return output;
     }
 
-    async addLeaderboardScore(wallet: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
+    async addLeaderboardScore(wallet: string, username: string, score: number, sprintId: string = ""): Promise<{ score: number, username: string, network: string }> {
         if (!sprintId || !sprintId.length) 
             sprintId = DEFAULT_SPRINT_KEY;
         if (sprintId == "current")
@@ -149,24 +159,25 @@ export class LeaderboardDynamoDb implements ILeaderboard {
             
         score = parseInt(score.toString());
             
-        const output = { score: score, network: this.network };
+        const output = { score: score, username: username, network: this.network }
         
         //get current score first 
         const result = await this._dataAccess_getScore(wallet, sprintId); 
         if (result.success && result.data) {
             output.score = parseInt(result.data.score.N) + score;
+            output.username = result.data.username?.S ?? '';
         }
         
         //write accumulated score 
-        await this._dataAccess_putScore(wallet, output.score, sprintId); 
+        await this._dataAccess_putScore(wallet, username, output.score, sprintId) 
         
         //add to default too, if adding to sprint 
         if (sprintId != DEFAULT_SPRINT_KEY) {
-            await this.addLeaderboardScore(wallet, score); 
+            await this.addLeaderboardScore(wallet, username, score, sprintId); 
         }
         
         //update the cache 
-        await this._updateCacheItem(wallet, output.score, sprintId);
+        await this._updateCacheItem(wallet, username, output.score, sprintId)
         
         return output; 
     }
@@ -347,7 +358,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         };
     }
     
-    async _updateCacheItem(wallet: string, score:number, sprintId: string) {
+    async _updateCacheItem(wallet: string, username: string, score:number, sprintId: string) {
         let cache: LocalScoreCache = null;
         if (sprintId == DEFAULT_SPRINT_KEY) {
             cache = localScoreCache_default;
@@ -359,7 +370,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         }
         
         if (cache) {
-            cache.update({wallet, score}); 
+            cache.update(wallet, username, score); 
         }
     }
     
@@ -376,7 +387,7 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         const result = await this.dynamoDb.query(params); 
         if (result.success) {
             const sortedItems = result.data.sort((a, b) => parseInt(b.score.N) - parseInt(a.score.N));
-            return sortedItems.map((i) => { return { wallet: i.wallet.S, score: parseInt(i.score.N) } });
+            return sortedItems.map((i) => { return { wallet: i.wallet.S, username: i.username?.S ?? '', score: parseInt(i.score.N) } });
         }
 
         return [];
@@ -399,11 +410,12 @@ export class LeaderboardDynamoDb implements ILeaderboard {
         });
     }
 
-    async _dataAccess_putScore(wallet: string, score: number, sprintId: string): Promise<IDynamoResult> {
+    async _dataAccess_putScore(wallet: string, username: string, score: number, sprintId: string): Promise<IDynamoResult> {
         return await this.dynamoDb.putItem({
             TableName: Config.scoresTableName,
             Item: {
                 wallet: {'S': wallet },
+                username: {'S': username },
                 sprintId: { 'S': sprintId },
                 score: { 'N': score.toString() }
             }

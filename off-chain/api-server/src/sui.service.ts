@@ -499,7 +499,7 @@ export class SuiService {
      * @param sprint unique sprint id, or "current", "", or "default"
      * @returns LeaderboardDto
      */
-    async getLeaderboardScore(wallet: string, sprint: string | null | "current" | "" = null): Promise<{ wallet: string, score: number; network: string }> {
+    async getLeaderboardScore(wallet: string, sprint: string | null | "current" | "" = null): Promise<{ wallet: string, score: number; username: string, network: string }> {
         return await this.leaderboard.getLeaderboardScore(wallet, sprint);
     }
 
@@ -511,7 +511,7 @@ export class SuiService {
      * @param sprint unique sprint id, or "current", "", or "default"
      * @returns GetLeaderboardResponseDto
      */
-    async getLeaderboardScores(limit: number = 0, sprint: string | null | "current" | "" = null): Promise<{ scores: { wallet: string; score: number }[]; network: string }> {
+    async getLeaderboardScores(limit: number = 0, sprint: string | null | "current" | "" = null): Promise<{ scores: { wallet: string; username: string, score: number }[]; network: string }> {
         return await this.leaderboard.getLeaderboardScores(limit, sprint);
     }
 
@@ -523,8 +523,14 @@ export class SuiService {
      * @param sprint unique sprint id, or "current", "", or "default"
      * @returns LeaderboardDto
      */
-    async addLeaderboardScore(wallet: string, score: number, sprint: string | null | "current" | "" = null): Promise<{ score: number; network: string }> {
-        return await this.leaderboard.addLeaderboardScore(wallet, score, sprint);
+    async addLeaderboardScore(authId: string, authType: string, score: number, sprint: string | null | "current" | "" = null): Promise<{ score: number; network: string }> {
+        const aType: 'evm' | 'sui' = authType != 'sui' ? 'evm': 'sui';
+        const user = await this.getAccountFromLogin(authId, aType)
+        let username = authId;
+        if (user) {
+            username = user.username;
+        }
+        return await this.leaderboard.addLeaderboardScore(authId, username, score, sprint)
     }
     
     /**

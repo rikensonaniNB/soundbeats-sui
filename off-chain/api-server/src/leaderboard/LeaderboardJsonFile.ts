@@ -14,8 +14,8 @@ export class LeaderboardJsonFile extends LeaderboardMemory {
         this._readFromFiles();
     }
 
-    async addLeaderboardScore(wallet: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
-        const output = await super.addLeaderboardScore(wallet, score);
+    async addLeaderboardScore(wallet: string, username: string, score: number, sprintId: string = ""): Promise<{ score: number, network: string }> {
+        const output = await super.addLeaderboardScore(wallet, username, score);
 
         this._writeToFile(wallet);
         return output;
