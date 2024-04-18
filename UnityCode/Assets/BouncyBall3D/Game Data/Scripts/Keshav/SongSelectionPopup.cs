@@ -19,28 +19,28 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
     {
         if (GameManager.instance.producer == false)
         {
-            Name.text = _songDataSet.Songs[songIndex].Name;
+            Name.text = _songDataSet.Songs[songIndex].currentSong.name;
             AutherName.text = _songDataSet.Songs[songIndex].ExtraInfo;
-            int totalSeconds = int.Parse(_songDataSet.Songs[songIndex].Duration);
-            int minutes = totalSeconds / 60;
-            int seconds = totalSeconds % 60;
+            float totalSeconds = _songDataSet.Songs[songIndex].currentSong.song.length;
+            float minutes = Mathf.Floor(totalSeconds / 60f);
+            float seconds = totalSeconds % 60f;
             string formattedTime = string.Format("{0:00}:{1:00} mins", minutes, seconds);
             Length.text = formattedTime;
-            ThumbnailImage.sprite = _songDataSet.Songs[songIndex].Thumbnail;
             _song = _songDataSet.Songs[songIndex].currentSong;
+            ThumbnailImage.sprite = _song.SongImage;
             StartCoroutine(DisplayPopup());
         }
         if (GameManager.instance.producer == true)
         {
-            Name.text = _songDataSetProducer.Songs[songIndex].Name;
+            Name.text = _songDataSetProducer.Songs[songIndex].currentSong.name;
             AutherName.text = _songDataSetProducer.Songs[songIndex].ExtraInfo;
-            int totalSeconds = int.Parse(_songDataSetProducer.Songs[songIndex].Duration);
-            int minutes = totalSeconds / 60;
-            int seconds = totalSeconds % 60;
+            float totalSeconds = _songDataSet.Songs[songIndex].currentSong.song.length;
+            float minutes = Mathf.Floor(totalSeconds / 60f);
+            float seconds = totalSeconds % 60f;
             string formattedTime = string.Format("{0:00}:{1:00} mins", minutes, seconds);
             Length.text = formattedTime;
-            ThumbnailImage.sprite = _songDataSetProducer.Songs[songIndex].Thumbnail;
             _song = _songDataSetProducer.Songs[songIndex].currentSong;
+            ThumbnailImage.sprite = _song.SongImage;
             StartCoroutine(DisplayPopup());
             setProducerSongIndex = songIndex;
         }
@@ -58,7 +58,7 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
         if (GameManager.instance.producer == false)
         {
             UIManager.Instance.gameUI.SetActive(true);
-            GameManager.instance.playerObj.SetActive(true);
+            GameManager.instance.player.gameObject.SetActive(true);
             GameManager.instance.platform.SetActive(true);
             Player.instance.ResetPlayer();
             Debug.Log("PlaySong " + _song.name);
@@ -80,7 +80,7 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
             {
                 Destroy(allwhiteBalls);
             }
-            GameManager.instance.playerObj.transform.GetChild(10).gameObject.SetActive(true);
+            GameManager.instance.player.gameObject.transform.GetChild(10).gameObject.SetActive(true);
             GameManager.instance.platform.SetActive(true);
             UIController.instance.HomeScreen.SetActive(false);
             UIController.instance.SelectCharacterScreen.SetActive(false);

@@ -147,7 +147,7 @@ public class SongHolder : MonoBehaviour
     public void PlaySong()
     {
         UIManager.Instance.gameUI.SetActive(true);
-        GameManager.instance.playerObj.SetActive(true);
+        GameManager.instance.player.gameObject.SetActive(true);
         GameManager.instance.platform.SetActive(true);
         Player.instance.ResetPlayer();
         GameManager.instance.producer = false;

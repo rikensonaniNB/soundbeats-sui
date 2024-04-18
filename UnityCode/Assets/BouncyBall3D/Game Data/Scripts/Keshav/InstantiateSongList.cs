@@ -22,9 +22,9 @@ public class InstantiateSongList : MonoBehaviour
         {
             SongData songData = songDataSet.Songs[i];
             SelectSong newSongObject = Instantiate(songPrefab, contentParent);
-            newSongObject.name = songData.Name;
+            newSongObject.name = songData.currentSong.name;
             newSongObject.toggle.group = _ToggleGroup;
-            newSongObject.init(songData.Name, songData.ExtraInfo, songData.Thumbnail, songData.currentSong);
+            newSongObject.init(songData.currentSong.name, songData.ExtraInfo, songData.currentSong.SongImage, songData.currentSong);
             newSongObject.gameObject.SetActive(true);
             newSongObject.LevelNumber = i + 1;
         }

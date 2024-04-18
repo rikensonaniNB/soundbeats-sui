@@ -380,7 +380,7 @@ public class GameManager : Singleton<GameManager>
         levelSelection.SetActive(false);
         Player.instance.characters[Player.instance.characterSelect].SetActive(false);
         platform.SetActive(false);
-        playerObj.transform.GetChild(10).gameObject.SetActive(false);
+        player.gameObject.transform.GetChild(10).gameObject.SetActive(false);
     }
 
     public void onNO()
@@ -465,7 +465,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.HomeScreen.SetActive(false);
         UIController.instance.SelectCharacterScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
-        playerObj.SetActive(false);
+        player.gameObject.SetActive(false);
         platform.SetActive(false);
         Player.instance.levelSelectorPlayer.SetActive(true);
     }
@@ -542,7 +542,6 @@ public class GameManager : Singleton<GameManager>
     public List<Song> songNameCheckForBeatMapJson = new List<Song>();
     public int n;
     public GameObject platform;
-    public GameObject playerObj;
     public GameObject selectCharacter;
     public GameObject producerCloseBtn;
     public GameObject producerQuitScreen;
@@ -582,7 +581,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.Mint_NFTScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
-        playerObj.SetActive(true);
+        player.gameObject.SetActive(true);
         UIController.instance.SuiWalletScreen.SetActive(false);
         selectCharacter.SetActive(true);
         congrats.SetActive(false);
@@ -640,7 +639,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.Mint_NFTScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        playerObj.SetActive(true);
+        player.gameObject.SetActive(true);
         UIController.instance.SuiWalletScreen.SetActive(false);
         selectCharacter.SetActive(true);
         PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
@@ -726,7 +725,7 @@ public class GameManager : Singleton<GameManager>
         platform.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        playerObj.SetActive(false);
+        player.gameObject.SetActive(false);
         UIController.instance.SuiWalletScreen.SetActive(false);
         UIController.instance.SelectCharacterScreen.SetActive(false);
         selectCharacter.SetActive(false);
@@ -737,7 +736,7 @@ public class GameManager : Singleton<GameManager>
         sky.SetActive(false);
         RenderSettings.skybox = producerCameraMat;
         Player.instance.ResetPlayer();
-        Debug.Log("currentSong" + LevelGenerator.Instance.currentSong.name);
+        Debug.Log("currentSong :-" + LevelGenerator.Instance.currentSong.name);
         AudioVisualizeManager.visualizeManager.audioSource.clip = LevelGenerator.Instance.currentSong.song;
         songTime.gameObject.SetActive(true);
         UpdateSongRemainingTime();
@@ -832,7 +831,7 @@ public class GameManager : Singleton<GameManager>
             UIController.instance.Mint_NFTScreen.SetActive(false);
             UIManager.Instance.gameUI.SetActive(true);
             gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            playerObj.SetActive(true);
+            player.gameObject.SetActive(true);
             mainCamera.SetActive(true);
             sky.SetActive(true);
             RenderSettings.skybox = mainCameraMat;
@@ -843,6 +842,7 @@ public class GameManager : Singleton<GameManager>
     public void RegenerateBtn()
     {
         Debug.Log($"<color=green> REGENRATE </color>");
+        StopCoroutine(waitforsavedata(AudioVisualizeManager.instance.audioSource.clip));
         AudioVisualizeManager.visualizeManager.audioSource.Stop();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
@@ -877,7 +877,7 @@ public class GameManager : Singleton<GameManager>
     }
     public IEnumerator waitforsavedata(AudioClip clipTime)
     {
-        Debug.Log("StartCorutine");
+        Debug.Log("DIRECT_SAVE_IN_CONTENT");
         yield return new WaitForSeconds(clipTime.length);
         congrats.SetActive(true);
         songPlaying = false;

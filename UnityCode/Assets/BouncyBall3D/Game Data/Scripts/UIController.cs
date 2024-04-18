@@ -70,7 +70,6 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI link_successful;
     public GameObject SuiWalletScreen;
     public GameObject HomeScreen, UserNamePanel;
-    public GameObject PlaySongScreen;
     public GameObject WalletScreen;
     public GameObject LeaderboardScreen;
     public GameObject ClaimTokensScreen;
@@ -129,7 +128,6 @@ public class UIController : MonoBehaviour
     public GameObject setup1Panel;
     public GameObject setup2Panel;
 
-    public GameObject SongPlayerObj;
     #endregion
 
 #pragma warning disable 0414
@@ -332,7 +330,6 @@ public class UIController : MonoBehaviour
             WalletScreen.SetActive(false);
             HomeScreen.SetActive(false);
             SelectCharacterScreen.SetActive(false);
-            PlaySongScreen.SetActive(false);
 
             //retain selected index 
             int selectedIndex = -1;
@@ -715,7 +712,6 @@ public class UIController : MonoBehaviour
         if (SuiWallet.HasActiveAddress())
         {
             HomeScreen.SetActive(true);
-            PlaySongScreen.SetActive(true);
             NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
             NFTLinkText = SuiWallet.ActiveWalletAddress;
 

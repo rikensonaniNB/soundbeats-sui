@@ -3,7 +3,9 @@ using UnityEngine.UI;
 
 public class TabController : MonoBehaviour
 {
+    public GameObject playerDataObj;
     public Toggle Option1;
+    public GameObject beatmapDataObj;
     public Toggle Option2;
 
 
@@ -20,6 +22,8 @@ public class TabController : MonoBehaviour
     {
         if (value)
         {
+            playerDataObj.SetActive(true);
+            beatmapDataObj.SetActive(false);
             GetLeaderboard.Instance.GetLeaderboardAPI();
         }
     }
@@ -28,6 +32,8 @@ public class TabController : MonoBehaviour
     {
         if (value)
         {
+            beatmapDataObj.SetActive(true);
+            playerDataObj.SetActive(false);
             GetLeaderboard.Instance.GetBeatmapLeaderboardAPI();
         }
     }

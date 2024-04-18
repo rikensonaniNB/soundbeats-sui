@@ -319,6 +319,34 @@ public class LevelGenerator : Singleton<LevelGenerator>
             return platform.transform;
         }
     }
+    public void SaveFloatList()
+    {
+        // Convert the float list to JSON string
+        string jsonString = JsonUtility.ToJson(myDataList);
+        string baseFileName = currentSong.name + "_Beat_";
+        string fileName = baseFileName + UserData.UserName + ".json";
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        int index = 1;
+        while (File.Exists(filePath))
+        {
+            fileName = baseFileName + index + "_" + UserData.UserName + ".json";
+            filePath = Path.Combine(Application.persistentDataPath, fileName);
+            index++;
+        }
+
+        // Write the JSON string to the file
+        File.WriteAllText(filePath, jsonString);
+        GameObject jsonPrefab = Instantiate(FileNamePrefab, FileNameparraent);
+        if (fileName.Contains(".json"))
+        {
+            string fileN = fileName;
+            fileN = fileN.Replace(".json", "");
+            jsonPrefab.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileN;
+            jsonPrefab.transform.GetChild(1).GetComponent<Image>().sprite = currentSong.SongImage;
+        }
+
+        Debug.Log("Float list saved to: " + filePath);
+    }
 
     public string[] fileNamess;
     public GameObject FileNamePrefab;
@@ -328,7 +356,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
         UIController.instance.Mint_NFTScreen.SetActive(true);
         fileNamess = GetFileNamesInPersistentDataPath();
-        foreach(Transform t in FileNameparraent.transform)
+        foreach (Transform t in FileNameparraent.transform)
         {
             Destroy(t.gameObject);
         }
@@ -340,11 +368,24 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 string fileN = fileName;
                 fileN = fileN.Replace(".json", "");
                 Obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = fileN;
+
+                foreach (var song in GameManager.instance.songNameCheckForBeatMapJson)
+                {
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        if (song.name + "_Beat_" + i + "_" + UserData.UserName == fileN || song.name + "_Beat_" + UserData.UserName == fileN)
+                        {
+                            Obj.transform.GetChild(1).GetComponent<Image>().sprite = song.SongImage;
+                            Debug.Log(Obj.name);
+                            break;
+                        }
+                    }
+                }
+                Obj.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    OpenFileAndPlaySongWithGameStart(fileName);
+                });
             }
-            Obj.GetComponent<Button>().onClick.AddListener(() =>
-            {
-                OpenFileAndPlaySongWithGameStart(fileName);
-            });
         }
     }
     public string fileNameWithoutExtension;
@@ -354,6 +395,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
             Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
+        GameManager.instance.player.gameObject.SetActive(true);
         UIController.instance.SuiWalletScreen.SetActive(false);
         UIController.instance.HomeScreen.SetActive(false);
         UIController.instance.Mint_NFTScreen.SetActive(false);
@@ -385,28 +427,17 @@ public class LevelGenerator : Singleton<LevelGenerator>
             fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
             Debug.LogError("Filename " + fileNameWithoutExtension);
 
-            for (int j = 0; j < GameManager.instance.songNameCheckForBeatMapJson.Count; j++)
+            foreach (var song in GameManager.instance.songNameCheckForBeatMapJson)
             {
-                //if (ContainsIntegerFollowedByBeat(GameManager.instance.SongLists[j].name + "_Beat_" + UserData.UserName) || GameManager.instance.SongLists[j].name + "_Beat_" == fileNameWithoutExtension)
-                if (GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_1_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_2_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_3_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_4_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_5_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_6_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_7_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_8_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_9_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_10_" + UserData.UserName == fileNameWithoutExtension ||
-                    GameManager.instance.songNameCheckForBeatMapJson[j].name + "_Beat_" == fileNameWithoutExtension)
+                for (int j = 1; j <= 10; j++)
                 {
-                    currentSong = GameManager.instance.songNameCheckForBeatMapJson[j];
-                    Debug.LogError(currentSong);
+                    if (song.name + "_Beat_" + j + "_" + UserData.UserName == fileNameWithoutExtension || song.name + "_Beat_" + UserData.UserName == fileNameWithoutExtension)
+                    {
+                        currentSong = song;
+                        break;
+                    }
                 }
-
             }
-
             foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
             {
                 allwhiteBalls.gameObject.SetActive(false);
@@ -426,11 +457,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
         Regex regex = new Regex(pattern);
         return regex.IsMatch(input);
     }
-
-
-
-
-
 
     public string[] GetFileNamesInPersistentDataPath()
     {
@@ -478,32 +504,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
     // Name of the JSON file to be saved
     // Call this method to save the float list to JSON
-    public void SaveFloatList()
-    {
-        // Convert the float list to JSON string
-        string jsonString = JsonUtility.ToJson(myDataList);
-        string baseFileName = currentSong.name + "_Beat_";
-        string fileName = baseFileName + UserData.UserName + ".json";
-        // Get the persistent data path
-        string filePath = Path.Combine(Application.persistentDataPath, fileName);
-
-        // Check if the file already exists
-        int index = 1;
-        while (File.Exists(filePath))
-        {
-            fileName = baseFileName + index + "_" + UserData.UserName + ".json";
-            filePath = Path.Combine(Application.persistentDataPath, fileName);
-            index++;
-        }
-
-        // Write the JSON string to the file
-        File.WriteAllText(filePath, jsonString);
-
-        Debug.Log("Float list saved to: " + filePath);
-    }
-
-
-
 
     public IEnumerator StartWithSongProducer()
     {

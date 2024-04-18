@@ -11,10 +11,10 @@ using Unity.VisualScripting;
 public class GetLeaderboard : Singleton<GetLeaderboard>
 {
     public GameObject prefabObj;
-    public GameObject prefabBeatObj;
-    public Transform parentObj;
+    public Transform playerDataContent;
 
     [Header("BEATMAP")]
+    public GameObject prefabBeatObj;
     public SelectSong songPrefab;
     public Transform contentParent;
     public SongDataSet songDataSet;
@@ -41,7 +41,7 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
     /// </summary>
     private void ClearList()
     {
-        foreach (Transform s in parentObj.transform)
+        foreach (Transform s in playerDataContent.transform)
         {
             Destroy(s.gameObject);
         }
@@ -57,7 +57,7 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
         for (int i = 0; i < scores.Length; i++)
         {
             var score = scores[i];
-            var dataObject = Instantiate(prefabObj, parentObj);
+            var dataObject = Instantiate(prefabObj, playerDataContent);
             dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
             dataObject.transform.GetChild(0).GetComponent<Text>().text = (i + 1) + ")";
             dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
@@ -82,8 +82,8 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
             SongData songData = songDataSet.Songs[i];
             SelectSong newSongObject = Instantiate(songPrefab, contentParent);
             newSongObject.transform.GetChild(0).GetComponent<Text>().text = i + 1 + ")";
-            newSongObject.transform.GetChild(1).GetComponent<Text>().text = songData.Name + "_" + UserData.UserName + "_" + "beatmap";
-            Debug.Log(songData.Name);
+            newSongObject.transform.GetChild(1).GetComponent<Text>().text = songData.currentSong.name + "_" + UserData.UserName + "_" + "beatmap";
+            Debug.Log(songData.currentSong.name);
             newSongObject.LevelNumber = i + 1;
         }
     }
@@ -109,5 +109,11 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
     private void OnGetLeaderboardError(string error)
     {
         //TODO: (MED) do on error? 
+    }
+
+    public void openLeaderboard()
+    {
+        UIController.instance.LeaderboardScreen.SetActive(true);
+        GameManager.instance.producer = false;
     }
 }
