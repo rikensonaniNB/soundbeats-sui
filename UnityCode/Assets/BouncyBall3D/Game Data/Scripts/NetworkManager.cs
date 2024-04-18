@@ -177,7 +177,7 @@ public class NetworkManager : Singleton<NetworkManager>
         CreateLeaderboardDto body = new CreateLeaderboardDto();
         body.wallet = wallet;
         body.score = score;
-
+        print("body.wallet : " + body.wallet + " - body.score : " + body.score);
         SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
     }
 
@@ -191,6 +191,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         var json = JsonConvert.SerializeObject(body);
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        print("json : " + json + " - dictionary : " + dictionary.ToSafeString());
         SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
     }
 
@@ -563,6 +564,7 @@ public class VerifySignatureResponseDto
     public bool completed;
     public string wallet;
     public string suiWallet;
+    public string username;
     public int level;
     public string failureReason;
 }

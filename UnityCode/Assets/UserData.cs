@@ -3,11 +3,10 @@ using System.Diagnostics;
 
 public class UserData
 {
-    private static string[] _nftNames = { "Anna", "Alien", "Neon", "Robot", "Rainbow" };
+    private static string[] _nftNames = { "Alien", "Neon", "Robot", "Rainbow" };
     private static System.Collections.Generic.Dictionary<string, bool> _nfts = new System.Collections.Generic.Dictionary<string, bool>() {
-        { "Anna", true},
-        { "Alien", false},
-        { "Neon", false },
+        { "Alien", true},
+        { "Neon", true },
         { "Robot", false },
         { "Rainbow", false }
     };

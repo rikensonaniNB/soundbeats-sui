@@ -196,7 +196,7 @@ public class UIController : MonoBehaviour
     private NftUiElements NftUiElements_Anna = new NftUiElements();
     //private NftUiElements NftUiElements_Marshmallow = new NftUiElements();
     //private NftUiElements NftUiElements_Taral = new NftUiElements();
-    private NftUiElements NftUiElements_Alien = new NftUiElements();
+    //private NftUiElements NftUiElements_Alien = new NftUiElements();
     private NftUiElements NftUiElements_Neon = new NftUiElements();
     private NftUiElements NftUiElements_Robot = new NftUiElements();
     private NftUiElements NftUiElements_Rainbow = new NftUiElements();
@@ -208,7 +208,7 @@ public class UIController : MonoBehaviour
         this.NftUiList.Add(NftUiElements_Anna);
         //this.NftUiList.Add(NftUiElements_Marshmallow);
         //this.NftUiList.Add(NftUiElements_Taral);
-        this.NftUiList.Add(NftUiElements_Alien);
+        //this.NftUiList.Add(NftUiElements_Alien);
         this.NftUiList.Add(NftUiElements_Neon);
         this.NftUiList.Add(NftUiElements_Robot);
         this.NftUiList.Add(NftUiElements_Rainbow);
@@ -221,9 +221,9 @@ public class UIController : MonoBehaviour
         NftUiElements_Anna.MintText = Mint_Text_Anna;
         NftUiElements_Anna.MintButton = Mint_Button_Anna;
         NftUiElements_Anna.MintNftScreenButton = MintNFTScreen_Button_Anna;
-        NftUiElements_Anna.CharacterSprite = Character_Anna;
-        NftUiElements_Anna.Name = "Anna";
-        NftUiElements_Anna.ImageUrl = GameData.NftImageUrlBase + "Anna.png";
+        NftUiElements_Anna.CharacterSprite = Character_Alien;
+        NftUiElements_Anna.Name = "Alien";
+        NftUiElements_Anna.ImageUrl = GameData.NftImageUrlBase + "Alien.png";
         NftUiElements_Anna.SelectedSprite = sprite_Green;
         NftUiElements_Anna.UnselectedSprite = sprite_Pink;
 
@@ -251,16 +251,16 @@ public class UIController : MonoBehaviour
         //NftUiElements_Taral.UnselectedSprite = sprite_Pink;
 
         //group Alien elements together
-        NftUiElements_Alien.MintNftScreenText = MintNFTScreen_Text_Alien;
-        NftUiElements_Alien.MintText = Mint_Text_Alien;
-        NftUiElements_Alien.MintButton = Mint_Button_Alien;
-        NftUiElements_Alien.MintNftScreenButton = MintNFTScreen_Button_Alien;
-        NftUiElements_Alien.CharacterSprite = Character_Alien;
-        NftUiElements_Alien.Locked = false;
-        NftUiElements_Alien.Name = "Alien";
-        NftUiElements_Alien.ImageUrl = GameData.NftImageUrlBase + "Alien.png";
-        NftUiElements_Alien.SelectedSprite = sprite_Green;
-        NftUiElements_Alien.UnselectedSprite = sprite_Pink;
+        //NftUiElements_Alien.MintNftScreenText = MintNFTScreen_Text_Alien;
+        //NftUiElements_Alien.MintText = Mint_Text_Alien;
+        //NftUiElements_Alien.MintButton = Mint_Button_Alien;
+        //NftUiElements_Alien.MintNftScreenButton = MintNFTScreen_Button_Alien;
+        //NftUiElements_Alien.CharacterSprite = Character_Alien;
+        //NftUiElements_Alien.Locked = false;
+        //NftUiElements_Alien.Name = "Alien";
+        //NftUiElements_Alien.ImageUrl = GameData.NftImageUrlBase + "Alien.png";
+        //NftUiElements_Alien.SelectedSprite = sprite_Green;
+        //NftUiElements_Alien.UnselectedSprite = sprite_Pink;
 
         //group Neon elements together
         NftUiElements_Neon.MintNftScreenText = MintNFTScreen_Text_Neon;
@@ -633,7 +633,7 @@ public class UIController : MonoBehaviour
             request.messageToSign = response;
             request.username = UserData.UserName;
             request.signature = System.Web.HttpUtility.UrlEncode(result);
-
+            PlayerPrefsExtra.SetString("nftSignature", System.Web.HttpUtility.UrlEncode(result));
             NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
 
         }
@@ -820,7 +820,7 @@ public class UIController : MonoBehaviour
         }
         Player.instance.playerIndex(index);
         Player.instance.characterSelect = index;
-    }   
+    }
 
     /// <summary>
     /// Sets the NFT that's currently selected, and updates the UI accordingly. 
