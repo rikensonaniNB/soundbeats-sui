@@ -59,6 +59,7 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
         {
             UIManager.Instance.gameUI.SetActive(true);
             GameManager.instance.player.gameObject.SetActive(true);
+            GameManager.instance.pauseButton.SetActive(true);
             GameManager.instance.platform.SetActive(true);
             Player.instance.ResetPlayer();
             Debug.Log("PlaySong " + _song.name);

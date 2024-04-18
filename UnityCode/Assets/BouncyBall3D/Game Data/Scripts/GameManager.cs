@@ -554,6 +554,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject holdPopUp;
     public GameObject congrats;
     public TextMeshProUGUI songTime;
+    public Coroutine CRMoveAndStop;
 
     public void OpenProducer()
     {
@@ -842,7 +843,9 @@ public class GameManager : Singleton<GameManager>
     public void RegenerateBtn()
     {
         Debug.Log($"<color=green> REGENRATE </color>");
-        StopCoroutine(waitforsavedata(AudioVisualizeManager.instance.audioSource.clip));
+
+        StopProducer();
+
         AudioVisualizeManager.visualizeManager.audioSource.Stop();
         LevelGenerator.Instance.myDataList.dataSave.Clear();
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
@@ -873,12 +876,12 @@ public class GameManager : Singleton<GameManager>
         PlayBtn.transform.gameObject.GetComponent<Button>().interactable = true;
         AudioVisualizeManager.visualizeManager.audioSource.Play();
         AudioVisualizeManager.visualizeManager.StartBeatDetect();
-        StartCoroutine(waitforsavedata(LevelGenerator.Instance.currentSong.song));
+        IEMoveAndStop(LevelGenerator.Instance.currentSong.song.length);
     }
-    public IEnumerator waitforsavedata(AudioClip clipTime)
+    public IEnumerator waitforsavedata(float clipTime)
     {
         Debug.Log("DIRECT_SAVE_IN_CONTENT");
-        yield return new WaitForSeconds(clipTime.length);
+        yield return new WaitForSeconds(clipTime);
         congrats.SetActive(true);
         songPlaying = false;
         PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
@@ -887,6 +890,17 @@ public class GameManager : Singleton<GameManager>
         SetBox.instance.camerabool = false;
         PlayBtn.interactable = false;
         PlayBtn.transform.gameObject.GetComponent<Button>().interactable = true;
+    }
+    public void StopProducer()
+    {
+        if (CRMoveAndStop != null)
+        {
+            StopCoroutine(CRMoveAndStop);
+        }
+    }
+    public void IEMoveAndStop(float time)
+    {
+        CRMoveAndStop = StartCoroutine(waitforsavedata(time));
     }
 
     void UpdateSongRemainingTime()
