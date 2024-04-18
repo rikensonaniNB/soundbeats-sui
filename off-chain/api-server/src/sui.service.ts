@@ -334,7 +334,8 @@ export class SuiService {
             failureReason: string, 
             wallet: string; network: string, 
             verified: boolean, 
-            suiWallet: string
+            suiWallet: string,
+            username: string
         }> {
         
         const output = {
@@ -343,7 +344,8 @@ export class SuiService {
             wallet: '', 
             network: '', 
             verified: false, 
-            suiWallet: ''
+            suiWallet: '', 
+            username: ''
         }; 
         
         //first verify session id, if any
@@ -385,7 +387,11 @@ export class SuiService {
 
         this.logger.log(`getting auth record for ${walletType} ${output.wallet}`);
         const authRecord: IAuthRecord = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
-        output.suiWallet = authRecord?.suiWallet ?? '';
+        
+        if (authRecord) {
+            output.suiWallet = authRecord?.suiWallet ?? ''
+            output.username = authRecord?.username ?? ''
+        }
 
         //update the auth record if the action is 'update'
         if (action == 'update' && walletType == 'evm') {
@@ -410,6 +416,7 @@ export class SuiService {
                     suiWallet = regOutput.suiWallet;
                     this.authManager.updateAuthSession(sessionId, evmWallet, suiWallet, true);
                     output.suiWallet = suiWallet ?? '';
+                    output.username = username ?? ''
                 }
                 else {
                     output.failureReason = regOutput.status;

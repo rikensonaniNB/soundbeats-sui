@@ -245,6 +245,8 @@ export class AuthVerifyResponseDto {
     failureReason: string
     @ApiProperty({ description: 'Sui wallet address (if any)' })
     suiWallet: string
+    @ApiProperty({ description: 'Username of user' })
+    username: string
 }
 
 export class UpdateUserLevelDto {
