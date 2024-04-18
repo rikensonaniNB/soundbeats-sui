@@ -121,7 +121,7 @@ public class GameManager : Singleton<GameManager>
             PlayerPrefsExtra.SetInt(LevelGenerator.Instance.currentSong.name, score);
         }
         PlayerPrefsExtra.Save();
-        LevelGenerator.Instance.currentSong = null;
+        //LevelGenerator.Instance.currentSong = null;
         Debug.Log("win");
         GoogleAnalytics.Instance.SendPlayerWin(score, this.GetGameDuration());
     }
@@ -217,7 +217,7 @@ public class GameManager : Singleton<GameManager>
     void ShowLevelProgress()
     {
         songName.text = LevelGenerator.Instance.currentSong.name;
-        songNameWin.text = LevelGenerator.Instance.currentSong.name;
+        songNameWin.text = LevelGenerator.Instance.currentSong.SongScore.ToString();
 
         levelScore.text = score.ToString();
         for (int i = 0; i < 3; i++)
@@ -266,9 +266,12 @@ public class GameManager : Singleton<GameManager>
         scoreText.text = "0";
         player.ResetPlayer();
         revivePanel.SetActive(false);
+        Winpanel.SetActive(false);
         playButton.SetActive(true);
-
+        GameManager.instance.platform.SetActive(true);
+        LevelGenerator.Instance.StartWithSong();
     }
+
     public void StartGame()
     {
         this.gameStartTime = System.DateTime.Now;

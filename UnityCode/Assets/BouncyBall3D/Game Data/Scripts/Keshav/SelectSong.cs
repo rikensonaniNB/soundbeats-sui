@@ -16,7 +16,7 @@ public class SelectSong : MonoBehaviour
     public string _songDataSetObjName;
     private Vector3 levelPlayerPosition = new Vector3(-1.79f, 113.45f, -2.45f);
     public int LevelNumber;
-
+    private bool canSeePlayer = true;
 
     private void Start()
     {
@@ -26,10 +26,11 @@ public class SelectSong : MonoBehaviour
         _songDataSet = _songDataSetObj.GetComponent<SongDataSet>();
     }
 
-    public void init(string songname, string songdetail, Sprite image, Song _song)
+    public void init(string songname, string songdetail, Sprite image, Song _song, bool playerDisplay)
     {
         Name.text = $"<size=16><b>{songname}</b></size>\n{songdetail}";
         ThumbnailImage.sprite = image;
+        canSeePlayer = playerDisplay;
     }
 
     public void setSong()
@@ -37,7 +38,7 @@ public class SelectSong : MonoBehaviour
         // Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
         if (toggle)
         {
-            if (GameManager.instance.producer == false)
+            if (GameManager.instance.producer == false && canSeePlayer == true)
             {
                 Player.instance.levelSelectorPlayer.transform.SetParent(toggle.transform);
                 Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
@@ -45,14 +46,18 @@ public class SelectSong : MonoBehaviour
             }
         }
         GameManager.instance.songDataPopUp.SetActive(true);
-        SongSelectionPopup.Instance.setData(LevelNumber - 1);
+        SongSelectionPopup.Instance.setData(LevelNumber - 1, canSeePlayer);
 
         StartCoroutine(SetSongData());
     }
 
     public IEnumerator SetSongData()
     {
-        yield return new WaitForSeconds(1.2f);
+        //yield return new WaitForSeconds(0.001f);
+        if (canSeePlayer)
+        {
+            yield return new WaitForSeconds(1.2f);
+        }
         //if (toggle.isOn)
         //{
         LevelGenerator.Instance.currentSong = _song;

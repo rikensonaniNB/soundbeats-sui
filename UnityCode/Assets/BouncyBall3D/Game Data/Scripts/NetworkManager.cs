@@ -175,9 +175,10 @@ public class NetworkManager : Singleton<NetworkManager>
     public void SendLeaderboardScore(string wallet, int score, UnityAction<LeaderboardScoreDto> callbackOnSuccess, UnityAction<string> callbackOnFail)
     {
         CreateLeaderboardDto body = new CreateLeaderboardDto();
-        body.wallet = wallet;
+        body.authId = wallet;
         body.score = score;
-        print("body.wallet : " + body.wallet + " - body.score : " + body.score);
+        body.authId = "evm";
+        print("body.wallet : " + body.authId + " - body.score : " + body.score);
         SendLeaderboardScore(body, callbackOnSuccess, callbackOnFail);
     }
 
@@ -192,7 +193,8 @@ public class NetworkManager : Singleton<NetworkManager>
         var json = JsonConvert.SerializeObject(body);
         var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         print("json : " + json + " - dictionary : " + dictionary.ToSafeString());
-        SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        //SendRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, "post", dictionary);
+        StartCoroutine(SendPostRequest(ServerConfig.FormatServerUrl(ServerConfig.API_POST_LEADERBOARD), callbackOnSuccess, callbackOnFail, json));
     }
 
     /// <summary>
@@ -572,7 +574,8 @@ public class VerifySignatureResponseDto
 [Serializable]
 public class CreateLeaderboardDto
 {
-    public string wallet;
+    public string authId;
+    public string authType;
     public int score;
 }
 
@@ -581,6 +584,7 @@ public class LeaderboardScoreDto
 {
     public string wallet;
     public int score;
+    public string username;
 }
 
 [Serializable]

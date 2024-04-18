@@ -14,9 +14,11 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
     public SongDataSet _songDataSet;
     public SongDataSet _songDataSetProducer;
     public GameObject InfoPanel;
+    private bool canWaitForFewSec = true;
 
-    public void setData(int songIndex = 0)
+    public void setData(int songIndex = 0, bool canWait = true)
     {
+        canWaitForFewSec = canWait;
         if (GameManager.instance.producer == false)
         {
             Name.text = _songDataSet.Songs[songIndex].currentSong.name;
@@ -48,7 +50,8 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
 
     public IEnumerator DisplayPopup()
     {
-        yield return new WaitForSeconds(1.2f);
+        if (canWaitForFewSec)
+            yield return new WaitForSeconds(0.2f);
         InfoPanel.SetActive(true);
         Player.instance.levelSelectorPlayer.SetActive(false);
     }

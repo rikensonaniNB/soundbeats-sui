@@ -10,6 +10,7 @@ public class InstantiateSongList : MonoBehaviour
     public Transform contentParent;
     public SongDataSet songDataSet;
     public ToggleGroup _ToggleGroup;
+    public bool canSeePlayerOnMap = true;
 
     void Start()
     {
@@ -24,7 +25,7 @@ public class InstantiateSongList : MonoBehaviour
             SelectSong newSongObject = Instantiate(songPrefab, contentParent);
             newSongObject.name = songData.currentSong.name;
             newSongObject.toggle.group = _ToggleGroup;
-            newSongObject.init(songData.currentSong.name, songData.ExtraInfo, songData.currentSong.SongImage, songData.currentSong);
+            newSongObject.init(songData.currentSong.name, songData.ExtraInfo, songData.currentSong.SongImage, songData.currentSong, canSeePlayerOnMap);
             newSongObject.gameObject.SetActive(true);
             newSongObject.LevelNumber = i + 1;
         }

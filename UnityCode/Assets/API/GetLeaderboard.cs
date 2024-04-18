@@ -60,7 +60,7 @@ public class GetLeaderboard : Singleton<GetLeaderboard>
             var dataObject = Instantiate(prefabObj, playerDataContent);
             dataObject.GetComponent<Image>().color = SuiWallet.ActiveWalletAddress == score.wallet ? Color.green : Color.grey;
             dataObject.transform.GetChild(0).GetComponent<Text>().text = (i + 1) + ")";
-            dataObject.transform.GetChild(1).GetComponent<Text>().text = UserData.UserName;
+            dataObject.transform.GetChild(1).GetComponent<Text>().text = score.username == "" ? UserData.UserName : score.username.ToString();
             dataObject.transform.GetChild(3).GetComponent<Text>().text = score.score.ToString();
         }
     }

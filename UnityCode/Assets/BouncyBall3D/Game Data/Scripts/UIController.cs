@@ -360,11 +360,11 @@ public class UIController : MonoBehaviour
         //Wallet 
         WalletButton_Home.onClick.AddListener(() =>
         {
-            if (SuiWallet.HasActiveAddress())
-            {
-                NetworkManager.Instance.GetTokenBalance(SuiWallet.ActiveWalletAddress, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
-                LoadingScreen.SetActive(true);
-            }
+            //if (SuiWallet.HasActiveAddress())
+            //{
+            NetworkManager.Instance.GetTokenBalance(SuiWallet.ActiveWalletAddress, OnSuccessfulGetTokenBalance, OnErrorGetTokenBalance);
+            LoadingScreen.SetActive(true);
+            //}
         });
 
         //Select Character Screen
@@ -549,7 +549,7 @@ public class UIController : MonoBehaviour
         //MessageToSign = GenerateRandomMessage();
         //Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
         Debug.Log($"[WalletConnectModalSample] address: {address}");
-
+        SuiWallet.ActiveWalletAddress = address;
         NetworkManager.Instance.StartAuthSession("" + address, OnSuccessfulAuthSession, OnErrorStartAuthSession);
     }
 

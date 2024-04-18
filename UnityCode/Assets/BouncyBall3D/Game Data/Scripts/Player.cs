@@ -574,6 +574,7 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Revive");
         canMove = false;
+
         //jumpingPartRB.isKinematic = true;
 
         Vector3 newPlayerPos = new Vector3(transform.position.x, transform.position.y, platformA.position.z);
