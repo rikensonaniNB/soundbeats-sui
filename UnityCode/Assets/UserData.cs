@@ -1,14 +1,16 @@
 using System;
 using System.Diagnostics;
+using Unity.VisualScripting;
 
 public class UserData
 {
-    private static string[] _nftNames = { "Alien", "Neon", "Robot", "Rainbow" };
+    private static string[] _nftNames = { "Alien", "Neon", "Robot", "Rainbow", "Wanderer" };
     private static System.Collections.Generic.Dictionary<string, bool> _nfts = new System.Collections.Generic.Dictionary<string, bool>() {
-        { "Alien", true},
-        { "Neon", true },
+        { "Alien", true },
+        { "Neon", false },
         { "Robot", false },
-        { "Rainbow", false }
+        { "Rainbow", false },
+        { "Wanderer", false}
     };
 
     public static string WalletAddress
@@ -169,7 +171,14 @@ public class UserData
     {
         foreach (string key in _nftNames)
         {
-            _nfts[key] = false;
+            if (key == "Anna")
+            {
+                _nfts[key] = true;
+            }
+            else
+            {
+                _nfts[key] = false;
+            }
         }
     }
 
