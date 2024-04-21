@@ -72,25 +72,22 @@ export class SuiService {
         this.logger.log('admin address: ' + suiAddress);
 
         //detect token info from blockchain 
-        /*
-        if (Config.detectPackageInfo) {
+        /*if (Config.detectPackageInfo) {
             this.logger.log('detecting package data ...');
-            this._detectTokenInfo(suiAddress, this.packageId).then(async (response) => {
+            this._detectTokenInfo(suiAddress, Config.beatsNftPackageId).then(async (response) => {
                 this.logger.log('parsing package data ...');
                 if (response && response.packageId && response.treasuryCap) {
-                    this.packageId = response.packageId;
                     this.treasuryCap = response.treasuryCap;
                     this.beatsNftOwnerCap = response.beatsNftOwnerCap;
                     this.beatmapsNftOwnerCap = response.beatmapsNftOwnerCap;
 
-                    this.logger.log('detected packageId: ' + this.packageId);
+                    this.logger.log('detected packageId: ' + response.packageId);
                     this.logger.log('detected treasuryCap: ' + this.treasuryCap);
                     this.logger.log('detected beatsNftOwnerCap: ' + this.beatsNftOwnerCap);
                     this.logger.log('detected beatmapsNftOwnerCap: ' + this.beatmapsNftOwnerCap);
                 }
             });
-        }
-        */
+        }*/
     }
 
     createWallet(): { address: string, privateKey: string } {
@@ -702,8 +699,17 @@ export class SuiService {
     }
 
     //TODO: comment header
-    async startAuthSession(evmWallet: string): Promise<{messageToSign: string, sessionId: string }> {
-        return await this.authManager.startAuthSession(evmWallet); 
+    async startAuthSession(evmWallet: string): Promise<{messageToSign: string, sessionId: string, username: string }> {
+        const session = await this.authManager.startAuthSession(evmWallet); 
+        const account = await this.authManager.getAuthRecord(evmWallet, 'evm'); 
+        const output = {
+          username: '',
+          ...session
+        }
+        if (account) {
+            output.username = account.username ?? '';
+        }
+        return output;
     }
     
     //TODO: comment header 

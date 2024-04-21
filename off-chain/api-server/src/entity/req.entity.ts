@@ -217,6 +217,8 @@ export class StartAuthSessionResponseDto {
     sessionId: string
     @ApiProperty({ description: 'A message for the client to sign as a challenge' })
     messageToSign: string
+    @ApiProperty({ description: 'The username of the specified account, if it exists' })
+    username: string
 }
 
 export class AuthVerifyDto {
