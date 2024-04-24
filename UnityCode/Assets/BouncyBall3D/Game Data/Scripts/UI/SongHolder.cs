@@ -29,9 +29,7 @@ public class SongHolder : MonoBehaviour
     private void OnEnable()
     {
         PlayButton.interactable = true;
-        GameManager.instance.ThresoldSlider.interactable = true;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Generate";
-        GameManager.instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Generate";
     }
     private void Awake()
     {
@@ -134,13 +132,10 @@ public class SongHolder : MonoBehaviour
     {
         Debug.Log("StartCorutine");
         yield return new WaitForSeconds(clipTime.length);
-        GameManager.instance.congrats.SetActive(true);
         GameManager.instance.songPlaying = false;
         PlayButton.transform.GetChild(0).GetComponent<Text>().text = "Finish";
         LevelGenerator.Instance.SaveFloatList();
-        GameManager.instance.PlayBtn.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Finish";
         SetBox.instance.camerabool = false;
-        GameManager.instance.PlayBtn.interactable = false;
     }
 
 
@@ -152,8 +147,8 @@ public class SongHolder : MonoBehaviour
         Player.instance.ResetPlayer();
         GameManager.instance.producer = false;
         Debug.Log("PlaySong " + song.name);
-        player.transform.GetChild(10).gameObject.SetActive(false);
-        player.transform.GetChild(10).gameObject.SetActive(true);
+        player.transform.GetChild(8).gameObject.SetActive(false);
+        player.transform.GetChild(8).gameObject.SetActive(true);
 
         //GoogleAnalytics.Instance.SendSelectedSong(song.name);
         UIManager.Instance.CloseMenu();
@@ -188,7 +183,6 @@ public class SongHolder : MonoBehaviour
         GameManager.instance.mainCamera.SetActive(true);
         GameManager.instance.sky.SetActive(true);
         RenderSettings.skybox = GameManager.instance.mainCameraMat;
-        GameManager.instance.producerCamera.SetActive(false);
         foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
         {
             Destroy(allwhiteBalls);

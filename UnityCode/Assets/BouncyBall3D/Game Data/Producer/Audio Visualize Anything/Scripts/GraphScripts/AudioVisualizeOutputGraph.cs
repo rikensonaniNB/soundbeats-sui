@@ -74,7 +74,7 @@ public class AudioVisualizeOutputGraph : MonoBehaviour
                 graphReference.SetActive(true);
                 break;
             case Graph.Disabeled:
-                graphReference.SetActive(false);
+                //graphReference.SetActive(false);
                 break;
             default:
                 break;

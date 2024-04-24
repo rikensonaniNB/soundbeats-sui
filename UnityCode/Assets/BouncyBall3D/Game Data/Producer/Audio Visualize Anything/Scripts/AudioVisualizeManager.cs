@@ -35,7 +35,7 @@ public class AudioVisualizeManager : MonoBehaviour
     }
     private void Update()
     {
-        SetBox.instance.cameraZPos = audioSource.time;
+        //SetBox.instance.cameraZPos = audioSource.time;
     }
     public enum InvokeMode
     {
@@ -362,7 +362,7 @@ public class AudioVisualizeManager : MonoBehaviour
 
 
         Output = Output_Volume; //for visualAid //I should make this static instead of averageBlockVolume
-        if (Output > GameManager.instance.ThresoldValue)
+        if (Output > ProducerManager.Instance.complexityValue)
         {
             Debug.Log($"<color=red> AUDIO_OUTPUT : </color> " + Output);
             BeatDetect.beatDetect.AddToBeatList(Output);

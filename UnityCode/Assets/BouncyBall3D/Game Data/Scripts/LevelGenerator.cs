@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
+using System.Runtime.CompilerServices;
 
 public class LevelGenerator : Singleton<LevelGenerator>
 {
@@ -15,7 +17,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public Song currentSong;
     [Space]
     [HideInInspector] public int platformsPassed = 0;
-    [SerializeField] int platformsDrawn = 7;
+    [SerializeField] int platformsDrawn;
     [SerializeField] float platformTurnStep = 0.5f;
     [SerializeField] float levelWidth = 10;
     [Range(0f, 1f)]
@@ -146,7 +148,9 @@ public class LevelGenerator : Singleton<LevelGenerator>
 
     #endregion
 
-
+    private void Start()
+    {
+    }
 
     public void StartWithSong()
     {
@@ -213,11 +217,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
             //Debug.Log(lastPlatformZ - platform);
         }
 
-
-        if (CheckForStar())
-        {
-            GameObject star = Instantiate(starPrefab, platform.transform);
-        }
 
         if (GameManager.instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 7 && GameManager.instance.isSpeedupActive == false)
         {
@@ -391,25 +390,24 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public string fileNameWithoutExtension;
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
+        SceneManager.LoadScene(2);
+        DontDestroyOnLoad(GameManager.instance.gameObject);
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(SoundManager._Instance.gameObject);
+        DontDestroyOnLoad(SavingHandler.Instance.gameObject);
+        DontDestroyOnLoad(AudioVisualizeManager.instance.gameObject);
+        DontDestroyOnLoad(Player.instance.gameObject);
+        CameraFollow.instance.target = Player.instance.gameObject.transform;
         Player.instance.characters[Player.instance.characterSelect].transform.position
             = new Vector3(Player.instance.characters[Player.instance.characterSelect].transform.position.x, 0,
             Player.instance.characters[Player.instance.characterSelect].transform.position.z);
 
         GameManager.instance.player.gameObject.SetActive(true);
-        UIController.instance.SuiWalletScreen.SetActive(false);
-        UIController.instance.HomeScreen.SetActive(false);
-        UIController.instance.Mint_NFTScreen.SetActive(false);
-        UIController.instance.SelectCharacterScreen.SetActive(false);
         GameManager.instance.platform.SetActive(true);
-        GameManager.instance.mainCamera.SetActive(true);
-        GameManager.instance.sky.SetActive(true);
-        RenderSettings.skybox = GameManager.instance.mainCameraMat;
-        GameManager.instance.producerCamera.SetActive(false);
         GameManager.instance.pauseButton.SetActive(true);
         GameManager.instance.producer = true;
         checkProducer = 0;
-        player.transform.GetChild(10).gameObject.SetActive(false);
-        player.transform.GetChild(10).gameObject.SetActive(true);
+        player.transform.GetChild(8).gameObject.SetActive(true);
         Player.instance.ResetPlayer();
         string filePath = Path.Combine(Application.persistentDataPath, filename);
 
@@ -438,24 +436,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
                     }
                 }
             }
-            foreach (Transform allwhiteBalls in SetBox.instance.whiteBallParent.transform)
-            {
-                allwhiteBalls.gameObject.SetActive(false);
-                Destroy(allwhiteBalls);
-            }
-            StartCoroutine(StartWithSongProducer());
         }
         else
         {
             Debug.LogError("File not found at path: " + filePath);
         }
-    }
-
-    bool ContainsIntegerFollowedByBeat(string input)
-    {
-        string pattern = @"_Beat_\d+";
-        Regex regex = new Regex(pattern);
-        return regex.IsMatch(input);
     }
 
     public string[] GetFileNamesInPersistentDataPath()
@@ -476,40 +461,11 @@ public class LevelGenerator : Singleton<LevelGenerator>
         return fileNames;
     }
 
-    public void OpenFolder()
-    {
-        // Get the persistent data path
-        string folderPath = Application.persistentDataPath;
-
-        // Open the folder in the file explorer
-        Application.OpenURL("file://" + folderPath);
-    }
-
-    public static char GetLastDigit(string input)
-    {
-        // Iterate over the characters of the input string from the end
-        for (int i = input.Length - 1; i >= 0; i--)
-        {
-            // Check if the current character is a digit
-            if (char.IsDigit(input[i]))
-            {
-                // Return the last digit found
-                return input[i];
-            }
-        }
-
-        // Return '\0' (null character) if no digit is found
-        return '\0';
-    }
-
-    // Name of the JSON file to be saved
-    // Call this method to save the float list to JSON
 
     public IEnumerator StartWithSongProducer()
     {
         yield return new WaitForSeconds(1);
 
-        UIManager.Instance.gameUI.SetActive(true);
         Debug.Log("wait is over");
         platformCount = 0;
         platformsPassed = 0;
@@ -521,9 +477,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
             GameObject newPlatform = platformPool.GetItem;
 
             RepositionProducer(newPlatform, platformCount);
-
             platformList.Add(newPlatform);
-
             Debug.Log(newPlatform);
 
             platformCount++;
@@ -559,12 +513,10 @@ public class LevelGenerator : Singleton<LevelGenerator>
             Debug.Log("LAST PLATFORM Z - 2 :-" + lastPlatformZ);
             //lastPlatformZ += distanceBetweenPlatforms - hitindex;
         }
-
-        if (CheckForStar())
+        if (GameManager.instance.gameState == GameState.Gameplay && Random.Range(0, 10) > 7 && GameManager.instance.isSpeedupActive == false)
         {
-            GameObject star = Instantiate(starPrefab, platform.transform);
+            GameObject speedUp = Instantiate(PowerUpPrefab, platform.transform);
         }
-
 
     }
     [System.Serializable]

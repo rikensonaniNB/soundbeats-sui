@@ -2,14 +2,17 @@
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] Transform target;
+    public Transform target;
     [SerializeField] float smoothDamp = 0.5f;
 
-    Vector3 offset, velocity;
-
+    public Vector3 offset, velocity;
+    public static CameraFollow instance;
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
-        offset = transform.position - target.position;
     }
 
     void LateUpdate()

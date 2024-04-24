@@ -61,6 +61,8 @@ public class Player : MonoBehaviour
     public float SWIPE_THRESHOLD = 20f;
     public float distance;
 
+    public GameObject gameStartTxt;
+
     [Header("Select_Character")]
     public int userIndex = 0;
 
@@ -86,11 +88,11 @@ public class Player : MonoBehaviour
 
         if (IsMobilePlatform())
         {
-            GameManager.instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Swipe up to start/un-pause, swipe down to pause\nswipe left/Right to move Left/Right";
+            gameStartTxt.GetComponent<TextMeshProUGUI>().text = "Swipe up to start/un-pause, swipe down to pause\nswipe left/Right to move Left/Right";
         }
         else
         {
-            GameManager.instance.gameStartText.GetComponent<TextMeshProUGUI>().text = "Press Space to start/pause\nWASD / Arrow keys to move";
+            gameStartTxt.GetComponent<TextMeshProUGUI>().text = "Press Space to start/pause\nWASD / Arrow keys to move";
         }
     }
 
