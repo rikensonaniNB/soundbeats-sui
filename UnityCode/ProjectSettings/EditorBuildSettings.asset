@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/BouncyBall3D/Game Data/Game_Scenes/GamePlayingScene.unity
     guid: a39ba4df5ac3d384e8351b1f2d794a93
+  - enabled: 1
+    path: Assets/BouncyBall3D/Game Data/Game_Scenes/LoadingSceneForPlaying.unity
+    guid: c9ef96c9bc771ef4cb5f1c74086cfb91
+  - enabled: 1
+    path: Assets/BouncyBall3D/Game Data/Game_Scenes/LoadingSceneForProducer.unity
+    guid: 741d6d9f69ca98e458d20b745554b69c
   m_configObjects: {}

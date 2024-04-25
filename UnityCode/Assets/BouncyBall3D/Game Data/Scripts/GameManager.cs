@@ -724,4 +724,14 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Show_Hold_PopUp");
     }
 
+    public IEnumerator LoadingSceneToGamePlayingScene()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(2);
+    }
+    public IEnumerator loadingSceneToProducerScene()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(1);
+    }
 }

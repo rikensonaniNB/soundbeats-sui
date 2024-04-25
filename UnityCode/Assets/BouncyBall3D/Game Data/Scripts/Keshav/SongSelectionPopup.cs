@@ -76,7 +76,8 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
     {
         if (GameManager.instance.producer == false)
         {
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene(3);
+            //StartCoroutine(GameManager.Instance.LoadingSceneToGamePlayingScene());
             DontDestroyOnLoad(GameManager.instance.gameObject);
             DontDestroyOnLoad(LevelGenerator.Instance.gameObject);
             DontDestroyOnLoad(SoundManager._Instance.gameObject);
@@ -97,10 +98,11 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
             DontDestroyOnLoad(LevelGenerator.Instance.gameObject);
             DontDestroyOnLoad(AudioVisualizeManager.instance.gameObject);
             InfoPanel.SetActive(false);
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(4);
+            //StartCoroutine(GameManager.Instance.loadingSceneToProducerScene());
         }
     }
-
+   
     public void closePopup()
     {
         Player.instance.levelSelectorPlayer.SetActive(true);

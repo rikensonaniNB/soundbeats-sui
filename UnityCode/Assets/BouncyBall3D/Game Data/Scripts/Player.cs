@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
         marshmello_Animator = Selected_character[characterSelect].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
-        Text_Name.text = Selected_character[characterSelect].name;
+        //Text_Name.text = Selected_character[characterSelect].name;
         characters[characterSelect].SetActive(true);
         marshmello_Animator.Play("Idle");
     }
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
         jumpingPartRB = jumpingPart.GetComponent<Rigidbody>();
         marshmello_Animator = Selected_character[UserData.SelectedNftIndex].GetComponent<Animator>();
         //Selected_character[PlayerPrefs.GetInt("Selected_player")].SetActive(true);
-        Text_Name.text = Selected_character[UserData.SelectedNftIndex].name;
+        //Text_Name.text = Selected_character[characterSelect].name;
 
         var obj = transform;
         obj.position = new Vector3(0f, .5f, 0f);
