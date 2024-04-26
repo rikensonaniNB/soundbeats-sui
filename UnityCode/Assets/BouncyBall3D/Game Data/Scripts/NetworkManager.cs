@@ -622,6 +622,7 @@ public class StartAuthSessionDto
 [Serializable]
 public class StartAuthSessionResponseDto
 {
+    public string username;
     public string sessionId;
     public string messageToSign;
 }

@@ -14,7 +14,7 @@ public class ProducerLoading : MonoBehaviour
     IEnumerator LoadProducerScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("ProducerScene");
     }
     private void Update()
     {

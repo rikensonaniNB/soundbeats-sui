@@ -89,7 +89,7 @@ public class GamePlayingManager : MonoBehaviour
     public void OnClose()
     {
         CameraFollow.instance.enabled = false;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("HomeScene");
         Destroy(GameManager.instance.gameObject);
         Destroy(LevelGenerator.Instance.gameObject);
         Destroy(SoundManager._Instance.gameObject);

@@ -390,7 +390,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
     public string fileNameWithoutExtension;
     public void OpenFileAndPlaySongWithGameStart(string filename)
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene("GamePlayingScene");
         DontDestroyOnLoad(GameManager.instance.gameObject);
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(SoundManager._Instance.gameObject);

@@ -13,7 +13,7 @@ public class PlayingLoading : MonoBehaviour
     IEnumerator loadPlayingScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene("GamePlayingScene");
     }
 
     private void Update()

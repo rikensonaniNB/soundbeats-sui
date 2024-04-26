@@ -15,8 +15,9 @@ public class LoadingScreen : MonoBehaviour
 
     private void Start()
     {
-        Show(SceneManager.LoadSceneAsync(1));
-       // Advertisements.Instance.Initialize();
+
+        Show(SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1));
+        // Advertisements.Instance.Initialize();
 
     }
 

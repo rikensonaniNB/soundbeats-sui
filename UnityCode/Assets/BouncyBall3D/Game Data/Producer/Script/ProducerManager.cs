@@ -192,7 +192,7 @@ public class ProducerManager : MonoBehaviour
     }
     public void OnCloseProducer()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("HomeScene");
         LevelGenerator.Instance.currentSong = null;
         LevelGenerator.Instance.myDataList.dataSave.Clear();
         foreach (Transform t in SetBox.instance.whiteBallParent.transform)
@@ -218,5 +218,5 @@ public class ProducerManager : MonoBehaviour
         GameManager.instance.RegenerateBtn();
     }
 
-   
+
 }

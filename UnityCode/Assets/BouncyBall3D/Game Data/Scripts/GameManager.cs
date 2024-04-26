@@ -77,10 +77,10 @@ public class GameManager : Singleton<GameManager>
         {
             UpdateSongRemainingTime();
         }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            SceneManager.LoadScene(0);
-        }
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //   SceneManager.LoadScene(0);
+        //}
     }
 
     public int GetGameDuration()
@@ -389,7 +389,7 @@ public class GameManager : Singleton<GameManager>
         player.gameObject.transform.GetChild(8).gameObject.SetActive(false);
     }
 
-   
+
 
     public void onPause()
     {
@@ -414,7 +414,7 @@ public class GameManager : Singleton<GameManager>
 
     public void Menu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("HomeScene");
         //  Advertisements.Instance.ShowInterstitial();
     }
 
@@ -590,7 +590,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Log("Close Producer");
     }
 
-   
+
     public void SelectSong(int Num)
     {
         foreach (Transform platformPool in LevelGenerator.Instance.platformPool.transform)
@@ -727,11 +727,11 @@ public class GameManager : Singleton<GameManager>
     public IEnumerator LoadingSceneToGamePlayingScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene("GamePlayingScene");
     }
     public IEnumerator loadingSceneToProducerScene()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("ProducerScene");
     }
 }

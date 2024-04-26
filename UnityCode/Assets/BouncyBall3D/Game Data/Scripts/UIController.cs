@@ -1,7 +1,3 @@
-//FAKE_SIGNIN is for testing without a web front-end, or without a wallet (testing only)
-#define FAKE_SIGNIN
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,19 +15,14 @@ using WalletConnectUnity.Core.Evm;
 
 public class UIController : MonoBehaviour
 {
-    private const int SIGNING_MESSAGE_LENGTH = 32;
-    private static string MessageToSign = "";
-
     public static UIController instance;
     private void Awake()
     {
         instance = this;
-        UserName.text = UserData.UserName;
     }
 
     #region UI Components 
 
-    public Button NewWalletButton;
     public Button NFTButton;
     public Button WalletButton_Home;
     public Button Mint_Button_Anna;
@@ -62,16 +53,14 @@ public class UIController : MonoBehaviour
     public Button MintNFT_LinkButton;
     public Button WalletScreen_NFTAdd_Button;
     public Button ClaimScreen_NFTAdd_Button;
-    public Button ConnectWalletButton;
-    public Button onLogOutButton;
-    public Button ImportWalletButton;
 
+    public Button onLogOutButton;
 
     public TMP_InputField NewWalletMnemonicsText;
     public TMP_InputField ActiveAddressText;
     public TextMeshProUGUI link_successful;
     public GameObject SuiWalletScreen;
-    public GameObject HomeScreen, UserNamePanel;
+    public GameObject HomeScreen;
     public GameObject WalletScreen;
     public GameObject LeaderboardScreen;
     public GameObject ClaimTokensScreen;
@@ -87,7 +76,6 @@ public class UIController : MonoBehaviour
     public Image Mint_SuccessfulScreen_Image;
     public GameObject SelectCharacter_Overlay;
 
-    public TMP_InputField UserName;
 
     public Sprite Character_Anna;
     public Sprite Character_Melloow;
@@ -129,9 +117,6 @@ public class UIController : MonoBehaviour
 
     public TMP_InputField MnemonicsInputField;
     //public GameObject ImportWalletScreen; (no longer used)
-    public GameObject blockImage;
-    public GameObject setup1Panel;
-    public GameObject setup2Panel;
 
     #endregion
 
@@ -221,7 +206,6 @@ public class UIController : MonoBehaviour
         this.NftUiList.Add(NftUiElements_Wanderer);
 
         ActiveAddressText.text = SuiWallet.ActiveWalletAddress;
-        NewWalletButton.gameObject.SetActive(false);
 
         ////group Anna elements together
         NftUiElements_Anna.MintNftScreenText = MintNFTScreen_Text_Anna;
@@ -317,32 +301,6 @@ public class UIController : MonoBehaviour
         NftUiElements_Wanderer.SelectedSprite = sprite_Green;
         NftUiElements_Wanderer.UnselectedSprite = sprite_Pink;
 
-        //Connect Wallet (click connect button)
-        ConnectWalletButton.onClick.AddListener(() =>
-        {
-            try
-            {
-                MessageToSign = GenerateRandomMessage();
-                print(MessageToSign);
-#if FAKE_SIGNIN
-                //SignMessageCallback("AODvvPzbHqQOKnZBqz0+Km66s9TQNNTWtEawg8vQk+tT3k80aP+4mh+taz/+YqYYefPfnlOxNujyetqSWiR9+gKpKGbzUWas+HHgcEN+/d8Etd2QAQrAMMlRsEvIFejUHw==:0x94e666c0de3a5e3e2e730d40030d9ae5c5843c468ee23e49f4717a5cb8e57bfb");
-                VerifySignatureResponseDto dto = new VerifySignatureResponseDto();
-                dto.verified = true;
-                dto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-                dto.failureReason = "";
-                dto.level = 1;
-                this.OnSuccessfulVerifySignature(dto);
-#else
-                //CallSuiSignMessage(MessageToSign);
-                OnPersonalSignButton();
-#endif
-            }
-            catch (Exception e)
-            {
-                SuiWallet.ErrorMessage = e.ToString();
-            }
-        });
-
         //Log Out (click logout button)
         onLogOutButton.onClick.AddListener(() =>
         {
@@ -364,9 +322,6 @@ public class UIController : MonoBehaviour
                 PlayerPrefsExtra.SetInt("selectedIndex", selectedIndex);
 
             UserData.TokenBalance = 0;
-
-            setup2Panel.SetActive(false);
-            setup1Panel.SetActive(true);
             SuiWalletScreen.SetActive(true);
         });
 
@@ -541,16 +496,6 @@ public class UIController : MonoBehaviour
 
     }
 
-    public void EVMSelect(bool value)
-    {
-
-    }
-
-    public void SUISelect(bool value)
-    {
-
-    }
-
     public void selectLevel(int levelNum)
     {
         var session = WalletConnect.Instance.ActiveSession;
@@ -559,28 +504,6 @@ public class UIController : MonoBehaviour
             .Address;
 
         NetworkManager.Instance.postLevel(levelNum, "" + address, OnSuccessfulPostLevel, OnErrorPostLevel);
-    }
-
-    public async void OnPersonalSignButton()
-    {
-        var session = WalletConnect.Instance.ActiveSession;
-        Debug.Log($"[WalletConnectModalSample] session: {session}");
-
-        var sessionNamespace = session.Namespaces;
-        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
-            .Address;
-
-        //MessageToSign = GenerateRandomMessage();
-        //Debug.Log($"[WalletConnectModalSample] MessageToSign: {MessageToSign}");
-        Debug.Log($"[WalletConnectModalSample] address: {address}");
-        SuiWallet.ActiveWalletAddress = address;
-        NetworkManager.Instance.StartAuthSession("" + address, OnSuccessfulAuthSession, OnErrorStartAuthSession);
-    }
-
-    public void setuserName()
-    {
-        Debug.Log("get");
-        NetworkManager.Instance.CheckUsername("" + UserName.text, OnSuccessfulVerifyUserName, OnErrorStartAuthSession);
     }
 
     private void CreateNFT(string name, string imageUrl)
@@ -595,94 +518,6 @@ public class UIController : MonoBehaviour
         //OnSuccessfulCreateNFT(new CreateNFTResponseDto());
     }
 
-    #region Login Methods 
-
-    /// <summary>
-    /// Generates a randomized string of numbers and letters, to be used as a message to sign in order to verify wallet ownership 
-    /// (part of login process).
-    /// </summary>
-    /// <returns>Randomized alphanumeric string</returns>
-    private string GenerateRandomMessage()
-    {
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var stringChars = new char[SIGNING_MESSAGE_LENGTH];
-        var random = new System.Random();
-
-        for (int i = 0; i < stringChars.Length; i++)
-            stringChars[i] = chars[random.Next(chars.Length)];
-
-        //this is for development only
-#if FAKE_SIGNIN
-        return "PpMoClvCn6IzrMewxpplO9skITR9vZoG";
-#else
-        return new String(stringChars);
-#endif
-    }
-
-    /// <summary>
-    /// Called from the Javascript front end after signing a message; passes back the user address and signed message signature.
-    /// </summary>
-    /// <param name="response">A string of two elements delimited by ':'. First element is the signature, the second element is 
-    /// the user's wallet address (which was used to sign the message).</param>
-    private async void SignMessageCallback(string response)
-    {
-        Debug.Log("SignMessageCallback response : " + response);
-
-        var session = WalletConnect.Instance.ActiveSession;
-        var sessionNamespace = session.Namespaces;
-        var address = WalletConnect.Instance.ActiveSession.CurrentAddress(sessionNamespace.Keys.FirstOrDefault())
-        .Address;
-
-        Debug.Log("SignMessageCallback address : " + address);
-        var data = new PersonalSign(response, address);
-
-        Debug.Log("SignMessageCallback PersonalSign : " + data);
-
-        try
-        {
-
-            Debug.Log("Generating Signature from Data.");
-            var result = await WalletConnect.Instance.RequestAsync<PersonalSign, string>(data);
-            Debug.Log("Received response.This app cannot validate signatures yet.\nResponse: " + result);
-
-            Debug.Log("signed message:" + response);
-            Debug.Log("wallet address:" + address);
-
-            //prepare a request to verify the signature
-            AuthVerifyDto request = new AuthVerifyDto();
-            request.wallet = "" + address;
-            request.walletType = "evm";
-            request.action = "update";
-            request.sessionId = UserData.sessionID;
-            request.messageToSign = response;
-            request.username = UserData.UserName;
-            request.signature = System.Web.HttpUtility.UrlEncode(result);
-            PlayerPrefsExtra.SetString("nftSignature", System.Web.HttpUtility.UrlEncode(result));
-            NetworkManager.Instance.VerifyAuthSession(request, OnSuccessfulVerifySession, OnErrorVerifySignature);
-
-        }
-        catch (WalletConnectException e)
-        {
-
-            Debug.Log($"[WalletConnectModalSample] Personal Sign Error: {e.Message}");
-        }
-
-        Debug.Log("Done with VerifyAuthSession.");
-
-        ////prepare a request to verify the signature
-        //VerifySignatureDto request = new VerifySignatureDto();
-        //request.address = address;
-        //request.signature = System.Web.HttpUtility.UrlEncode(signature);
-        //request.message = MessageToSign;
-
-        ////call to verify signature
-        //NetworkManager.Instance.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
-        ////this.VerifySignature(request, OnSuccessfulVerifySignature, OnErrorVerifySignature);
-
-    }
-
-    #endregion
-
     #region UI Methods 
 
     /// <summary>
@@ -690,6 +525,8 @@ public class UIController : MonoBehaviour
     /// </summary>
     private void ShowHomeScreen()
     {
+        //get user owned NFTs
+        NetworkManager.Instance.GetUserOwnedBeatsNfts(SuiWallet.ActiveWalletAddress, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
         HomeScreen.SetActive(true);
         //PlaySongScreen.SetActive(true);
         NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
@@ -708,13 +545,13 @@ public class UIController : MonoBehaviour
         if (UserData.HasSelectedNft && UserData.OwnedNftCount > 0)
         {
             //this is hiding the NFT minting overlay 
-            blockImage.SetActive(false);
+            //blockImage.SetActive(false);
             isOverlayOn = false;
         }
         else
         {
             //this is showing the NFT minting overlay 
-            blockImage.SetActive(true);
+            //blockImage.SetActive(true);
             SelectCharacter_Overlay.SetActive(true);
             isOverlayOn = true;
         }
@@ -749,12 +586,12 @@ public class UIController : MonoBehaviour
 
             if (UserData.HasSelectedNft)
             {
-                blockImage.SetActive(false);
+                //blockImage.SetActive(false);
                 isOverlayOn = false;
             }
             else
             {
-                blockImage.SetActive(true);
+                //blockImage.SetActive(true);
                 SelectCharacter_Overlay.SetActive(true);
                 isOverlayOn = true;
             }
@@ -763,7 +600,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            blockImage.SetActive(true);
+            //blockImage.SetActive(true);
         }
     }
 
@@ -806,7 +643,7 @@ public class UIController : MonoBehaviour
             this.NftMintCandidateIndex = index;
             this.CreateNFT(selectedNft.Name, selectedNft.ImageUrl);
             LoadingScreen.SetActive(true);
-            blockImage.SetActive(false);
+            //blockImage.SetActive(false);
         }
         else
         {
@@ -939,49 +776,6 @@ public class UIController : MonoBehaviour
         GoogleAnalytics.Instance.SendError(error, "getBeatsNfts");
     }
 
-    private void OnSuccessfulVerifySignature(VerifySignatureResponseDto verifySignatureResponseDto)
-    {
-        //set active wallet address 
-        if (verifySignatureResponseDto.verified)
-        {
-            //#if FAKE_SIGNIN
-            //            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-            //#endif
-
-            SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.wallet;
-            UserData.currentLevel = verifySignatureResponseDto.level;
-
-            //get user owned NFTs
-            NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.wallet, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
-        }
-        else
-        {
-            ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
-        }
-    }
-
-    private void OnSuccessfulAuthSession(StartAuthSessionResponseDto startAuthSessionResponseDto)
-    {
-        Debug.Log("OnSuccessfulAuthSession");
-        //set active wallet address 
-        if (startAuthSessionResponseDto.sessionId != "")
-        {
-            //#if FAKE_SIGNIN
-            //            startAuthSessionResponseDto.sessionId = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-            //#endif
-            UserData.sessionID = startAuthSessionResponseDto.sessionId;
-            MessageToSign = startAuthSessionResponseDto.messageToSign;
-
-            SignMessageCallback(MessageToSign);
-        }
-        else
-        {
-            ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = startAuthSessionResponseDto.sessionId + ", " + startAuthSessionResponseDto.messageToSign;
-        }
-    }
-
     private void OnSuccessfulPostLevel(UpdateUserLevelDto updateUserLevelDto)
     {
         Debug.Log("OnSuccessfulPostLevel");
@@ -992,80 +786,10 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private void OnSuccessfulVerifySession(VerifySignatureResponseDto verifySignatureResponseDto)
-    {
-        Debug.Log("Inside OnSuccessfulVerifySession");
-        //set active wallet address 
-        if (verifySignatureResponseDto.wallet != "")
-        {
-            //#if FAKE_SIGNIN
-            //            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-            //#endif
-            UserData.currentLevel = verifySignatureResponseDto.level;
-            NetworkManager.Instance.CheckUsername("" + UserName.text, isUserNameSaved, null);
-            if (verifySignatureResponseDto.suiWallet != "")
-            {
-                //get user owned NFTs
-                NetworkManager.Instance.GetUserOwnedBeatsNfts(verifySignatureResponseDto.suiWallet, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
-            }
-            else
-            {
-                NetworkManager.Instance.GetUserSUIAddress(verifySignatureResponseDto.wallet, OnSuccessfulVerifySession, OnErrorGetBeatsNfts);
-            }
-        }
-        else
-        {
-            UserData.UserName = "";
-            ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
-        }
-    }
-
-    private void OnSuccessfulVerifyUserName(CheckUsernameResponseDto checkUsernameResponseDto)
-    {
-        Debug.Log("OnSuccessfulVerifyUserName");
-        //set active wallet address 
-        if (!checkUsernameResponseDto.exists)
-        {
-            UserData.UserName = UserName.text;
-            //ShowHomeScreen();
-            UserNamePanel.SetActive(false);
-        }
-        else
-        {
-            ErrorScreen.SetActive(true);
-            txtError_ErrorScreen.text = "Username is not available. Please choose another username";
-        }
-    }
-
-    private void isUserNameSaved(CheckUsernameResponseDto checkUsernameResponseDto)
-    {
-        Debug.Log("isUserNameSaved : " + checkUsernameResponseDto.exists);
-        //set active wallet address 
-        if (!checkUsernameResponseDto.exists)
-        {
-            UserData.UserName = "";
-            //ErrorScreen.SetActive(true);
-            //txtError_ErrorScreen.text = "Username is not saved yet.";
-        }
-    }
-
-    private void OnErrorVerifySignature(string error)
-    {
-        this.ShowError(error);
-        GoogleAnalytics.Instance.SendError(error, "verifySignature");
-    }
-
     private void OnErrorPostLevel(string error)
     {
         this.ShowError(error);
         GoogleAnalytics.Instance.SendError(error, "PostLevel");
-    }
-
-    private void OnErrorStartAuthSession(string error)
-    {
-        this.ShowError(error);
-        GoogleAnalytics.Instance.SendError(error, "StartAuthSession");
     }
 
     private void OnSuccessfulCreateNFT(CreateNFTResponseDto createNFTResponseDto)

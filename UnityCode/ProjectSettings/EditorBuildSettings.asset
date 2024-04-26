@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/BouncyBall3D/Game Data/Scenes/Loading.unity
+    guid: 067985740ccc4bc47b146591fb9a5d71
+  - enabled: 1
+    path: Assets/BouncyBall3D/Game Data/Game_Scenes/Login.unity
+    guid: 7fee74ab88ae4471cb81fe1cd3957450
+  - enabled: 1
     path: Assets/BouncyBall3D/Game Data/Game_Scenes/HomeScene.unity
     guid: 5732a19c3c72145379e463f7c5f8c203
   - enabled: 1
