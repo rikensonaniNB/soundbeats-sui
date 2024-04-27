@@ -69150,7 +69150,6 @@ MonoBehaviour:
   Mint_Button_Rainbow: {fileID: 155282405}
   Mint_Button_Wanderer: {fileID: 53172452}
   Mint_SuccessfulScreen_Close: {fileID: 773421125}
-  PlayButton: {fileID: 0}
   MintNFTScreen_Button_Anna: {fileID: 1881810264}
   MintNFTScreen_Button_Marshmallow: {fileID: 1168102704}
   MintNFTScreen_Button_Taral: {fileID: 745166250}
@@ -69168,7 +69167,6 @@ MonoBehaviour:
   WalletScreen_NFTAdd_Button: {fileID: 1643401415}
   ClaimScreen_NFTAdd_Button: {fileID: 1558875184}
   onLogOutButton: {fileID: 2056841884}
-  NewWalletMnemonicsText: {fileID: 0}
   ActiveAddressText: {fileID: 1305458437}
   link_successful: {fileID: 1952999391}
   SuiWalletScreen: {fileID: 0}
@@ -69193,6 +69191,7 @@ MonoBehaviour:
   Character_Rainbow: {fileID: 21300000, guid: 5bb3481730dd44df49a4c6e8b5c4a925, type: 3}
   Character_Wanderer: {fileID: 21300000, guid: adba520b036fc4015bd3ed749ff6eb16, type: 3}
   txtAddressNFT_WalletScreen: {fileID: 863248045}
+  txtAddress_WalletScreen: {fileID: 863248045}
   txtScore_WalletScreen: {fileID: 791341569}
   txtScore_ClaimScreen: {fileID: 1266885295}
   txtAddressNFT_ClaimScreen: {fileID: 1121000101}
@@ -69217,7 +69216,6 @@ MonoBehaviour:
   MintNFTScreen_Text_Robot: {fileID: 1202346686}
   MintNFTScreen_Text_Rainbow: {fileID: 101347895}
   MintNFTScreen_Text_Wanderer: {fileID: 816324517}
-  MnemonicsInputField: {fileID: 0}
 --- !u!1 &1131451507
 GameObject:
   m_ObjectHideFlags: 0
@@ -94118,7 +94116,7 @@ MonoBehaviour:
     ExtraInfo: West & Zander
   - currentSong: {fileID: 11400000, guid: 3afa882aec0b94dcd98dbff204b2a6c9, type: 2}
     ExtraInfo: Iso Indies
-  - currentSong: {fileID: 11400000, guid: 3afa882aec0b94dcd98dbff204b2a6c9, type: 2}
+  - currentSong: {fileID: 11400000, guid: e13d52b67d0db4320ba74334ae1ddfee, type: 2}
     ExtraInfo: Nyck Caution
   - currentSong: {fileID: 11400000, guid: 4fa331dc2b2a94b4e91fe7ec613ef777, type: 2}
     ExtraInfo: Paisley Pink feat. Vicki Vox
@@ -121505,7 +121503,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 3.0050004, y: 0.3121458}
   m_AnchorMax: {x: 4.603438, y: 0.58877516}
-  m_AnchoredPosition: {x: -27978.916, y: -41.339478}
+  m_AnchoredPosition: {x: -27978.924, y: -41.339478}
   m_SizeDelta: {x: -11755.768, y: -28.816284}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2555884557777880802

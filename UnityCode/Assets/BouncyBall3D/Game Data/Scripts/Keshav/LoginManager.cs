@@ -203,6 +203,7 @@ public class LoginManager : MonoBehaviour
             if (startAuthSessionResponseDto.username != "")
             {
                 Debug.Log("Processing for Auth");
+                UserName.text = startAuthSessionResponseDto.username;
                 UserData.UserName = startAuthSessionResponseDto.username;
                 UserData.sessionID = startAuthSessionResponseDto.sessionId;
                 MessageToSign = startAuthSessionResponseDto.messageToSign;
@@ -246,7 +247,6 @@ public class LoginManager : MonoBehaviour
         }
         else
         {
-            UserData.UserName = "";
             ErrorScreen.SetActive(true);
             txtError_ErrorScreen.text = verifySignatureResponseDto.wallet + ", " + verifySignatureResponseDto.failureReason;
         }
@@ -258,7 +258,7 @@ public class LoginManager : MonoBehaviour
         //set active wallet address 
         if (!checkUsernameResponseDto.exists)
         {
-            UserData.UserName = UserName.text;
+
             //ShowHomeScreen();
             UserNamePanel.SetActive(false);
             LoadingScreen.SetActive(true);
@@ -273,11 +273,10 @@ public class LoginManager : MonoBehaviour
 
     private void isUserNameSaved(CheckUsernameResponseDto checkUsernameResponseDto)
     {
-        Debug.Log("isUserNameSaved : " + checkUsernameResponseDto.exists);
-        //set active wallet address 
+        Debug.Log(UserData.UserName + " || " + UserName.text + " - isUserNameSaved : " + checkUsernameResponseDto.exists);
+        UserData.UserName = UserName.text;
         if (!checkUsernameResponseDto.exists)
         {
-            UserData.UserName = "";
             ErrorScreen.SetActive(true);
             txtError_ErrorScreen.text = "Some issue occured during verification of your account.\nPlease Try again after some time.";
         }

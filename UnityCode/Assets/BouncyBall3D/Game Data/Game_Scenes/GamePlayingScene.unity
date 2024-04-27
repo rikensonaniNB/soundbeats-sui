@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0015770659, g: 0.0006084003, b: 0.00084430934, a: 1}
+  m_IndirectSpecularColor: {r: 0.00157643, g: 0.00060816546, b: 0.0008438936, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8989,9 +8989,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: HidePopup
+      - m_Target: {fileID: 1507843698}
+        m_TargetAssemblyTypeName: GamePlayingManager, Assembly-CSharp
+        m_MethodName: OnClose
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9459,9 +9459,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: onClose
+      - m_Target: {fileID: 1507843698}
+        m_TargetAssemblyTypeName: GamePlayingManager, Assembly-CSharp
+        m_MethodName: OnClose
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -30622,14 +30622,18 @@ PrefabInstance:
     - target: {fileID: 8386645014278981664, guid: 9be1edd06897b4c14ab1db2ee36b0175, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1507843698}
     - target: {fileID: 8386645014278981664, guid: 9be1edd06897b4c14ab1db2ee36b0175, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: HidePopup
+      value: OnClose
       objectReference: {fileID: 0}
     - target: {fileID: 8386645014278981664, guid: 9be1edd06897b4c14ab1db2ee36b0175, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameManager, Assembly-CSharp
+      value: GamePlayingManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8386645014278981666, guid: 9be1edd06897b4c14ab1db2ee36b0175, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8386645014292760433, guid: 9be1edd06897b4c14ab1db2ee36b0175, type: 3}
       propertyPath: m_AnchoredPosition.y

@@ -260,7 +260,6 @@ public class NetworkManager : Singleton<NetworkManager>
         // Convert JSON string to byte array
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonReqData);
 
-        Debug.Log(bodyRaw);
 
         // Set request body
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);

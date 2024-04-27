@@ -458,7 +458,7 @@ public class GameManager : Singleton<GameManager>
         levelSelection.SetActive(true);
         producer = false;
         sky.SetActive(true);
-        UIController.instance.SuiWalletScreen.SetActive(false);
+        //UIController.instance.SuiWalletScreen.SetActive(false);
         UIController.instance.HomeScreen.SetActive(false);
         UIController.instance.SelectCharacterScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
@@ -470,7 +470,7 @@ public class GameManager : Singleton<GameManager>
     {
         levelSelection.SetActive(false);
         sky.SetActive(false);
-        UIController.instance.SuiWalletScreen.SetActive(true);
+        //UIController.instance.SuiWalletScreen.SetActive(true);
         UIController.instance.HomeScreen.SetActive(true);
         UIController.instance.SelectCharacterScreen.SetActive(true);
         UIManager.Instance.gameUI.SetActive(false);
@@ -531,7 +531,7 @@ public class GameManager : Singleton<GameManager>
         UIController.instance.Mint_NFTScreen.SetActive(false);
         UIManager.Instance.gameUI.SetActive(false);
         player.gameObject.SetActive(true);
-        UIController.instance.SuiWalletScreen.SetActive(false);
+        //UIController.instance.SuiWalletScreen.SetActive(false);
         AudioVisualizeManager.instance.audioSource.enabled = false;
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
         {
@@ -581,7 +581,7 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.gameUI.SetActive(false);
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
         player.gameObject.SetActive(true);
-        UIController.instance.SuiWalletScreen.SetActive(false);
+        //UIController.instance.SuiWalletScreen.SetActive(false);
         AudioVisualizeManager.instance.audioSource.enabled = false;
         foreach (Transform allboxs in SetBox.instance.gameObject.transform)
         {
@@ -622,7 +622,7 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.gameUI.SetActive(false);
         gameObject.transform.GetChild(0).gameObject.SetActive(false);
         player.gameObject.SetActive(false);
-        UIController.instance.SuiWalletScreen.SetActive(false);
+        //UIController.instance.SuiWalletScreen.SetActive(false);
         UIController.instance.SelectCharacterScreen.SetActive(false);
         songPlaying = false;
         mainCamera.SetActive(false);

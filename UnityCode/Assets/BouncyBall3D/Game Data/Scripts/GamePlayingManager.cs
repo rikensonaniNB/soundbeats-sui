@@ -86,6 +86,7 @@ public class GamePlayingManager : MonoBehaviour
     {
         GameManager.instance.onPause();
     }
+
     public void OnClose()
     {
         CameraFollow.instance.enabled = false;

@@ -35,7 +35,6 @@ public class UIController : MonoBehaviour
     public Button Mint_Button_Wanderer;
 
     public Button Mint_SuccessfulScreen_Close;
-    public Button PlayButton;
     public Button MintNFTScreen_Button_Anna;
     public Button MintNFTScreen_Button_Marshmallow;
     public Button MintNFTScreen_Button_Taral;
@@ -56,7 +55,6 @@ public class UIController : MonoBehaviour
 
     public Button onLogOutButton;
 
-    public TMP_InputField NewWalletMnemonicsText;
     public TMP_InputField ActiveAddressText;
     public TextMeshProUGUI link_successful;
     public GameObject SuiWalletScreen;
@@ -87,6 +85,7 @@ public class UIController : MonoBehaviour
     public Sprite Character_Wanderer;
 
     public TextMeshProUGUI txtAddressNFT_WalletScreen;
+    public TextMeshProUGUI txtAddress_WalletScreen;
     public TextMeshProUGUI txtScore_WalletScreen;
     public TextMeshProUGUI txtScore_ClaimScreen;
     public TextMeshProUGUI txtAddressNFT_ClaimScreen;
@@ -114,9 +113,6 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI MintNFTScreen_Text_Robot;
     public TextMeshProUGUI MintNFTScreen_Text_Rainbow;
     public TextMeshProUGUI MintNFTScreen_Text_Wanderer;
-
-    public TMP_InputField MnemonicsInputField;
-    //public GameObject ImportWalletScreen; (no longer used)
 
     #endregion
 
@@ -196,6 +192,9 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
+        //get user owned NFTs
+        NetworkManager.Instance.GetUserOwnedBeatsNfts(SuiWallet.ActiveWalletAddress, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
+
         this.NftUiList.Add(NftUiElements_Anna);
         //this.NftUiList.Add(NftUiElements_Marshmallow);
         //this.NftUiList.Add(NftUiElements_Taral);
@@ -300,7 +299,6 @@ public class UIController : MonoBehaviour
         NftUiElements_Wanderer.ImageUrl = GameData.NftImageUrlBase + "Wanderer.png";
         NftUiElements_Wanderer.SelectedSprite = sprite_Green;
         NftUiElements_Wanderer.UnselectedSprite = sprite_Pink;
-
         //Log Out (click logout button)
         onLogOutButton.onClick.AddListener(() =>
         {
@@ -525,13 +523,13 @@ public class UIController : MonoBehaviour
     /// </summary>
     private void ShowHomeScreen()
     {
-        //get user owned NFTs
-        NetworkManager.Instance.GetUserOwnedBeatsNfts(SuiWallet.ActiveWalletAddress, OnSuccessfulGetBeatsNfts, OnErrorGetBeatsNfts);
         HomeScreen.SetActive(true);
         //PlaySongScreen.SetActive(true);
         NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
         NFTLinkText = SuiWallet.ActiveWalletAddress;
         txtAddressNFT_WalletScreen.text = NFTLinkText;
+        txtAddress_WalletScreen.text = NFTLinkText;
+        Debug.LogError("UserData.UserName : " + UserData.UserName);
         txtUserName_WalletScreen.text = "Hello " + UserData.UserName;
         txtLevel_WalletScreen.text = "Level " + UserData.currentLevel;
         string nftSignature = PlayerPrefsExtra.GetString("nftSignature");
@@ -575,7 +573,7 @@ public class UIController : MonoBehaviour
             HomeScreen.SetActive(true);
             NFTLinkAdd = SuiWallet.ErrorMessage.Length > 0 ? SuiWallet.ErrorMessage : SuiExplorer.FormatAddressUri(SuiWallet.ActiveWalletAddress);
             NFTLinkText = SuiWallet.ActiveWalletAddress;
-
+            txtAddress_WalletScreen.text = NFTLinkText;
             txtAddressNFT_WalletScreen.text = NFTLinkText;
             string nftSignature = PlayerPrefsExtra.GetString("nftSignature");
             link_successful.text = nftSignature;

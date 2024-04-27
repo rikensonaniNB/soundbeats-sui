@@ -423,7 +423,6 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 myDataList.dataSave.Add((float)data.dataSave[i]);
             }
             fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-            Debug.LogError("Filename " + fileNameWithoutExtension);
 
             foreach (var song in GameManager.instance.songNameCheckForBeatMapJson)
             {

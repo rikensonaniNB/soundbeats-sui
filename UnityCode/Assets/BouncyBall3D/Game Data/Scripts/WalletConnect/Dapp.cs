@@ -60,7 +60,6 @@ namespace WalletConnectUnity.Modal.Sample
                     {
                         LoginManager.instance.OnPersonalSignButton();
                     }
-                    Debug.Log($"[WalletConnectModalSample] Session connected. Chain: {_selectedChains.ToString()}");
                     //_userName.SetActive(true);
                     LoginManager.instance.LoadingScreen.SetActive(true);
                     _networkList.SetActive(false);
