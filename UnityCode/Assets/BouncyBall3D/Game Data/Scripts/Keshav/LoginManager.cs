@@ -32,6 +32,11 @@ public class LoginManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
         //Connect Wallet (click connect button)
         ConnectWalletButton.onClick.AddListener(() =>
         {
@@ -229,7 +234,7 @@ public class LoginManager : MonoBehaviour
             //            verifySignatureResponseDto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
             //#endif
             UserData.currentLevel = verifySignatureResponseDto.level;
-            NetworkManager.Instance.CheckUsername("" + UserName.text, isUserNameSaved, null);
+            NetworkManager.Instance.CheckUsername("" + UserData.UserName, isUserNameSaved, null);
             if (verifySignatureResponseDto.suiWallet != "")
             {
                 SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.suiWallet;
@@ -273,8 +278,13 @@ public class LoginManager : MonoBehaviour
         if (!checkUsernameResponseDto.exists)
         {
             UserData.UserName = "";
-            //ErrorScreen.SetActive(true);
-            //txtError_ErrorScreen.text = "Username is not saved yet.";
+            ErrorScreen.SetActive(true);
+            txtError_ErrorScreen.text = "Some issue occured during verification of your account.\nPlease Try again after some time.";
+        }
+        else
+        {
+            LoadingScreen.SetActive(true);
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 

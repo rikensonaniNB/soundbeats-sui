@@ -62,7 +62,7 @@ namespace WalletConnectUnity.Modal.Sample
                     }
                     Debug.Log($"[WalletConnectModalSample] Session connected. Chain: {_selectedChains.ToString()}");
                     //_userName.SetActive(true);
-                    UIController.instance.LoadingScreen.SetActive(true);
+                    LoginManager.instance.LoadingScreen.SetActive(true);
                     _networkList.SetActive(false);
                 };
 
@@ -86,7 +86,7 @@ namespace WalletConnectUnity.Modal.Sample
         {
             _dappButtons.SetActive(false);
             _networkList.SetActive(true);
-            UIController.instance.LoadingScreen.SetActive(false);
+            LoginManager.instance.LoadingScreen.SetActive(false);
             if (_networkListContainer.childCount == 0)
             {
                 foreach (var chain in Chain.All)
