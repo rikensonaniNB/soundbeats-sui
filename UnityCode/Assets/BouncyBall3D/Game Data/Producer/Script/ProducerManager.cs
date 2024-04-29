@@ -60,15 +60,15 @@ public class ProducerManager : MonoBehaviour
         ///// ThresoldSlider /////
         complexitySlider.value = 0.35f;
         complexityValue = complexitySlider.value;
-        complexitySlider.minValue = 0.1f;
+        complexitySlider.minValue = 0.3f;
         complexitySlider.maxValue = 0.8f;
         complexityValueTxt.text = complexitySlider.value.ToString();
 
         ///// RefreshTimeSlider /////
         RefreshTimeSlider.value = 0.1f;
         RefreshTimeValue = RefreshTimeSlider.value;
-        RefreshTimeSlider.minValue = 0.01f;
-        RefreshTimeSlider.maxValue = 0.1f;
+        RefreshTimeSlider.minValue = 0.06f;
+        RefreshTimeSlider.maxValue = 0.12f;
         RefreshTimeValueTxt.text = RefreshTimeSlider.value.ToString();
         AudioVisualizeManager.instance.refreshTime = RefreshTimeValue;
 
@@ -82,8 +82,8 @@ public class ProducerManager : MonoBehaviour
         ///////////////////////////////////////////
         PushMultiplierPartTwoSlider.value = 1f;
         PushMultiplierPartTwoValue = PushMultiplierPartTwoSlider.value;
-        PushMultiplierPartTwoSlider.minValue = 0f;
-        PushMultiplierPartTwoSlider.maxValue = 100f;
+        PushMultiplierPartTwoSlider.minValue = 1f;
+        PushMultiplierPartTwoSlider.maxValue = 2f;
         PushMultiplierPartTwoValueTxt.text = PushMultiplierPartTwoSlider.value.ToString();
         AudioVisualizeManager.instance.PushMultiplierPartTwo = PushMultiplierPartTwoValue;
 
@@ -99,13 +99,16 @@ public class ProducerManager : MonoBehaviour
         AudioVisualizeManager.instance.maxOutput = MaxOutputValue;
         //MaxOutputSlider.minValue = -4f;
         //MaxOutputSlider.maxValue = 4f;
+
+
+        StartAgain.GetComponent<Button>().interactable = false;
     }
     public void ResetPopManager()
     {
         complexitySlider.value = 0.35f;
         Debug.Log($"<color=blue> Threshold_Slider_Value </color>" + complexitySlider.value);
 
-        RefreshTimeSlider.value = 0.30f;
+        RefreshTimeSlider.value = 0.1f;
         Debug.Log($"<color=blue> Refresh_Time_Slider_Value </color>" + RefreshTimeSlider.value);
         AudioVisualizeManager.instance.refreshTime = RefreshTimeValue;
 
@@ -163,7 +166,6 @@ public class ProducerManager : MonoBehaviour
 
     public void OnCloseThresoldpanal()
     {
-        AudioVisualizeManager.instance.audioSource.clip = LevelGenerator.Instance.currentSong.song;
         if (GameManager.instance.songPlaying == true)
         {
             producerHoldscreen.SetActive(true);
@@ -174,6 +176,7 @@ public class ProducerManager : MonoBehaviour
             //Player.instance.ResetPlayer();
             SetBox.instance.SpawnWhiteBalls();
             songTime.SetActive(true);
+            StartAgain.GetComponent<Button>().interactable = true;
         }
     }
 
@@ -215,7 +218,21 @@ public class ProducerManager : MonoBehaviour
 
     public void StartAgainBtn()
     {
-        GameManager.instance.RegenerateBtn();
+        Debug.Log($"<color=green> REGENRATE </color>");
+
+        GameManager.instance.StopProducer();
+
+        AudioVisualizeManager.visualizeManager.audioSource.Stop();
+        LevelGenerator.Instance.myDataList.dataSave.Clear();
+        foreach (Transform allboxs in SetBox.instance.gameObject.transform)
+        {
+            Destroy(allboxs.gameObject);
+        }
+        GameManager.instance.PlaySong();
+        SetBox.instance.SpawnWhiteBalls();
+        songTime.SetActive(true);
+        ////////// RESTART SONG SAVE DATA AND PLAYING //////////
+        GameManager.instance.PlaySongProducer();
     }
 
 

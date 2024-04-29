@@ -107,4 +107,18 @@ public class GamePlayingManager : MonoBehaviour
         pauseButton.SetActive(true);
         GameManager.instance.isPausePopupOpen = false;
     }
+
+    public void HidePopup()
+    {
+        Debug.Log("HidePopup");
+        scoreText.text = "0";
+        Player.instance.ResetPlayer();
+        revivePanel.SetActive(false);
+        Winpanel.SetActive(false);
+        playButton.SetActive(true);
+        GameManager.instance.platform.SetActive(true);
+        LevelGenerator.Instance.StartWithSong();
+        Player.instance.transform.GetChild(8).gameObject.SetActive(false);
+        Player.instance.transform.GetChild(8).gameObject.SetActive(true);
+    }
 }

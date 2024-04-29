@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.043384254, g: 0.04576018, b: 0.047914546, a: 1}
+  m_IndirectSpecularColor: {r: 0.04338513, g: 0.045760483, b: 0.047916204, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -370,8 +370,8 @@ MonoBehaviour:
   MaxOutputSlider: {fileID: 1428011592971801308}
   MaxOutputValueTxt: {fileID: 5707694094927396053}
   MaxOutputValue: 0
-  Generate: {fileID: 0}
-  StartAgain: {fileID: 0}
+  Generate: {fileID: 7598574421504267460}
+  StartAgain: {fileID: 333738672351983438}
 --- !u!4 &1618593478
 Transform:
   m_ObjectHideFlags: 0

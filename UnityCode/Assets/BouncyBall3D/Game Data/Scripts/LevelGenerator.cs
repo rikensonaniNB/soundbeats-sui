@@ -34,7 +34,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
 #pragma warning disable 0414
     bool nextPlatformIsStart = false;
 #pragma warning restore 0414
-    float lastPlatformZ = 0;
+    public float lastPlatformZ = 0;
     public List<GameObject> platformList = new List<GameObject>();
     //public List<GameObject> platformListBox = new List<GameObject>();
     public List<int> countlist = new List<int>();

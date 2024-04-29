@@ -5,19 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class ProducerLoading : MonoBehaviour
 {
-    public GameObject loaderImage;
     void Start()
     {
-        StartCoroutine(LoadProducerScene());
-    }
+        Debug.Log("ProducerLoading");
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex - 3);
 
-    IEnumerator LoadProducerScene()
-    {
-        yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("ProducerScene");
-    }
-    private void Update()
-    {
-        loaderImage.transform.Rotate(Vector3.forward * -100 * Time.deltaTime);
     }
 }

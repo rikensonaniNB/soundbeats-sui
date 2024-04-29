@@ -76,8 +76,8 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
     {
         if (GameManager.instance.producer == false)
         {
-            SceneManager.LoadScene("LoadingSceneForPlaying");
-            //StartCoroutine(GameManager.Instance.LoadingSceneToGamePlayingScene());
+            //SceneManager.LoadScene("LoadingSceneForPlaying");
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 3);
             DontDestroyOnLoad(GameManager.instance.gameObject);
             DontDestroyOnLoad(LevelGenerator.Instance.gameObject);
             DontDestroyOnLoad(SoundManager._Instance.gameObject);
@@ -99,7 +99,7 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
             DontDestroyOnLoad(AudioVisualizeManager.instance.gameObject);
             InfoPanel.SetActive(false);
             SceneManager.LoadScene("LoadingSceneForProducer");
-            //StartCoroutine(GameManager.Instance.loadingSceneToProducerScene());
+            AudioVisualizeManager.instance.audioSource.clip = LevelGenerator.Instance.currentSong.song;
         }
     }
 
