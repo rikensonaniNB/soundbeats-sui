@@ -260,6 +260,7 @@ public class LoginManager : MonoBehaviour
         {
 
             //ShowHomeScreen();
+            UserData.UserName = UserName.text;
             UserNamePanel.SetActive(false);
             LoadingScreen.SetActive(true);
             SignMessageCallback(MessageToSign);
