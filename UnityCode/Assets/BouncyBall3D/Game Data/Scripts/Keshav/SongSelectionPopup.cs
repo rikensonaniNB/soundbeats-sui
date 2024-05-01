@@ -88,7 +88,6 @@ public class SongSelectionPopup : Singleton<SongSelectionPopup>
             Player.instance.ResetPlayer();
             LevelGenerator.Instance.currentSong = _song;
             Debug.Log("PlaySong " + _song.name);
-            Advertisements.Instance.ShowInterstitial();
         }
         if (GameManager.instance.producer == true)
         {

@@ -372,7 +372,7 @@ public class LevelGenerator : Singleton<LevelGenerator>
                 {
                     for (int i = 1; i <= 10; i++)
                     {
-                        if (song.name + "_Beat_" + i + "_" + UserData.UserName == fileN || song.name + "_Beat_" + UserData.UserName == fileN)
+                        if (song.name + "_Beat_" + i + "_" + UserData.UserName == fileN || song.name + "_Beat_" + UserData.UserName == fileN || song.name + "_Beat_" + i + UserData.UserName == fileN)
                         {
                             Obj.transform.GetChild(1).GetComponent<Image>().sprite = song.SongImage;
                             Debug.Log(Obj.name);

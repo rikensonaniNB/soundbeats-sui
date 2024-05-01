@@ -35,8 +35,8 @@ public class SelectSong : MonoBehaviour
             {
                 Player.instance.levelSelectorPlayer.transform.SetParent(toggle.transform);
                 Player.instance.levelSelectorPlayer.transform.localScale = new Vector3(9000, 9000, 9000);
-                Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
-                //Player.instance.levelSelectorPlayer.transform.localPosition = levelPlayerPosition;
+                //Player.instance.levelSelectorPlayer.transform.DOLocalMove(levelPlayerPosition, 1f);
+                Player.instance.levelSelectorPlayer.transform.localPosition = levelPlayerPosition;
                 Debug.Log(Player.instance.levelSelectorPlayer.transform.localPosition);
             }
         }

@@ -39,7 +39,7 @@ TextureImporter:
       213: -4485904457344867081
     second: sactx-1024x1024-ETC2-Atlas-f666e342 #802_11
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -99,10 +99,11 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -116,7 +117,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 10
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -150,6 +151,18 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -426,18 +439,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_7: 9099008408593068636
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_11: -4485904457344867081
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_0: 2322901902843621557
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_6: 4983881131765334261
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_1: 6106094793123245312
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_10: 8335617424979727038
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_3: 6668296038315937242
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_11: -4485904457344867081
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_2: -8923725107131885810
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_3: 6668296038315937242
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_4: -8425042052594092225
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_5: 23597792270505722
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_6: 4983881131765334261
+      sactx-1024x1024-ETC2-Atlas-f666e342 #802_7: 9099008408593068636
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_8: -994678031251616691
       sactx-1024x1024-ETC2-Atlas-f666e342 #802_9: -7786641122197271079
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_5: 23597792270505722
-      sactx-1024x1024-ETC2-Atlas-f666e342 #802_1: 6106094793123245312
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

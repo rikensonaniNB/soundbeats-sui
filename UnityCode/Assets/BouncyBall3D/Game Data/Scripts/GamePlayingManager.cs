@@ -78,7 +78,6 @@ public class GamePlayingManager : MonoBehaviour
         }
         Player.instance.characters[Player.instance.characterSelect].SetActive(true);
         //LevelGenerator.Instance.StartWithSong();
-        Advertisements.Instance.ShowInterstitial();
         Player.instance.transform.GetChild(8).gameObject.SetActive(true);
     }
 

@@ -40,22 +40,29 @@ public class LoginManager : MonoBehaviour
         //Connect Wallet (click connect button)
         ConnectWalletButton.onClick.AddListener(() =>
         {
-            try
-            {
-                MessageToSign = GenerateRandomMessage();
-                print(MessageToSign);
-                VerifySignatureResponseDto dto = new VerifySignatureResponseDto();
-                dto.verified = true;
-                dto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
-                dto.failureReason = "";
-                dto.level = 1;
-                this.OnSuccessfulVerifySignature(dto);
-            }
-            catch (Exception e)
-            {
-                SuiWallet.ErrorMessage = e.ToString();
-            }
+            LoadingScreen.SetActive(true);
+            StartCoroutine(LoadingSceen());
         });
+    }
+
+    public IEnumerator LoadingSceen()
+    {
+        yield return new WaitForSeconds(0.0001f);
+        try
+        {
+            MessageToSign = GenerateRandomMessage();
+            print(MessageToSign);
+            VerifySignatureResponseDto dto = new VerifySignatureResponseDto();
+            dto.verified = true;
+            dto.wallet = "0x0fc4a6096df7a66592ffcd6eedb8bc1965e110fa8d7c6d5aef1b70ebc7ab3938";
+            dto.failureReason = "";
+            dto.level = 1;
+            this.OnSuccessfulVerifySignature(dto);
+        }
+        catch (Exception e)
+        {
+            SuiWallet.ErrorMessage = e.ToString();
+        }
     }
 
     public void EVMSelect(bool value)
@@ -180,7 +187,6 @@ public class LoginManager : MonoBehaviour
         {
             SuiWallet.ActiveWalletAddress = verifySignatureResponseDto.wallet;
             UserData.currentLevel = verifySignatureResponseDto.level;
-            LoadingScreen.SetActive(true);
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }
         else

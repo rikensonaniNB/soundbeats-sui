@@ -18,7 +18,7 @@ TextureImporter:
       213: -6525359874834377417
     second: sactx-1024x1024-ETC2-Avatar-367b8948 #803_4
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -78,10 +78,11 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -95,7 +96,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 10
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -129,6 +130,18 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -259,8 +272,8 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       sactx-1024x1024-ETC2-Avatar-367b8948 #803_0: -426401929730316803
-      sactx-1024x1024-ETC2-Avatar-367b8948 #803_2: 2354343432899118183
       sactx-1024x1024-ETC2-Avatar-367b8948 #803_1: -6334833641561832045
+      sactx-1024x1024-ETC2-Avatar-367b8948 #803_2: 2354343432899118183
       sactx-1024x1024-ETC2-Avatar-367b8948 #803_3: 6533984691613140145
       sactx-1024x1024-ETC2-Avatar-367b8948 #803_4: -6525359874834377417
   spritePackingTag: 

@@ -178,7 +178,6 @@ public class SongHolder : MonoBehaviour
 
         LevelGenerator.Instance.currentSong = song;
         LevelGenerator.Instance.StartWithSong();
-        Advertisements.Instance.ShowInterstitial();
         this.gameObject.SetActive(false);
         GameManager.instance.mainCamera.SetActive(true);
         GameManager.instance.sky.SetActive(true);
