@@ -11,9 +11,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/BouncyBall3D/Game Data/Game_Scenes/Login.unity
     guid: 7fee74ab88ae4471cb81fe1cd3957450
+  - enabled: 0
+    path: Assets/BouncyBall3D/Game Data/Game_Scenes/HomeScene 3.unity
+    guid: 63b5940344e38f043b2a0229f16d7567
+  - enabled: 0
+    path: Assets/BouncyBall3D/Game Data/Game_Scenes/HomeScene 5.unity
+    guid: c68100732bc222c41b4561958a69cc16
   - enabled: 1
     path: Assets/BouncyBall3D/Game Data/Game_Scenes/HomeScene.unity
-    guid: 5732a19c3c72145379e463f7c5f8c203
+    guid: bc301aaa8a8bcaa4ea87bad695538975
   - enabled: 1
     path: Assets/BouncyBall3D/Game Data/Game_Scenes/ProducerScene.unity
     guid: e1f12b007ee69ee47b7ebfb5c0302072

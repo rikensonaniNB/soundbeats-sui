@@ -47,7 +47,7 @@ public class LoginManager : MonoBehaviour
 
     public IEnumerator LoadingSceen()
     {
-        yield return new WaitForSeconds(0.0001f);
+        yield return new WaitForSeconds(0.00001f);
         try
         {
             MessageToSign = GenerateRandomMessage();
